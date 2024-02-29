@@ -1,0 +1,20 @@
+baseURL = 'https://hyperagon.github.io/'
+languageCode = 'en-us'
+title = 'Hyperagon'
+theme = 'PaperMod'
+
+[params]
+env = "production"
+title = "Magic"
+description = "Programmer 🧑‍💻️ by Day, Wizard 🧙‍♀️️ by Night"
+keywords = [ "Blog", "Portfolio", "PaperMod" ]
+author = "Hyperagon"
+favicon = './static/favicon.ico'
+
+  [assets]
+    favicon = "static/hyperagon.ico"
+    apple_touch_icon = "static/hyperagon.png"
+
+  [params.contact]
+    email = 'vimino•net@gmail•com'
+
