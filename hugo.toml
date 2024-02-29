@@ -6,7 +6,7 @@ theme = 'PaperMod'
 [params]
 env = "production"
 title = "Magic"
-description = "Programmer 🧑‍💻️ by Day, Wizard 🧙‍♀️️ by Night"
+description = "Programmer by Day, Wizard by Night"
 keywords = [ "Blog", "Portfolio", "PaperMod" ]
 author = "Hyperagon"
 favicon = './static/favicon.ico'
