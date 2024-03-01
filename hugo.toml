@@ -5,16 +5,14 @@ theme = 'PaperMod'
 
 [params]
 env = "production"
-title = "Magic"
-description = "Programmer by Day, Wizard by Night"
 keywords = [ "Blog", "Portfolio", "PaperMod" ]
 author = "Hyperag⬡n"
 
   [params.homeInfoParams]
   Title = "Hyperag⬡n"
-  Content = """
-Programmer by Day, Wizard by Night
-"""
+  Content = """Programmer by Day
+
+Wizard by Night"""
 
     [[params.socialIcons]]
     name = "Github"
