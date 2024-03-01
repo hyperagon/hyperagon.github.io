@@ -1,6 +1,6 @@
-baseURL = 'https://hyperagon.github.io/'
+88baseURL = 'https://hyperagon.github.io/'
 languageCode = 'en-us'
-title = 'Hyperagon'
+title = 'Hyperag⬡n'
 theme = 'PaperMod'
 
 [params]
@@ -8,8 +8,30 @@ env = "production"
 title = "Magic"
 description = "Programmer by Day, Wizard by Night"
 keywords = [ "Blog", "Portfolio", "PaperMod" ]
-author = "Hyperagon"
+author = "Hyperag⬡n"
 
-  [params.contact]
-    email = 'vimino•net@gmail•com'
+  [params.homeInfoParams]
+  Title = "Hyperag⬡n"
+  Content = """
+Programmer by Day, Wizard by Night
+"""
 
+    [[params.socialIcons]]
+    name = "Github"
+    url = "https://github.com/hyperagon"
+
+    [[params.socialIcons]]
+    name = "itchio"
+    url = "https://hyperagon.itch.io/"
+
+    [[params.socialIcons]]
+    name = "LinkedIn"
+    url = "https://www.linkedin.com/in/vím"
+
+    [[params.socialIcons]]
+    name = "Twitter"
+    url = "https://twitter.com/alphachill8"
+
+    #  [[params.socialIcons]]
+    #  name = "Portfolio"
+    #  url = "https://hyperagon.github.io/"
