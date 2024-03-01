@@ -26,6 +26,11 @@ Library (Update 6):
 - [Youtube - How a Transformer works at inference vs training time](https://www.youtube.com/watch?v=IGu7ivuy1Ag)
 - [Youtube - Transformers demystified](https://www.youtube.com/watch?v=C6ZszXYPDDw)
 
+- [Youtube - But what is a neural network? | Chapter 1, Deep learning](https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
+- [Youtube - Gradient descent, how neural networks learn | Chapter 2, Deep learning ](https://www.youtube.com/watch?v=IHZwWFHWa-w)
+- [Youtube - What is backpropagation really doing? | Chapter 3, Deep learning](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
+- [Youtube - Backpropagation calculus | Chapter 4, Deep learning](https://www.youtube.com/watch?v=tIeHLnjs5U8&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=4)
+
 ### Python
 - [Python for Everyone](https://www.py4e.com/)
 - [Youtube - Python in 100 Seconds](https://www.youtube.com/watch?v=x7X9w_GIm1s/)
