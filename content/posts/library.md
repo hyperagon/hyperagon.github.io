@@ -29,20 +29,26 @@ Library (Update 6):
 ### Python
 - [Python for Everyone](https://www.py4e.com/)
 - [Youtube - Python in 100 Seconds](https://www.youtube.com/watch?v=x7X9w_GIm1s/)
+- [Real Python](https://realpython.com/)
 
 ### PyTorch
 - [Youtube - PyTorch in 100 Seconds](https://www.youtube.com/watch?v=ORMx45xqWkA/)
 - [PyTorch Tutorials](https://pytorch.org/tutorials/)'
-- [Language Models For Software Developers in 17 Minutes](https://www.youtube.com/watch?v=tL1zltXuHO8/)
+- [Youtube - Language Models For Software Developers in 17 Minutes](https://www.youtube.com/watch?v=tL1zltXuHO8/)
 - [Youtube - PyTorch for Deep Learning & Machine Learning – Full Course](https://www.youtube.com/watch?v=V_xro1bcAuA/)
+- [Learn PyTorch](https://www.learnpytorch.io/)
+- [Youtube - Learn PyTorch for deep learning in a dat](https://www.youtube.com/watch?v=Z_ikDlimN6A)
 
 ### TensorFlow
 - [Youtube - TensorFlow in 100 Seconds](https://www.youtube.com/watch?v=i8NETqtGHms)
 
+## Generative AI
+- [Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)
+- [Generative AI Full Course](https://www.youtube.com/watch?v=mEsleV16qdo)
+
 ### List
 - [Kaggle](https://www.kaggle.com/)
 - [SciKit Learn](https://scikit-learn.org/stable/index.html/)
-- [Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)
 - [Deeplearning - Chatgpt Prompt Engineering](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
 - [Awesome Machine Learning](https://github.com/josephmisiti/awesome-machine-learning)
 - [Awesome Neural Radience Field](https://github.com/awesome-NeRF/awesome-NeRF/)
