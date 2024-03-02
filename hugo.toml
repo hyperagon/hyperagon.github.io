@@ -30,6 +30,6 @@ Wizard by Night"""
     name = "Twitter"
     url = "https://twitter.com/alphachill8"
 
-    #  [[params.socialIcons]]
-    #  name = "Portfolio"
-    #  url = "https://hyperagon.github.io/"
+ #   [[params.socialIcons]]
+ #   name = "email"
+ #   url = "mailto:vimino•net@gmail•com"
