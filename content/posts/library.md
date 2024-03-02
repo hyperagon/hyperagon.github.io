@@ -39,7 +39,7 @@ Library (Update 6):
 - [Youtube - Language Models For Software Developers in 17 Minutes](https://www.youtube.com/watch?v=tL1zltXuHO8/)
 - [Youtube - PyTorch for Deep Learning & Machine Learning – Full Course](https://www.youtube.com/watch?v=V_xro1bcAuA/)
 - [Learn PyTorch](https://www.learnpytorch.io/)
-- [Youtube - Learn PyTorch for deep learning in a dat](https://www.youtube.com/watch?v=Z_ikDlimN6A)
+- [Youtube - Learn PyTorch for deep learning in a day](https://www.youtube.com/watch?v=Z_ikDlimN6A)
 
 ### TensorFlow
 - [Youtube - TensorFlow in 100 Seconds](https://www.youtube.com/watch?v=i8NETqtGHms)
