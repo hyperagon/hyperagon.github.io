@@ -33,3 +33,19 @@ Wizard by Night"""
  #   [[params.socialIcons]]
  #   name = "email"
  #   url = "mailto:vimino•net@gmail•com"
+
+    [[menu.main]]
+    name = "Projects"
+    url = "page"
+    weight = 5
+
+    [[menu.main]]
+    name = "Tags"
+    url = "tags/"
+    weight = 10
+
+#    [[menu.main]]
+#    name = "Search"
+#    url = "search/"
+#    weight = 15
+
