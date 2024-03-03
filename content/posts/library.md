@@ -3,14 +3,14 @@ title = 'Learning AI'
 summary = 'A big list of learning resources.'
 date = 2024-03-01T11:30:03+01:01
 draft = false
-weight = 1
+weight = 1 # Pin it
 +++
 [Artificial Intelligene](https://en.wikipedia.org/wiki/Artificial_intelligence) >
 [Machine Learning](https://en.wikipedia.org/wiki/Machine_learning) >
 [Deep Learning](https://en.wikipedia.org/wiki/Deep_learning) >
 [Neural Network](https://en.wikipedia.org/wiki/Neural_network_(machine_learning))
 
-Library (Update 6):
+Library (Update 7):
 
 ### Motivation
 - [Youtube - ChatGPT a lying lier who lies](https://www.youtube.com/watch?v=m5iOW0llVMg&t=457s)
@@ -47,6 +47,9 @@ Library (Update 6):
 ## Generative AI
 - [Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)
 - [Generative AI Full Course](https://www.youtube.com/watch?v=mEsleV16qdo)
+
+## Data Engineer
+- [Database / Data Warehouse / DataLake](https://www.youtube.com/watch?v=-bSkREem8dM)
 
 ### List
 - [Kaggle](https://www.kaggle.com/)
