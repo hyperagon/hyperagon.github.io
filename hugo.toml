@@ -5,7 +5,7 @@ theme = 'PaperMod'
 
 [params]
 env = "production"
-keywords = [ "Blog", "Portfolio", "PaperMod" ]
+keywords = [ "Blog", "Portfolio" ]
 author = "Hyperag⬡n"
 
   [params.homeInfoParams]
@@ -30,13 +30,13 @@ Wizard by Night"""
     name = "Twitter"
     url = "https://twitter.com/alphachill8"
 
- #   [[params.socialIcons]]
- #   name = "email"
- #   url = "mailto:vimino•net@gmail•com"
+#    [[params.socialIcons]]
+#    name = "email"
+#    url = "mailto:hyperagon@outlook.com"
 
     [[menu.main]]
     name = "Projects"
-    url = "page"
+    url = "projects/"
     weight = 5
 
     [[menu.main]]
