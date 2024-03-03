@@ -1,4 +1,5 @@
 ---
-title: Test3
+title: 'Test 3'
+summary: 'Blue Three'
 layout: three
 ---
