@@ -1,4 +1,5 @@
 ---
 title: Test3
-layout: /three
+url: /three
+layout: three
 ---

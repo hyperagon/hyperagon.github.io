@@ -7,6 +7,7 @@ theme = 'PaperMod'
 env = "production"
 keywords = [ "Blog", "Portfolio" ]
 author = "Hyperag⬡n"
+images = ["static/favicon.png"]
 
   [params.homeInfoParams]
   Title = "Hyperag⬡n"

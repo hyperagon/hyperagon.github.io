@@ -1,4 +1,5 @@
 ---
 title: Test1
-layout: /projects/one
+url: /one
+layout: one
 ---
