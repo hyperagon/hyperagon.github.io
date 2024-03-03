@@ -1,5 +1,5 @@
 ---
 title: 'Test 2'
-summary: 'Green Rwo'
+summary: 'Green Two'
 layout: two
 ---

@@ -8,7 +8,7 @@ paginate = 3
 env = "production"
 keywords = [ "Blog", "Portfolio" ]
 author = "Hyperag⬡n"
-images = ["static/favicon.png"]
+images = ["static/favicon-16x16.png", "static/favicon-16««32x32.png", "static/favicon.png"]
 
   [params.homeInfoParams]
   Title = "Hyperag⬡n"
