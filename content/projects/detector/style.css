@@ -1,16 +1,4 @@
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  box-sizing: border-box;
-}
-
-body {
+#container {
   align-items: center;
   background: #fafafa;
   color: #212121;
