@@ -12,7 +12,7 @@ let lastY = 0;
 
 // Load our model.
 const sess = new onnx.InferenceSession();
-const loadingModelPromise = sess.loadModel("../model.onnx");
+const loadingModelPromise = sess.loadModel("../onnx_model.onnx");
 
 // Add 'Draw a number here!' to the canvas.
 ctx.lineWidth = 28;
