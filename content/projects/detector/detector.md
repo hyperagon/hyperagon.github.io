@@ -1,7 +1,7 @@
 ---
 title: 'Number Detector'
 summary: 'PyTorch ➝ ONNX Number Detector'
-date: ‘2024-03-04’
+date:  2024-03-04T20:00:13Z
 tags: ['goal', 'machine learning', 'pyttorch', 'onnx']
 ---
 By following this [Guide (How to Run PyTorch Models in the Browser With ONNX.js)](https://www.youtube.com/watch?v=Vs70jsRgO8S) I was able to put a model created in PyTorch online. Thus completing [Goal #1](/posts/2024-02-27). I used a greedy selection.
