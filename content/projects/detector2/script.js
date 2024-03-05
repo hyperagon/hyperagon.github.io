@@ -10,9 +10,13 @@ let hasIntroText = true;
 let lastX = 0;
 let lastY = 0;
 
-// Load our model.
+// Load our model
+const model = new KerasJS.Model({
+  filepath: '../keras_model.bin',
+  gpu: true
+})
 const sess = new onnx.InferenceSession();
-const loadingModelPromise = sess.loadModel("onnx_model.onnx");
+const loadingModelPromise = await model.ready()
 
 // Add 'Draw a number here!' to the canvas.
 ctx.lineWidth = 28;

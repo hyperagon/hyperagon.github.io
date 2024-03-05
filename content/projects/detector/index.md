@@ -11,7 +11,7 @@ Note:
 - Relative links act acording to the structure in the **public** directory (created when you use `hugo`).
 
 {{<rawhtml>}}
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="style.css" />
 
   <div id="container">
     <div class="card elevation">
@@ -31,6 +31,6 @@ Note:
     </div>
   </div>
 
-    <script src="../onnx.min.js"></script>
-    <script src="../script.js"></script>
+  <script src="onnx.min.js"></script>
+  <script src="script.js"></script>
 {{</rawhtml>}}
