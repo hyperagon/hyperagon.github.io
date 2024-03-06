@@ -55,6 +55,7 @@ Library (Last updated in 2024-03-06):
 - [Database / Data Warehouse / DataLake](https://www.youtube.com/watch?v=-bSkREem8dM)
 
 ### List
+- [TeachableMachine] (https://teachablemachine.withgoogle.com/)
 - [Kaggle](https://www.kaggle.com/)
 - [SciKit Learn](https://scikit-learn.org/stable/index.html/)
 - [Deeplearning - Chatgpt Prompt Engineering](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
