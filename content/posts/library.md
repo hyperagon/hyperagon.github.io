@@ -1,7 +1,7 @@
 +++
-title = 'Learning AI'
+title = 'Learning AI  (Library)'
 summary = 'A big list of learning resources.'
-date = 2024-03-01T11:30:03+01:01
+date = 2024-03-06T11:30:03+01:01
 draft = false
 weight = 1 # Pin it
 tags = ['machine learning', 'library', 'learn']
@@ -11,7 +11,7 @@ tags = ['machine learning', 'library', 'learn']
 [Deep Learning](https://en.wikipedia.org/wiki/Deep_learning) >
 [Neural Network](https://en.wikipedia.org/wiki/Neural_network_(machine_learning))
 
-Library (Update 8):
+Library (Last updated in 2024-03-06):
 
 ### Motivation
 - [Youtube - ChatGPT a lying lier who lies](https://www.youtube.com/watch?v=m5iOW0llVMg&t=457s)
