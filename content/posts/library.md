@@ -6,7 +6,7 @@ draft = false
 weight = 1 # Pin it
 tags = ['machine learning', 'library', 'learn']
 +++
-[Artificial Intelligene](https://en.wikipedia.org/wiki/Artificial_intelligence) >
+[Artificial Intelligence](https://en.wikipedia.org/wiki/Artificial_intelligence) >
 [Machine Learning](https://en.wikipedia.org/wiki/Machine_learning) >
 [Deep Learning](https://en.wikipedia.org/wiki/Deep_learning) >
 [Neural Network](https://en.wikipedia.org/wiki/Neural_network_(machine_learning))
