@@ -11,7 +11,7 @@ tags = ['machine learning', 'library', 'learn']
 [Deep Learning](https://en.wikipedia.org/wiki/Deep_learning) >
 [Neural Network](https://en.wikipedia.org/wiki/Neural_network_(machine_learning))
 
-Library (Update 7):
+Library (Update 8):
 
 ### Motivation
 - [Youtube - ChatGPT a lying lier who lies](https://www.youtube.com/watch?v=m5iOW0llVMg&t=457s)
