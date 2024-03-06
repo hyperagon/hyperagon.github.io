@@ -11,12 +11,8 @@ let lastX = 0;
 let lastY = 0;
 
 // Load our model
-const model = new KerasJS.Model({
-  filepath: '../keras_model.bin',
-  gpu: true
-})
-const sess = new onnx.InferenceSession();
-const loadingModelPromise = await model.ready()
+const model = tf.loadLayersModel("model"); // <NAME>.json + <NAME>-weights.bin
+const loadingModelPromise = model.ready();
 
 // Add 'Draw a number here!' to the canvas.
 ctx.lineWidth = 28;
@@ -49,9 +45,11 @@ function drawLine(fromX, fromY, toX, toY) {
 async function updatePredictions() {
   // Get the predictions for the canvas data.
   const imgData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-  const input = new onnx.Tensor(new Float32Array(imgData.data), "float32");
+  const input = tf.browser.fromPixels(imgData.data, 4)
+ // new onnx.Tensor(new Float32Array(imgData.data), "float32");
+ // model.predict([input]); // tf.browser.fromPixels(im, 4)
 
-  const outputMap = await sess.run([input]);
+  const outputMap = model.predict(input)); //await sess.run([input]);
   const outputTensor = outputMap.values().next().value;
   const predictions = outputTensor.data;
   const maxPrediction = Math.max(...predictions);
@@ -120,4 +118,43 @@ loadingModelPromise.then(() => {
 
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
   ctx.fillText("Draw!", CANVAS_SIZE / 2, CANVAS_SIZE / 2);
+
+/*
+// Be sure to load TensorFlow.js on your page. See
+// https://github.com/tensorflow/tfjs#getting-started.
+
+const model = await tf.loadGraphModel(
+    'https://www.kaggle.com/models/google/mobilenet-v3/frameworks/TfJs/variations/small-075-224-classification/versions/1',
+    { fromTFHub: true });
+
+// Preprocesses a single image tensor to prepare it as input for the model.
+//
+// Returns a tensor of shape [batch_size, height, width, channels], where the
+// batch_size in this case is 1.
+function preprocess(imageTensor) {
+  const widthToHeight = imageTensor.shape[1] / imageTensor.shape[0];
+  let squareCrop;
+  if (widthToHeight > 1) {
+    const heightToWidth = imageTensor.shape[0] / imageTensor.shape[1];
+    const cropTop = (1-heightToWidth) / 2;
+    const cropBottom = 1 - cropTop;
+    squareCrop = [[cropTop, 0, cropBottom, 1]];
+  } else {
+    const cropLeft = (1-widthToHeight) / 2;
+    const cropRight = 1 - cropLeft;
+    squareCrop = [[0, cropLeft, 1, cropRight]];
+  }
+  // Expand image input dimensions to add a batch dimension of size 1.
+  const crop = tf.image.cropAndResize(
+      tf.expandDims(imageTensor), squareCrop, [0], [224, 224]);
+  return crop.div(255);
+}
+
+const image = document.getElementById('img-id');
+const imageTensor = tf.browser.fromPixels(image);
+const logits = model.predict(preprocess(imageTensor));
+
+const classIndex = await tf.argMax(tf.squeeze(logits)).data();
+const className = model.metadata['classNames'][classIndex[0]];
+*/
 })
