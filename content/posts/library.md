@@ -53,7 +53,7 @@ tags = ['machine learning', 'library', 'learn']
 - [Database / Data Warehouse / DataLake](https://www.youtube.com/watch?v=-bSkREem8dM)
 
 ### Playgrund
-- [TeachableMachine] (https://teachablemachine.withgoogle.com/)
+- [TeachableMachine](https://teachablemachine.withgoogle.com/)
 - [Kaggle](https://www.kaggle.com/)
 - [SciKit Learn](https://scikit-learn.org/stable/index.html/)
 - [Godot AI Gym](https://lupoglaz.github.io/GodotAIGym/)
