@@ -28,5 +28,5 @@ Making a simple number detector in [Keras](https://keras.io/) was easy but the O
   </div>
 
   <script src="tf.min.js"></script>
-  <script src="script.js" async></script>
+  <!-- <script src="script.js"></script>c -->
 {{</rawhtml>}}

@@ -43,7 +43,7 @@ tags = ['machine learning', 'library', 'learn']
 ### TensorFlow (Javascrupt / Mobile)
 - [Youtube - TensorFlow in 100 Seconds](https://www.youtube.com/watch?v=i8NETqtGHms)
 - [Youtube - TensorFlow 2.0 Complete Course - Python Neural Networks for Beginners Tutorial](https://www.youtube.com/watch?v=tPYj3fFJGjk)
-- [Youtube - Machine Learning for Web Devs & Creatives (Web ML) - Next gen web apps with TensorFlow.js-](https://www.youtube.com/watch?v=TuYbgZ59Kpg&list=PLOU2XLYxmsILr3HQpqjLAUkIPa5EaZiui)
+- [Youtube - Machine Learning for Web Devs & Creatives (Web ML) - Next gen web apps with TensorFlow.js](https://www.youtube.com/watch?v=TuYbgZ59Kpg&list=PLOU2XLYxmsILr3HQpqjLAUkIPa5EaZiui)
 
 ## Generative AI
 - [Github - Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)

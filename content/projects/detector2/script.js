@@ -12,7 +12,7 @@ let lastY = 0;
 
 // Load our model
 const model = tf.loadLayersModel("model"); // <NAME>.json + <NAME>-weights.bin
-const loadingModelPromise = model.ready();
+const loadingModelPromise = model.ready;
 
 // Add 'Draw a number here!' to the canvas.
 ctx.lineWidth = 28;
@@ -49,7 +49,7 @@ async function updatePredictions() {
  // new onnx.Tensor(new Float32Array(imgData.data), "float32");
  // model.predict([input]); // tf.browser.fromPixels(im, 4)
 
-  const outputMap = model.predict(input)); //await sess.run([input]);
+  const outputMap = model.predict(input); //await sess.run([input]);
   const outputTensor = outputMap.values().next().value;
   const predictions = outputTensor.data;
   const maxPrediction = Math.max(...predictions);
