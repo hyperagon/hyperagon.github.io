@@ -34,7 +34,7 @@ tags = ['machine learning', 'library', 'learn']
 
 ### PyTorch (Python)
 - [Youtube - PyTorch in 100 Seconds](https://www.youtube.com/watch?v=ORMx45xqWkA/)
-- [PyTorch Tutorials](https://pytorch.org/tutorials/)'
+- [PyTorch Tutorials](https://pytorch.org/tutorials/)
 - [Youtube - Language Models For Software Developers in 17 Minutes](https://www.youtube.com/watch?v=tL1zltXuHO8/)
 - [Youtube - PyTorch for Deep Learning & Machine Learning – Full Course](https://www.youtube.com/watch?v=V_xro1bcAuA/)
 - [Learn PyTorch](https://www.learnpytorch.io/)
