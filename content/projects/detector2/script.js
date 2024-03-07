@@ -10,9 +10,13 @@ let hasIntroText = true;
 let lastX = 0;
 let lastY = 0;
 
-// Load our model
-const model = tf.loadLayersModel("model"); // <NAME>.json + <NAME>-weights.bin
-const loadingModelPromise = model.ready;
+~4// Load our model.
+//r//const sess = new onnx.InferenceSession();
+///t//const loadingModelPromise = sess.loadModel("onnx_model.onnx");
+const modelUrl = 'model.json';
+const loadingModelPromise = tf.loadLayersModel(modelUrl);
+let model = undefined;
+loadingModelPromise.then((mod) => model = mod);
 
 // Add 'Draw a number here!' to the canvas.
 ctx.lineWidth = 28;
@@ -43,13 +47,12 @@ function drawLine(fromX, fromY, toX, toY) {
 }
 
 async function updatePredictions() {
+/*r
   // Get the predictions for the canvas data.
   const imgData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-  const input = tf.browser.fromPixels(imgData.data, 4)
- // new onnx.Tensor(new Float32Array(imgData.data), "float32");
- // model.predict([input]); // tf.browser.fromPixels(im, 4)
+  const input = new onnx.Tensor(new Float32Array(imgData.data), "float32");
 
-  const outputMap = model.predict(input); //await sess.run([input]);
+  const outputMap = await sess.run([input]);
   const outputTensor = outputMap.values().next().value;
   const predictions = outputTensor.data;
   const maxPrediction = Math.max(...predictions);
@@ -62,6 +65,55 @@ async function updatePredictions() {
     } else {
         element.innerText = '?';
     }
+*/
+
+ // Uncaught (in promise) Error: Error when checking : expected conv2d_Conv2D1_input to have shape [null,28,28,1] but got array with shape [1,28,28,4].
+
+  // Get the predictions for the canvas data
+/*
+  const imgData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  const imageTensor = tf.browser.fromPixels(imgData);
+  const resizedImage = tf.image.resizeBilinear(imageTensor, [28, 28], true);
+  const batchedImage = resizedImage.expandDims(0);
+  const normalizedImage = tf.cast(batchedImage, 'float32').div(tf.scgrayscale_data = tf.image.rgb_to_grayscale(input_data)grayscale_data = tf.image.rgb_to_grayscale(input_data)alar(255));
+*/
+
+/* GPT 3
+const imgData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+const imageTensor = tf.browser.fromPixels(imgData);
+const grayscaleImage = tf.image.rgbToGrayscale(imageTensor);
+const resizedImage = tf.image.resizeBilinear(grayscaleImage, [28, 28], true);
+const batchedImage = resizedImage.expandDims(0);
+const normalizedImage = batchedImage.toFloat().div(tf.scalar(255));
+*/
+
+/* Memory Leak - mistralai/Mixtral-8x7B-Instruct */
+const imgData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+const imageTensor = tf.browser.fromPixels(imgData);
+const resizedImage = tf.image.resizeBilinear(imageTensor, [28, 28], true);
+
+// Convert the resized image to grayscale
+const grayscaleImage = tf.image.rgbToGrayscale(resizedImage);
+
+// Expand dimensions for the model input
+const batchedImage = grayscaleImage.expandDims(0);
+
+const normalizedImage = tf.cast(batchedImage, 'float32').div(tf.scalar(255));
+
+
+  const predictions = await model.predict(normalizedImage).dataSync();
+  const maxPrediction = Math.max(...predictions);
+
+  const element = document.getElementById('prediction');
+  let pred = predictions.indexOf(maxPrediction);
+  if (pred >= 0) {
+      element.innerText = pred;
+  } else {
+      element.innerText = '?';
+  }
+
+
+    imageTensor.dispose();
 }
 
 function canvasMouseDown(event) {
@@ -109,52 +161,16 @@ function bodyMouseOut(event) {
   }
 }
 
+
 loadingModelPromise.then(() => {
+  // Set up event listeners for canvas and body elements
   canvas.addEventListener("mousedown", canvasMouseDown);
   canvas.addEventListener("mousemove", canvasMouseMove);
   document.body.addEventListener("mouseup", bodyMouseUp);
   document.body.addEventListener("mouseout", bodyMouseOut);
   clearButton.addEventListener("mousedown", clearCanvas);
 
+  // Clear the canvas and display "Draw!" text
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
   ctx.fillText("Draw!", CANVAS_SIZE / 2, CANVAS_SIZE / 2);
-
-/*
-// Be sure to load TensorFlow.js on your page. See
-// https://github.com/tensorflow/tfjs#getting-started.
-
-const model = await tf.loadGraphModel(
-    'https://www.kaggle.com/models/google/mobilenet-v3/frameworks/TfJs/variations/small-075-224-classification/versions/1',
-    { fromTFHub: true });
-
-// Preprocesses a single image tensor to prepare it as input for the model.
-//
-// Returns a tensor of shape [batch_size, height, width, channels], where the
-// batch_size in this case is 1.
-function preprocess(imageTensor) {
-  const widthToHeight = imageTensor.shape[1] / imageTensor.shape[0];
-  let squareCrop;
-  if (widthToHeight > 1) {
-    const heightToWidth = imageTensor.shape[0] / imageTensor.shape[1];
-    const cropTop = (1-heightToWidth) / 2;
-    const cropBottom = 1 - cropTop;
-    squareCrop = [[cropTop, 0, cropBottom, 1]];
-  } else {
-    const cropLeft = (1-widthToHeight) / 2;
-    const cropRight = 1 - cropLeft;
-    squareCrop = [[0, cropLeft, 1, cropRight]];
-  }
-  // Expand image input dimensions to add a batch dimension of size 1.
-  const crop = tf.image.cropAndResize(
-      tf.expandDims(imageTensor), squareCrop, [0], [224, 224]);
-  return crop.div(255);
-}
-
-const image = document.getElementById('img-id');
-const imageTensor = tf.browser.fromPixels(image);
-const logits = model.predict(preprocess(imageTensor));
-
-const classIndex = await tf.argMax(tf.squeeze(logits)).data();
-const className = model.metadata['classNames'][classIndex[0]];
-*/
-})
+});
