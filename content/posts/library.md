@@ -47,7 +47,7 @@ tags = ['machine learning', 'library', 'learn']
 
 ## Generative AI
 - [Github - Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)
-- [Youtube  11111111Generative AI Full Course](https://www.youtube.com/watch?v=mEsleV16qdo)
+- [Youtube  Generative AI Full Course](https://www.youtube.com/watch?v=mEsleV16qdo)
 
 ## Data Engineer
 - [Database / Data Warehouse / DataLake](https://www.youtube.com/watch?v=-bSkREem8dM)
@@ -61,9 +61,9 @@ tags = ['machine learning', 'library', 'learn']
 ### List
 - [Deeplearning - Chatgpt Prompt Engineering](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
 - [Github - Awesome Machine Learning](https://github.com/josephmisiti/awesome-machine-learning)
-- [Github - Awesome Neural Radience Field](https://github.com/awesome-NeRF/awesome-NeRF/)
+- [Github - Awesome Neural Radiance Field](https://github.com/awesome-NeRF/awesome-NeRF/)
 - [Github - Awesome Neural Programming](https://github.com/andrewliao11/awesome-neural-programming/)
-- [Github - Awesome NN Optimizzation](https://github.com/harsh306/awesome-nn-optimization/)
+- [Github - Awesome NN Optimization](https://github.com/harsh306/awesome-nn-optimization/)
 - [Prompt Engineering: A Practical Example](https://realpython.com/practical-prompt-engineering/)
 - [Prompting Guide for Code Llama](https://www.promptingguide.ai/models/code-llama.en/)
 
