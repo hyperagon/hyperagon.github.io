@@ -47,7 +47,7 @@ tags = ['machine learning', 'library', 'learn']
 
 ## Generative AI
 - [Github - Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)
-- [Youtube  Generative AI Full Course](https://www.youtube.com/watch?v=mEsleV16qdo)
+- [Youtube - Generative AI Full Course](https://www.youtube.com/watch?v=mEsleV16qdo)
 
 ## Data Engineer
 - [Database / Data Warehouse / DataLake](https://www.youtube.com/watch?v=-bSkREem8dM)
