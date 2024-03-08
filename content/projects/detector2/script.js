@@ -87,7 +87,7 @@ const batchedImage = resizedImage.expandDims(0);
 const normalizedImage = batchedImage.toFloat().div(tf.scalar(255));
 */
 
-/* Memory Leak - mistralai/Mixtral-8x7B-Instruct */
+/* mistralai/Mixtral-8x7B-Instruct */
 const imgData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 const imageTensor = tf.browser.fromPixels(imgData);
 const resizedImage = tf.image.resizeBilinear(imageTensor, [28, 28], true);
@@ -100,9 +100,15 @@ const batchedImage = grayscaleImage.expandDims(0);
 
 const normalizedImage = tf.cast(batchedImage, 'float32').div(tf.scalar(255));
 
-
   const predictions = await model.predict(normalizedImage).dataSync();
   const maxPrediction = Math.max(...predictions);
+
+// dispose of all Tensors - avoid Memory Leaks
+normalizedImage.dispose();
+batchedImage.dispose();
+grayscaleImage.dispose();
+resizedImage.dispose();
+imageTensor.dispose();
 
   const element = document.getElementById('prediction');
   let pred = predictions.indexOf(maxPrediction);

@@ -1,7 +1,7 @@
 +++
-title = 'Learning AI  (Library)'
+title = 'Learning AI (Library)'
 summary = 'A big list of learning resources.'
-date = 2024-03-07T11:30:03+01:01
+date = 2024-03-08T11:30:03+01:01
 draft = false
 weight = 1 # Pin it
 tags = ['machine learning', 'library', 'learn']
@@ -40,10 +40,11 @@ tags = ['machine learning', 'library', 'learn']
 - [Learn PyTorch](https://www.learnpytorch.io/)
 - [Youtube - Learn PyTorch for deep learning in a day](https://www.youtube.com/watch?v=Z_ikDlimN6A)
 
-### TensorFlow (Javascrupt / Mobile)
+### TensorFlow (Python / Javascript / Mobile)
 - [Youtube - TensorFlow in 100 Seconds](https://www.youtube.com/watch?v=i8NETqtGHms)
 - [Youtube - TensorFlow 2.0 Complete Course - Python Neural Networks for Beginners Tutorial](https://www.youtube.com/watch?v=tPYj3fFJGjk)
 - [Youtube - Machine Learning for Web Devs & Creatives (Web ML) - Next gen web apps with TensorFlow.js](https://www.youtube.com/watch?v=TuYbgZ59Kpg&list=PLOU2XLYxmsILr3HQpqjLAUkIPa5EaZiui)
+- [ML Zero to Hero](https://www.youtube.com/watch?v=KNAWp2S3w94&list=PLQY2H8rRoyvwWuPiWnuTDBHe7I0fMSsfO)
 
 ## Generative AI
 - [Github - Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)
