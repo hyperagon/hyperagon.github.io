@@ -1,5 +1,5 @@
 ---
-title: 'Number Detector 2'
+title: 'Number Detector (Tensorflow)'
 summary: 'TensorFlow.js Number Detector'
 date:  2024-03-05T20:00:13Z
 tags: ['goal', 'machine learning', 'keras', 'keras.js', 'tensorflow.js']

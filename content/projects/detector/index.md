@@ -1,5 +1,5 @@
 ---
-title: 'Number Detector'
+title: 'Number Detector (ONNX)'
 summary: 'PyTorch ➝ ONNX Number Detector'
 date:  2024-03-04T20:00:13Z
 tags: ['goal', 'machine learning', 'pytorch', 'onnx']

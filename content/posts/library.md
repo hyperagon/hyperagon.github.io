@@ -32,19 +32,21 @@ tags = ['machine learning', 'library', 'learn']
 - [Youtube - Python in 100 Seconds](https://www.youtube.com/watch?v=x7X9w_GIm1s/)
 - [Real Python](https://realpython.com/)
 
-### PyTorch (Python)
+### PyTorch (Python) / PyTorch Live (Mobile)
 - [Youtube - PyTorch in 100 Seconds](https://www.youtube.com/watch?v=ORMx45xqWkA/)
 - [PyTorch Tutorials](https://pytorch.org/tutorials/)
 - [Youtube - Language Models For Software Developers in 17 Minutes](https://www.youtube.com/watch?v=tL1zltXuHO8/)
 - [Youtube - PyTorch for Deep Learning & Machine Learning – Full Course](https://www.youtube.com/watch?v=V_xro1bcAuA/)
 - [Learn PyTorch](https://www.learnpytorch.io/)
 - [Youtube - Learn PyTorch for deep learning in a day](https://www.youtube.com/watch?v=Z_ikDlimN6A)
+- [PyTorch Tutorial (2017)](https://github.com/MorvanZhou/PyTorch-Tutorial)
 
 ### TensorFlow (Python / Javascript / Mobile)
 - [Youtube - TensorFlow in 100 Seconds](https://www.youtube.com/watch?v=i8NETqtGHms)
 - [Youtube - TensorFlow 2.0 Complete Course - Python Neural Networks for Beginners Tutorial](https://www.youtube.com/watch?v=tPYj3fFJGjk)
 - [Youtube - Machine Learning for Web Devs & Creatives (Web ML) - Next gen web apps with TensorFlow.js](https://www.youtube.com/watch?v=TuYbgZ59Kpg&list=PLOU2XLYxmsILr3HQpqjLAUkIPa5EaZiui)
 - [ML Zero to Hero](https://www.youtube.com/watch?v=KNAWp2S3w94&list=PLQY2H8rRoyvwWuPiWnuTDBHe7I0fMSsfO)
+- [Tensorflow Tutorial (2017)](https://github.com/MorvanZhou/Tensorflow-Tutorial)
 
 ## Generative AI
 - [Github - Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)
@@ -53,7 +55,7 @@ tags = ['machine learning', 'library', 'learn']
 ## Data Engineer
 - [Database / Data Warehouse / DataLake](https://www.youtube.com/watch?v=-bSkREem8dM)
 
-### Playgrund
+### Playground
 - [TeachableMachine](https://teachablemachine.withgoogle.com/)
 - [Kaggle](https://www.kaggle.com/)
 - [SciKit Learn](https://scikit-learn.org/stable/index.html/)
@@ -62,6 +64,8 @@ tags = ['machine learning', 'library', 'learn']
 ### Models
 - [Kaggle Models](https://www.kaggle.com/models?tfhub-redirect=true&query=number&framework=tfJs)
 - [TensorFlow.js Models](https://www.tensorflow.org/js/models)
+- [Huggingface Models](https://huggingface.co/models)
+- [PyTorch Hub](https://pytorch.org/hub/)
 
 ### List
 - [Deeplearning - Chatgpt Prompt Engineering](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
