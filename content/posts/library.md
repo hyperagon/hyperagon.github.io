@@ -58,6 +58,10 @@ tags = ['machine learning', 'library', 'learn']
 - [SciKit Learn](https://scikit-learn.org/stable/index.html/)
 - [Godot AI Gym](https://lupoglaz.github.io/GodotAIGym/)
 
+### Models
+- [Kaggle Models](https://www.kaggle.com/models?tfhub-redirect=true&query=number&framework=tfJs)
+- [TensorFlow.js Models](https://www.tensorflow.org/js/models)
+
 ### List
 - [Deeplearning - Chatgpt Prompt Engineering](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
 - [Github - Awesome Machine Learning](https://github.com/josephmisiti/awesome-machine-learning)
