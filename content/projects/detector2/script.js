@@ -66,7 +66,7 @@ async function updatePredictions() {
         element.innerText = '?';
     }
 */
-
+tf.engine().startScope();
  // Uncaught (in promise) Error: Error when checking : expected conv2d_Conv2D1_input to have shape [null,28,28,1] but got array with shape [1,28,28,4].
 
   // Get the predictions for the canvas data
@@ -104,11 +104,18 @@ const normalizedImage = tf.cast(batchedImage, 'float32').div(tf.scalar(255));
   const maxPrediction = Math.max(...predictions);
 
 // dispose of all Tensors - avoid Memory Leaks
+/*
 normalizedImage.dispose();
 batchedImage.dispose();
 grayscaleImage.dispose();
 resizedImage.dispose();
 imageTensor.dispose();
+
+// or
+
+tf.tidy();
+*/
+tf.engine().endScope();
 
   const element = document.getElementById('prediction');
   let pred = predictions.indexOf(maxPrediction);
