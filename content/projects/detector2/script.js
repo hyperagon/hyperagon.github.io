@@ -124,9 +124,6 @@ tf.engine().endScope();
   } else {
       element.innerText = '?';
   }
-
-
-    imageTensor.dispose();
 }
 
 function canvasMouseDown(event) {
