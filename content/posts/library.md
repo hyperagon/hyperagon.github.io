@@ -75,9 +75,11 @@ tags = ['machine learning', 'library', 'learn']
 - [Github - Awesome NN Optimization](https://github.com/harsh306/awesome-nn-optimization/)
 - [Prompt Engineering: A Practical Example](https://realpython.com/practical-prompt-engineering/)
 - [Prompting Guide for Code Llama](https://www.promptingguide.ai/models/code-llama.en/)
+. [Papers with Code](https://paperswithcode.com/)
 
 ### Course
 - [HuggingFace Course](https://huggingface.co/learn/nlp-course/chapter1/1)
+- [Introduction to Machine Learning with TensorFlow.js](https://codecraft.tv/courses/tensorflowjs/introduction/introduction/)
 - [Coursera - Mathematics for Machine Learning Specialization](www.coursera.org/specializations/mathematics-machine-learning)
 - [Coursera - Machine Learning](https://www.coursera.org/browse/data-science/machine-learning)
 - [Coursera - Stanford University - Introduction to Statistics](https://www.coursera.org/learn/stanford-statistics)
