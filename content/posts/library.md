@@ -79,7 +79,7 @@ tags = ['machine learning', 'library', 'learn']
 
 ### Course
 - [HuggingFace Course](https://huggingface.co/learn/nlp-course/chapter1/1)
-- [Introduction to Machine Learning with TensorFlow.js](https://codecraft.tv/courses/tensorflowjs/introduction/introduction/)
+- [CodeCraft - Introduction to Machine Learning with TensorFlow.js](https://codecraft.tv/courses/tensorflowjs/introduction/introduction/)
 - [Coursera - Mathematics for Machine Learning Specialization](www.coursera.org/specializations/mathematics-machine-learning)
 - [Coursera - Machine Learning](https://www.coursera.org/browse/data-science/machine-learning)
 - [Coursera - Stanford University - Introduction to Statistics](https://www.coursera.org/learn/stanford-statistics)
