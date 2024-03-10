@@ -75,7 +75,7 @@ tags = ['machine learning', 'library', 'learn']
 - [Github - Awesome NN Optimization](https://github.com/harsh306/awesome-nn-optimization/)
 - [Prompt Engineering: A Practical Example](https://realpython.com/practical-prompt-engineering/)
 - [Prompting Guide for Code Llama](https://www.promptingguide.ai/models/code-llama.en/)
-. [Papers with Code](https://paperswithcode.com/)
+- [Papers with Code](https://paperswithcode.com/)
 
 ### Course
 - [HuggingFace Course](https://huggingface.co/learn/nlp-course/chapter1/1)
