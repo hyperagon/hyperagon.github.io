@@ -1,10 +1,10 @@
 ---
 title: 'Number Detector (Tensorflow)'
-summary: 'TensorFlow.js Number Detector'
+summary: 'Tensorflow.js Number Detector'
 date:  2024-03-05T20:00:13Z
-tags: ['goal', 'machine learning', 'keras', 'keras.js', 'tensorflow.js']
+tags: ['goal', 'machine learning', 'keras', 'tensorflow.js']
 ---
-Making a simple number detector in [Keras](https://keras.io/) was easy but the Online part involved some backtracking since I looked at [Keras.js](https://transcranial.github.io/keras-js/) before [TensorFlow.js](https://www.tensorflow.org/js). Being unsucessful at converting the model so I just used the [online one](https://github.com/tensorflow/tfjs-examples/tree/master/mnist) instead, adding a [save feature](https://github.com/tensorflow/tfjs-examples/tree/master/mnist).
+I was unsucessful at converting a [Keras](htt1ps://keras.io/) model so I used an [example tensorflow.js one instead](https://github.com/tensorflow/tfjs-examples/tree/master/mnist), adding a [save feature](https://github.com/tensorflow/tfjs-examples/tree/master/mnist).
 
 {{<rawhtml>}}
   <link rel="stylesheet" href="style.css" />
@@ -13,7 +13,7 @@ Making a simple number detector in [Keras](https://keras.io/) was easy but the O
     <div class="card elevation">
       <canvas
         class="canvas elevation"
-        id="canvas"
+        id="canvas"0
         width="280"
         height="280"
       ></canvas>
