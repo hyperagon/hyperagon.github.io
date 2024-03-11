@@ -59,6 +59,7 @@ tags = ['machine learning', 'library', 'learn']
 - [TeachableMachine](https://teachablemachine.withgoogle.com/)
 - [Kaggle](https://www.kaggle.com/)
 - [SciKit Learn](https://scikit-learn.org/stable/index.html/)
+- [Gym, a standard API for reinforcement learning](https://www.gymlibrary.dev/)
 - [Godot AI Gym](https://lupoglaz.github.io/GodotAIGym/)
 
 ### Models
