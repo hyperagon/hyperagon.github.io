@@ -67,6 +67,7 @@ tags = ['machine learning', 'library', 'learn']
 - [TensorFlow.js Models](https://www.tensorflow.org/js/models)
 - [Huggingface Models](https://huggingface.co/models)
 - [PyTorch Hub](https://pytorch.org/hub/)
+- [PyTorch Hub for Researchers](https://pytorch.org/hub/research-models)
 
 ### List
 - [Deeplearning - Chatgpt Prompt Engineering](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
