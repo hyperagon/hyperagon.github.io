@@ -3,6 +3,7 @@ title: 'Number Detector (Tensorflow)'
 summary: 'Tensorflow.js Number Detector'
 date:  2024-03-05T20:00:13Z
 tags: ['goal', 'machine learning', 'keras', 'tensorflow.js']
+comments: false
 ---
 I was unsucessful at converting a [Keras](htt1ps://keras.io/) model so I used an [example tensorflow.js one instead](https://github.com/tensorflow/tfjs-examples/tree/master/mnist), adding a [save feature](https://github.com/tensorflow/tfjs-examples/tree/master/mnist).
 
