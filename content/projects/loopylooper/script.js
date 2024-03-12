@@ -5,7 +5,7 @@ Copyright 2016-2024 Hyperagon (https://hyperagon.github.io/)
 
     This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-    For more informtion, visit <https://www.gnu.org/licenses/agpl-3.0.html>.
+    For more informtion, visit <https://www.gnu.org/license1s/agpl-3.0.html>.
 */
 const canvas = document.getElementById("canvas");
 let context = null;
@@ -19,6 +19,104 @@ var oc = "#ffc832";
 var delay = 0;
 function deg2rad(deg) {
     return (deg * Math.PI) / 180.0;
+}
+function hex2rgb(hex) {
+    if (hex.substring(0, 1) != "#") return { red: 0, green: 0, blue: 0 };
+    var r = parseInt(hex.substring(1, 3), 16);
+    var g = parseInt(hex.substring(3, 5), 16);
+    var b = parseInt(hex.substring(5, 7), 16);
+    return { red: r, green: g, blue: b };
+}
+function rgb2hex(red, green, blue) {
+    var black = "#000000";
+    if (red < 0 || red > 255) return black;
+    if (green < 0 || green > 255) return black;
+    if (blue < 0 || blue > 255) return black;
+    var color = blue | (green << 8) | (red << 16);
+    return "#" + color.toString(16);
+}
+function getColorStep(spos, epos, scol, ecol) {
+    var pdif = parseInt(epos) - parseInt(spos);
+    pdif = Math.abs(pdif);
+    var cdif = parseInt(ecol) - parseInt(scol);
+    return cdif / pdif;
+}
+function render(canvas, context) {
+if(canvas == null) { return; }
+context.clearRect(0, 0, canvas.width, canvas.height);
+context.save();
+var cwidth = canvas.width;
+var chwidth = cwidth / 2;
+var cheight = canvas.height;
+var chheight = cheight / 2;
+var angle = -90.0;
+var position = chwidth;
+context.strokeStyle = oc;
+context.lineWidth = lw / 10;
+context.lineCap = "round";
+context.lineJoin = "round";
+context.miterLimit = 700;
+var or = maxr / 100;
+var ir = or * (minr / 100);
+var rad = deg2rad(angle),
+    dstep = detail / 10;
+var iposition = chwidth * or;
+var fposition = chwidth * ir;
+var x = chwidth + Math.cos(rad) * iposition,
+    px = 0;
+var y = chheight + Math.sin(rad) * iposition,
+    py = 0;
+var icolor = hex2rgb(oc);
+var fcolor = hex2rgb(ic);
+var r = icolor.red;
+var g = icolor.green;
+var b = icolor.blue;
+var rs = getColorStep(iposition, fposition, r, fcolor.red) * (detail / 10);
+var gs = getColorStep(iposition, fposition, g, fcolor.green) * (detail / 10);
+var bs = getColorStep(iposition, fposition, b, fcolor.blue) * (detail / 10);
+for (position = iposition; position > fposition; position -= dstep) {
+    rad = deg2rad(angle);
+    px = x;
+    py = y;
+    x = chwidth + Math.cos(rad) * position;
+    y = chheight + Math.sin(rad) * position;
+    context.beginPath();
+    context.moveTo(px, py);
+    context.lineTo(x, y);
+    context.strokeStyle = rgb2hex(r, g, b);
+    r += rs;
+    r = r > 255 ? 255 : r;
+    r = r < 0 ? 0 : r;
+    g += gs;
+    g = g > 255 ? 255 : g;
+    g = g < 0 ? 0 : g;
+    b += bs;
+    b = b > 255 ? 255 : b;
+    b = b < 0 ? 0 : b;
+    context.stroke();
+    context.moveTo(x, y);
+    angle += step;
+    angle -= angle > 360 ? 360 : 0;
+}
+context.restore();
+}
+function animate(canvas, context) {
+var current = 0;
+//setTimeout(function() { console.log("dug") }, 2500);
+requestAnimationFrame(function () {
+    render(canvas, context);
+});
+}
+function rerender() {
+    if(context == null) {
+         redraw();
+    }
+    animate(canvas, context);
+}
+function redraw() {
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    animate(canvas, context);
 }
 function addControls() {
     var i = 0;
@@ -47,7 +145,7 @@ function addControls() {
     }
     document.write("</select>%,Line Width:");
     document.write('<select name=lw  size=1  tabindex=5  onMouseOver="javascript:updateDescription(5)" onMouseOut="javascript:updateDescription(0)">');
-    for (i = 1; i.toFixed(1) <= 50; i += 1) {
+    for (i = 1; i.toFixed(1) <= 100; i += 1) {
         document.write('<option value="' + i + '">' + (i / 10).toFixed(1) + "");
     }
     document.write("</select>");
@@ -103,7 +201,7 @@ function updateDescription(object) {
     } else if (object == 8) {
         text = "The delay of drawing (Return/Enter to restart)";
     } else if (object == 9) {
-        text = "(re)Start Drawing if delay > 0.";
+        text = "Start Drawing if delay > 0.";
     } else {
         text = "Hold your mouse over a control to view its description.";
     }
