@@ -7,6 +7,7 @@ Copyright 2016-2024 Hyperagon (https://hyperagon.github.io/)
 
     For more informtion, visit <https://www.gnu.org/license1s/agpl-3.0.html>.
 */
+const GLOBAL = {};
 const canvas = document.getElementById("canvas");
 let context = null;
 var step = 216.0;
@@ -41,71 +42,86 @@ function getColorStep(spos, epos, scol, ecol) {
     var cdif = parseInt(ecol) - parseInt(scol);
     return cdif / pdif;
 }
-function render(canvas, context) {
-if(canvas == null) { return; }
-context.clearRect(0, 0, canvas.width, canvas.height);
-context.save();
-var cwidth = canvas.width;
-var chwidth = cwidth / 2;
-var cheight = canvas.height;
-var chheight = cheight / 2;
-var angle = -90.0;
-var position = chwidth;
-context.strokeStyle = oc;
-context.lineWidth = lw / 10;
-context.lineCap = "round";
-context.lineJoin = "round";
-context.miterLimit = 700;
-var or = maxr / 100;
-var ir = or * (minr / 100);
-var rad = deg2rad(angle),
-    dstep = detail / 10;
-var iposition = chwidth * or;
-var fposition = chwidth * ir;
-var x = chwidth + Math.cos(rad) * iposition,
-    px = 0;
-var y = chheight + Math.sin(rad) * iposition,
-    py = 0;
-var icolor = hex2rgb(oc);
-var fcolor = hex2rgb(ic);
-var r = icolor.red;
-var g = icolor.green;
-var b = icolor.blue;
-var rs = getColorStep(iposition, fposition, r, fcolor.red) * (detail / 10);
-var gs = getColorStep(iposition, fposition, g, fcolor.green) * (detail / 10);
-var bs = getColorStep(iposition, fposition, b, fcolor.blue) * (detail / 10);
-for (position = iposition; position > fposition; position -= dstep) {
-    rad = deg2rad(angle);
-    px = x;
-    py = y;
-    x = chwidth + Math.cos(rad) * position;
-    y = chheight + Math.sin(rad) * position;
-    context.beginPath();
-    context.moveTo(px, py);
-    context.lineTo(x, y);
-    context.strokeStyle = rgb2hex(r, g, b);
-    r += rs;
-    r = r > 255 ? 255 : r;
-    r = r < 0 ? 0 : r;
-    g += gs;
-    g = g > 255 ? 255 : g;
-    g = g < 0 ? 0 : g;
-    b += bs;
-    b = b > 255 ? 255 : b;
-    b = b < 0 ? 0 : b;
-    context.stroke();
-    context.moveTo(x, y);
-    angle += step;
-    angle -= angle > 360 ? 360 : 0;
-}
-context.restore();
+function render() {
+    let canvas = GLOBAL.canvas;
+    let context = GLOBAL.context;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.save();
+    var cwidth = canvas.width;
+    var chwidth = cwidth / 2;
+    var cheight = canvas.height;
+    var chheight = cheight / 2;
+    var angle = -90.0;
+    var position = chwidth;
+    context.strokeStyle = oc;
+    context.lineWidth = lw / 10;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.miterLimit = 700;
+    var or = maxr / 100;
+    var ir = or * (minr / 100);
+    var rad = deg2rad(angle),
+        dstep = detail / 10;
+    var iposition = chwidth * or;
+    var fposition = chwidth * ir;
+    if (delay == 0) {
+        GLOBAL.iteration = 0;
+        GLOBAL.itercap = iposition;
+    }
+    var x = chwidth + Math.cos(rad) * iposition,
+        px = 0;
+    var y = chheight + Math.sin(rad) * iposition,
+        py = 0;
+    var icolor = hex2rgb(oc);
+    var fcolor = hex2rgb(ic);
+    var r = icolor.red;
+    var g = icolor.green;
+    var b = icolor.blue;
+    var rs = getColorStep(iposition, fposition, r, fcolor.red) * (detail / 10);
+    var gs = getColorStep(iposition, fposition, g, fcolor.green) * (detail / 10);
+    var bs = getColorStep(iposition, fposition, b, fcolor.blue) * (detail / 10);
+    for (position = iposition; position > fposition; position -= dstep) {
+        rad = deg2rad(angle);
+        px = x;
+        py = y;
+        x = chwidth + Math.cos(rad) * position;
+        y = chheight + Math.sin(rad) * position;
+        context.beginPath();
+        context.moveTo(px, py);
+        context.lineTo(x, y);
+        context.strokeStyle = rgb2hex(r, g, b);
+        r += rs;
+        r = r > 255 ? 255 : r;
+        r = r < 0 ? 0 : r;
+        g += gs;
+        g = g > 255 ? 255 : g;
+        g = g < 0 ? 0 : g;
+        b += bs;
+        b = b > 255 ? 255 : b;
+        b = b < 0 ? 0 : b;
+        context.stroke();
+        context.moveTo(x, y);
+        angle += step;
+        angle -= angle > 360 ? 360 : 0;
+        GLOBAL.iteration += 1;
+        if (GLOBAL.iteration > GLOBAL.itercap) {
+             break;
+        }
+    }
+    context.restore();
+    if (position > fposition) {
+        GLOBAL.itercap += 1;
+    }
+    GLOBAL.iteration = 0;
 }
 function animate(canvas, context) {
-var current = 0;
-//setTimeout(function() { console.log("dug") }, 2500);
-requestAnimationFrame(function () {
-    render(canvas, context);
-});
+    var current = 0;
+    GLOBAL.canvas = canvas;
+    GLOBAL.context = context;
+    GLOBAL.iteration = 0;
+    GLOBAL.itercap = 1;
+    let delay = document.controls.delay.value * 100;
+    setInterval(render, delay);
 }
 function rerender() {
     if(context == null) {
@@ -153,10 +169,7 @@ function addControls() {
     document.write("<div>");
     document.write('Inner Color:<input type=color  tabindex=6  name=ic  onMouseOver="javascript:updateDescription(6)" onMouseOut="javascript:updateDescription(0)"/>');
     document.write(',Outter Color:<input type=color  tabindex=7  name=oc  onMouseOver="javascript:updateDescription(7)" onMouseOut="javascript:updateDescription(0)"/>');
-    document.write(',Delay: <input type="range" tabindex=8 name=delay min="0" max="10" step="0.1" value="0" onMouseOver="javascript:updateDescription(8)" onMouseOut="javascript:updateDescription(0)">');
-
-    document.write('&nbsp;<input type="button" id="draw" tabindex=9 value="Draw" onclick="javascript:rerender();" onMouseOver="javascript:updateDescription(9)" onMouseOut="javascript:updateDescription(0)"></input>');
-
+    document.write(',Delay: <input type="range" tabindex=8 name=delay min="0" max="100" step="0.1" value="0" onMouseOver="javascript:updateDescription(8)" onMouseOut="javascript:updateDescription(0)">');
     document.write("</div><br/>");
     document.write("<div id=description>");
     document.write("Hold your mouse over a control to view its description.");
@@ -179,7 +192,7 @@ function updateValues() {
     lw = parseInt(document.controls.lw.value, 10);
     ic = document.controls.ic.value;
     oc = document.controls.oc.value;
-    delay = document.controls.delay.value;
+    delay = document.controls.delay.value * 100;
     redraw();
 }
 function updateDescription(object) {
@@ -201,7 +214,7 @@ function updateDescription(object) {
     } else if (object == 8) {
         text = "The delay of drawing (Return/Enter to restart)";
     } else if (object == 9) {
-        text = "Start Drawing if delay > 0.";
+        text = "Restart Drawing if delay > 0.";
     } else {
         text = "Hold your mouse over a control to view its description.";
     }
