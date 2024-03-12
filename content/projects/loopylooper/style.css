@@ -1,0 +1,123 @@
+/*
+Copyright 2016-2024 Hyperagon (https://hyperagon.github.io/)
+
+    This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    For more informtion, visit <https://www.gnu.org/licenses/agpl-3.0.html>.
+*/
+body {
+    padding: 0;
+    margin: 0;
+    color: #cccccc;
+    background-color: #444444;
+}
+div#title {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+div#title h1 {
+    margin: 0;
+    padding: 1ex;
+}
+div#title a {
+    text-decoration: none;
+}
+div#title a:link {
+    color: #aaaaaa;
+}
+div#title a:visited {
+    color: #aaaaaa;
+}
+div#title a:hover {
+    color: #ffffff;
+}
+div#title a:active {
+    color: #ffffff;
+}
+div.menu {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+div.menu ul {
+    padding: 0;
+    list-style-type: none;
+}
+div.menu li {
+    margin: 0 auto;
+    margin-top: 3ex;
+    margin-bottom: 3ex;
+    padding: 0;
+}
+div.menu li:first-child {
+    margin-top: 0;
+}
+div.menu li:last-child {
+    margin-bottom: 0;
+}
+div.menu li a {
+    display: inline;
+    margin: 0;
+    padding: 5px;
+    border: 2px solid #aaaaaa;
+    font-weight: bolder;
+    text-decoration: none;
+    border-radius: 1ex;
+}
+div.menu li a:link {
+    color: #aaaaaa;
+    background-color: #555555;
+}
+div.menu li a:visited {
+    color: #aaaaaa;
+    background-color: #555555;
+}
+div.menu li a:hover {
+    color: #ffffff;
+    background-color: #aaaaaa;
+}
+div.menu li a:active {
+    color: #ffffff;
+    background-color: #aaaaaa;
+}
+div.content {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+div.content div {
+    display: inline-block;
+    margin: 0 auto;
+    padding: 1ex;
+    margin-bottom: 0.5ex;
+    text-align: center;
+    background-color: #555555;
+    border-radius: 1ex;
+}
+div.content #canvas {
+    border: 2px solid #aaaaaa;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+    border-radius: 1ex;
+}
+div.content p {
+    margin: 0;
+}
+div.content #description {
+    font-weight: bolder;
+    background-color: #333333;
+}
+div.content input,
+div.content select,
+div.content textarea {
+    border: 2px solid #aaaaaa;
+    margin: 0 auto;
+    padding: 2px;
+    color: #ffffff;
+    background-color: #777777;
+    border-radius: 1ex;
+}
