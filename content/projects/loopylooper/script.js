@@ -116,14 +116,14 @@ function render() {
     GLOBAL.iteration = 0;
 }
 function animate(canvas, context) {
-    var current = 0;
     GLOBAL.canvas = canvas;
     GLOBAL.context = context;
     GLOBAL.iteration = 0;
     GLOBAL.itercap = 1;
-    let del = 10 * delay;
-console.log("##", del);
-    setInterval(render, del);
+    let del = 0;
+    if (typeof delay !== 'undefined') { del = delay * 10; }
+//console.log("##", del);
+    setInterval(render, parseInt(del));
 }
 function rerender() {
     if(context == null) {
