@@ -120,8 +120,7 @@ function animate(canvas, context) {
     GLOBAL.context = context;
     GLOBAL.iteration = 0;
     GLOBAL.itercap = 1;
-    let delay = document.controls.delay.value * 100;
-    setInterval(render, delay);
+    setInterval(render, 100 * delay);
 }
 function rerender() {
     if(context == null) {
