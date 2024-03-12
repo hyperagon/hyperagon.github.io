@@ -112,6 +112,7 @@ function render() {
     if (position > fposition) {
         GLOBAL.itercap += 1;
     }
+
     GLOBAL.iteration = 0;
 }
 function animate(canvas, context) {
@@ -120,7 +121,9 @@ function animate(canvas, context) {
     GLOBAL.context = context;
     GLOBAL.iteration = 0;
     GLOBAL.itercap = 1;
-    setInterval(render, 100 * delay);
+    let del = 10 * delay;
+console.log("##", del);
+    setInterval(render, del);
 }
 function rerender() {
     if(context == null) {
@@ -191,7 +194,7 @@ function updateValues() {
     lw = parseInt(document.controls.lw.value, 10);
     ic = document.controls.ic.value;
     oc = document.controls.oc.value;
-    delay = document.controls.delay.value * 100;
+    delay = document.controls.delay.value;
     redraw();
 }
 function updateDescription(object) {
