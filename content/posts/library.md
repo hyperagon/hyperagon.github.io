@@ -78,6 +78,7 @@ tags = ['machine learning', 'library', 'learn']
 - [Prompt Engineering: A Practical Example](https://realpython.com/practical-prompt-engineering/)
 - [Prompting Guide for Code Llama](https://www.promptingguide.ai/models/code-llama.en/)
 - [Papers with Code](https://paperswithcode.com/)
+- [PyLessons](https://www.pylessons.com/)
 
 ### Course
 - [HuggingFace Course](https://huggingface.co/learn/nlp-course/chapter1/1)
