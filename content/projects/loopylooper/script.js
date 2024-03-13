@@ -219,7 +219,7 @@ function updateDescription(object) {
     } else if (object == 7) {
         text = "The color of the first vertex.(must be a hex value)";
     } else if (object == 8) {
-        text = "The delay of drawing (Return/Enter to restart)";
+        text = "The delay of drawing each line.";
     } else if (object == 9) {
         text = "Restart Drawing if delay > 0.";
     } else {
