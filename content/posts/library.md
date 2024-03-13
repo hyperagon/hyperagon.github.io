@@ -70,6 +70,7 @@ tags = ['machine learning', 'library', 'learn']
 - [PyTorch Hub for Researchers](https://pytorch.org/hub/research-models)
 
 ### List
+- [Netron - Model viewer](https://github.com/lutzroeder/netron?tab=readme-ov-file)
 - [Deeplearning - Chatgpt Prompt Engineering](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
 - [Github - Awesome Machine Learning](https://github.com/josephmisiti/awesome-machine-learning)
 - [Github - Awesome Neural Radiance Field](https://github.com/awesome-NeRF/awesome-NeRF/)
