@@ -47,10 +47,10 @@ tags = ['machine learning', 'library', 'learn']
 - [Youtube - Machine Learning for Web Devs & Creatives (Web ML) - Next gen web apps with TensorFlow.js](https://www.youtube.com/watch?v=TuYbgZ59Kpg&list=PLOU2XLYxmsILr3HQpqjLAUkIPa5EaZiui)
 - [ML Zero to Hero](https://www.youtube.com/watch?v=KNAWp2S3w94&list=PLQY2H8rRoyvwWuPiWnuTDBHe7I0fMSsfO)
 - [Tensorflow Tutorial (2017)](https://github.com/MorvanZhou/Tensorflow-Tutorial)
+- [Youtube - Object Detection 101 Course](https://www.youtube.com/watch?v=WgPbbWmnXJ8)
 
 ## Generative AI
 - [Github - Generative AI - Learning](https://github.com/Yash-Kavaiya/GenAI-Learning)
-- [Youtube - Generative AI Full Course](https://www.youtube.com/watch?v=mEsleV16qdo)
 
 ## Data Engineer
 - [Database / Data Warehouse / DataLake](https://www.youtube.com/watch?v=-bSkREem8dM)
@@ -82,6 +82,7 @@ tags = ['machine learning', 'library', 'learn']
 - [PyLessons](https://www.pylessons.com/)
 
 ### Course
+- [Youtube - Generative AI Full Course](https://www.youtube.com/watch?v=mEsleV16qdo)
 - [HuggingFace Course](https://huggingface.co/learn/nlp-course/chapter1/1)
 - [CodeCraft - Introduction to Machine Learning with TensorFlow.js](https://codecraft.tv/courses/tensorflowjs/introduction/introduction/)
 - [Coursera - Mathematics for Machine Learning Specialization](www.coursera.org/specializations/mathematics-machine-learning)
