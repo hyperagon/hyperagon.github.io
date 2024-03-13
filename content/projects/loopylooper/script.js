@@ -110,10 +110,14 @@ function render() {
         }
     }
     context.restore();
+
+    if(GLOBAL.timer) {
+        clearTimeout(GLOBAL.timer);
+    }
     if (position > fposition) {
         GLOBAL.itercap += 1;
+        GLOBAL.timer = setTimeout(render, parseInt(GLOBAL.delay / 100));
     }
-
     GLOBAL.iteration = 0;
 }
 function animate(canvas, context) {
@@ -123,8 +127,8 @@ function animate(canvas, context) {
     GLOBAL.itercap = 1;
     let del = 0;
     if (typeof delay !== 'undefined') { del = delay * 10; }
-//console.log("##", del);
-    setInterval(render, parseInt(del));
+    GLOBAL.delay = del;
+    render();
 }
 function rerender() {
     if(context == null) {
@@ -172,7 +176,7 @@ function addControls() {
     document.write("<div>");
     document.write('Inner Color:<input type=color  tabindex=6  name=ic  onMouseOver="javascript:updateDescription(6)" onMouseOut="javascript:updateDescription(0)"/>');
     document.write(',Outter Color:<input type=color  tabindex=7  name=oc  onMouseOver="javascript:updateDescription(7)" onMouseOut="javascript:updateDescription(0)"/>');
-    document.write(',Delay: <input type="range" tabindex=8 name=delay min="0" max="100" step="0.1" value="0" onMouseOver="javascript:updateDescription(8)" onMouseOut="javascript:updateDescription(0)">');
+    document.write(',Delay: <input type="range" tabindex=8 name=delay min="0" max="1000" step="0.1" value="0" onMouseOver="javascript:updateDescription(8)" onMouseOut="javascript:updateDescription(0)">');
     document.write("</div><br/>");
     document.write("<div id=description>");
     document.write("Hold your mouse over a control to view its description.");
