@@ -7,6 +7,7 @@ Copyright 2016-2024 Hyperagon (https://hyperagon.github.io/)
 
     For more informtion, visit <https://www.gnu.org/license1s/agpl-3.0.html>.
 */
+// https://stackoverflow.com/questions/69888029/how-to-call-a-function-declared-in-a-javascript-module-type-module-from-an-htm
 const GLOBAL = {};
 const canvas = document.getElementById("canvas");
 let context = null;
