@@ -20,6 +20,11 @@ tags = ['machine learning', 'library', 'learn']
 - [Youtube - AI-driven Development for Programmers](https://www.youtube.com/watch?v=iO1mwxPNP5A)
 - [Uoutube - How get an AI Job](https://www.youtube.com/watch?v=45bef40Ypi8)
 
+### Search
+
+- [Dataset Search](https://datasetsearch.research.google.com/)
+- [Data Hub](https://datahub.io/)
+
 ### Transformer
 - [Wikipedia - Attention is All you Need](https://en.wikipedia.org/wiki/Attention_Is_All_You_Need)
 - [Github - Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/)
