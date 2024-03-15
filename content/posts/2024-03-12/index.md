@@ -11,4 +11,4 @@ I also updated the licese to [AGPL](https://www.gnu.org/licenses/agpl-3.0.en.htm
 
 You can get a Hexagon with `Step: 60 or 300`.
 
-![hexgon](/posts/2024-03-12/hexagon.png)
+![Hexagon shaped loopy loop.](hexagon.png)
