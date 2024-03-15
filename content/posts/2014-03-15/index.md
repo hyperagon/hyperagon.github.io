@@ -13,7 +13,7 @@ The script:
 ```
 from ultralytics import YOLO
 model = YOLO('weights/yolov8n.pt') # nano
-results = model('cars-512.jpg', imgsz=512, save=True, conf=0.1) # savses in runs/detect/predict
+results = model('cars-512.jpg', imgsz=512, save=True, conf=0.1) # saves in runs/detect/predict
 ```
 
 The `conf` parameter filters all matches with lower confidence out.
