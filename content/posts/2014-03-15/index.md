@@ -20,4 +20,4 @@ The `conf` parameter filters all matches with lower confidence out.
 
 Note that I originally used a `show=True` parameter but it just blocked on *Linux*.
 
-You can find more information on how ti use the Library in the [GitHub page](https://github.com/ultralytics/ultralytics/tree/main?tab=readme-ov-file) and [Documentation](https://docs.ultralytics.com/).
+You can find more information on how to use the Library in the [GitHub page](https://github.com/ultralytics/ultralytics/tree/main?tab=readme-ov-file) and [Documentation](https://docs.ultralytics.com/).
