@@ -18,5 +18,6 @@ results = model('cars-512.jpg', imgsz=512, save=True, conf=0.1) # saves in runs/
 
 The `conf` parameter filters all matches with lower confidence out.
 
-Note that I originally uded a `show=True` parameter but it just blocked on *Linux*.
-You can find more information on the [libraries' GitHub page](https://github.com/ultralytics/ultralytics/tree/main?tab=readme-ov-file) and [Documentation](https://docs.ultralytics.com/).
+Note that I originally used a `show=True` parameter but it just blocked on *Linux*.
+
+You can find more information on how ti use the Library in the [GitHub page](https://github.com/ultralytics/ultralytics/tree/main?tab=readme-ov-file) and [Documentation](https://docs.ultralytics.com/).
