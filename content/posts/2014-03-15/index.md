@@ -18,3 +18,4 @@ results = model('cars-512.jpg', imgsz=512, save=True, conf=0.1) # savses in runs
 
 The `conf` parameter filters all matches with lower confidence out.
 
+Note that I originally uded a `show=True` parameter but it just blocked on *Linux*.
