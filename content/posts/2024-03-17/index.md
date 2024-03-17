@@ -10,3 +10,5 @@ Trying to direct AIs' is really hard and helper libraries like [GPT-Pilot](https
 I had to update [Ollama](https://github.com/ollama/ollama) so I re-did `curl -fsSL https://ollama.com/install.sh | sh`. Then `ollama -v` went up to 0.1.0.1.29 and I was able to use the link from [this guide](https://ollama.com/blog/openai-compatibility).
 
 ![Angry Llama](angry.png)
+
+Finally changed my logo and banner to something made on  [Loopy Looper 5](/projects/loopylooper/). Those shapes look good!
