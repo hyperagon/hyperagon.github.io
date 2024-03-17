@@ -38,7 +38,7 @@ showtoc = true
 - [Youtube - Python in 100 Seconds](https://www.youtube.com/watch?v=x7X9w_GIm1s/)
 - [Real Python](https://realpython.com/)
 
-### PyTorch (Python) / PyTorch Live (Mobile)
+### PyTorch (Python / Mobile)
 - [Youtube - PyTorch in 100 Seconds](https://www.youtube.com/watch?v=ORMx45xqWkA/)
 - [PyTorch Tutorials](https://pytorch.org/tutorials/)
 - [Youtube - Language Models For Software Developers in 17 Minutes](https://www.youtube.com/watch?v=tL1zltXuHO8/)
