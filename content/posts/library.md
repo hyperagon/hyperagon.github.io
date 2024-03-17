@@ -4,7 +4,6 @@ summary = 'A big list of learning resources.'
 date = 2024-03-08T11:30:03+01:01
 draft = false
 weight = 1 # Pin it
-tags = ['machine learning', 'library', 'learn']
 +++
 [Artificial Intelligence](https://en.wikipedia.org/wiki/Artificial_intelligence) >
 [Machine Learning](https://en.wikipedia.org/wiki/Machine_learning) >

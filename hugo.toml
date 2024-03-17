@@ -10,6 +10,7 @@ keywords = [ "Blog", "Portfolio" ]
 author = "Hyperag⬡n"
 images = ["static/favicon-16x16.png", "static/favicon-32x32.png", "static/favicon.png"]
 comments = true
+ShowCodeCopyButtons = true
 
   [params.homeInfoParams]
   Title = "Hyperag⬡n"
