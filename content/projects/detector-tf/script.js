@@ -113,7 +113,7 @@ imageTensor.dispose();
 
 // or
 
-tf.tidy();
+tf.tidy(function);
 */
 tf.engine().endScope();
 
