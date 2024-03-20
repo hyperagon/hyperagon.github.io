@@ -87,7 +87,7 @@ showtoc = true
 - [Prompting Guide for Code Llama](https://www.promptingguide.ai/models/code-llama.en/)
 - [Papers with Code](https://paperswithcode.com/)
 - [PyLessons](https://www.pylessons.com/)
-- [Github - The Practical Guides for Large Language Models ](The Practical Guides for Large Language Models)
+- [Github - The Practical Guides for Large Language Models](The Practical Guides for Large Language Models)
 - [Github - Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM)
 
 ### Course
