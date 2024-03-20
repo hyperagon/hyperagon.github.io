@@ -88,7 +88,8 @@ showtoc = true
 - [Papers with Code](https://paperswithcode.com/)
 - [PyLessons](https://www.pylessons.com/)
 - [Github - The Practical Guides for Large Language Models](The Practical Guides for Large Language Models)
-- [Github - Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM)
+- [Github - Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM)
+- [Github - Build a Large Language Model (From Scratch)](https://github.com/rasbt/LLMs-from-scratch)
 
 ### Course
 - [Github - Large Language Model Course](https://github.com/mlabonne/llm-course)
