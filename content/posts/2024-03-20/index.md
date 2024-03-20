@@ -11,6 +11,6 @@ First of all I really needed a way to run [Docker](https://docs.docker.com/get-d
 
 Once that was done I could open [Label Studio](https://docs.docker.com/get-docker/) by running `sudo docker run -it -p 8080:8080 -v $(pwd)/mydata:/label-studio/data heartexlabs/label-studio:1.6.0`, using it and exporting a *JSON* file.
 
-Do avoid setting the confidence too low though.
+Avoid setting the confidence too low though.
 
 ![Picture with several defections at confidence 0.](mess_yolo_mnist.png)
