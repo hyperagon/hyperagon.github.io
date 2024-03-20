@@ -87,8 +87,11 @@ showtoc = true
 - [Prompting Guide for Code Llama](https://www.promptingguide.ai/models/code-llama.en/)
 - [Papers with Code](https://paperswithcode.com/)
 - [PyLessons](https://www.pylessons.com/)
+- [Github - The Practical Guides for Large Language Models ](The Practical Guides for Large Language Models)
+- [Github - Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM)
 
 ### Course
+- [Github - Large Language Model Course](https://github.com/mlabonne/llm-course)
 - [HuggingFace Course](https://huggingface.co/learn/nlp-course/chapter1/1)
 - [CodeCraft - Introduction to Machine Learning with TensorFlow.js](https://codecraft.tv/courses/tensorflowjs/introduction/introduction/)
 - [Coursera - Mathematics for Machine Learning Specialization](www.coursera.org/specializations/mathematics-machine-learning)
