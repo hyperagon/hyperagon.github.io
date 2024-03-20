@@ -11,5 +11,5 @@ First of all I needed a way to run [Docker](https://docs.docker.com/get-docker/)
 
 Once that was done I could open [Label Studio](https://docs.docker.com/get-docker/) by running `sudo docker run -it -p 8080:8080 -v $(pwd)/mydata:/label-studio/data heartexlabs/label-studio:1.6.0`, use it and export a *JSON* file.
 
-Avoid setting the confidence too low though (in this case I was testing a [Meter Reader on HuggingFace](https://huggingface.co/spaces/youssefboutaleb/Yolov8_meter)):
+You must avoid setting the confidence too low though (in this case I was testing a [Meter Reader on HuggingFace](https://huggingface.co/spaces/youssefboutaleb/Yolov8_meter)):
 ![Picture with several defections at confidence 0.](mess_yolo_mnist.png)
