@@ -18,4 +18,4 @@ I had to kill the container later on, using `docker ps` to list all containers a
 
 Turns out that I had a ton of stopped containers and images, seen using `docker ps -a` and `docker images` which I removed by using `docker rmi <IMAGE ID>` and `docker rm <CONRAINER ID>`. No wonder my login was forgotten, I kept starting new ones!
 
-After running `docker run ...` you should have a container listed in `docker ps -a` which you can start/stop with `docker start/stop <CONTAINER ID>`. This is quite a hassle for a single machine since **docker** was made for clusters but it's easy to learn. 😅️
+After running `docker run ...` you should have a container listed in `docker ps -a` which you can start/stop with `docker start/stop <CONTAINER ID>`. This is quite a hassle for a single machine since **Docker** was made for clusters but it's easy to learn. 😅️
