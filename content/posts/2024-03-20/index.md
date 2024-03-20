@@ -9,7 +9,11 @@ I was looking up some guides but they are rather outdated. I found [this one](ht
 
 First of all I needed a way to run [Docker](https://docs.docker.com/get-docker/) so I followed the guide. This was unnecessary since it could work fine as a local server but it guarantees that the environment is set up.
 
-Once that was done I could open [Label Studio]() by running `sudo docker run -it -p 8080:8080 -v $(pwd)/mydata:/label-studio/data heartexlabs/label-studio:1.6.0`, use it and export a *JSON* file.
+Once that was done I could open [Label Studio](https://github.com/HumanSignal/label-studio) by running `sudo docker run -it -p 8080:8080 -v label-studio/data heartexlabs/label-studio:1.6.0`, use it and export a *JSON* file.
+![Picture with several defections at confidence 0.](2024-03-20.png)
+
 
 You must avoid setting the confidence too low (in this case I was testing a [Meter Reader on HuggingFace](https://huggingface.co/spaces/youssefboutaleb/Yolov8_meter)):
 ![Picture with several defections at confidence 0.](mess_yolo_mnist.png)
+
+I had to kill the container later on, using `docker ps` to list containers and `docker kill <ID>`. I'm new to docker and really tought that stopping a container would suffice but the address (that you specify when calling it) was still directing me to the expected website.
