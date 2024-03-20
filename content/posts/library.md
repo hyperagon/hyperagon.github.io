@@ -75,6 +75,7 @@ showtoc = true
 - [Huggingface Models](https://huggingface.co/models)
 - [PyTorch Hub](https://pytorch.org/hub/)
 - [PyTorch Hub for Researchers](https://pytorch.org/hub/research-models)
+- [Github - Open LLMs](https://github.com/eugeneyan/open-llms)
 
 ### List
 - [Netron - Model viewer](https://github.com/lutzroeder/netron?tab=readme-ov-file)
