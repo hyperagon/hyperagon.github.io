@@ -5,7 +5,7 @@ date = 2024-03-21T08:49:39Z
 draft = false
 tags = ['yolo', 'label-studio']
 +++
-Kept following [this guide](https://betterdatascience.com/detect-license-plates-with-yolo/) o detect license plates. The whole 
+Kept following [this guide](https://betterdatascience.com/detect-license-plates-with-yolo/) to detect license plates. The whole 
 
 It went to [Google Colab](colab.research.google.com) and set the runtime to a TPU (Tensor Processing Unit).
 
