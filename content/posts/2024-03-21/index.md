@@ -11,7 +11,36 @@ It went to [Google Colab](colab.research.google.com) and set the runtime to a TP
 
 ![How to set the runtime type to TPU](google-colab.png)
 
-I tried to mount Google Drive but got [this issue](https://stackoverflow.com/questions/69822304/google-colab-google-drive-can%C2%B4t-be-mounted-anymore-browser-popup-google-dri), Apparently I was using "Blue's Solution". But [this is what worked](https://stackoverflow.com/questions/57419346/how-can-i-access-my-google-drive-files-from-google-colab).
+I tried to mount Google Drive but got [this issue](https://stackoverflow.com/questions/69822304/google-colab-google-drive-can%C2%B4t-be-mounted-anymore-browser-popup-google-dri). Apparently I was using "Blue's Solution" but [this is what worked](https://stackoverflow.com/questions/57419346/how-can-i-access-my-google-drive-files-from-google-colab), adding a **Files** tab after I agreed to allow the Colab to connect to my Google Drive.
 
-It also mentions Darknet, an open source neural network framework which has several reources ([1](https://github.com/AlexeyAB/darknet), [2](https://github.com/hank-ai/darknet), [3](https://www.ccoderun.ca/programming/darknet_faq/)), I assume it's the open-source version of the [Ultralytics YOLO](https://github.com/ultralytics/ultralytics).« which I used earlier.
+```
+from google.colab import drive 
+drive.mount('/content/gdrive', force_remount=True)
+```
+
+![Access to GoogleDrive](file_acess.png)
+
+Then just copy the folder path. Note that the `Ctrl+c` and `Ctrl+v` shortcuts work despite there being no Copy/Paste option in the context menu (what shows up on right-click).
+
+![Copy folder Path](copy_path.png)
+
+```
+from google.colab import drive 
+drive.mount('/content/gdrive', force_remount=True)
+
+root_dir = "/content/gdrive/MyDrive/Colab Notebooks/"
+base_dir = root_dir + 'Cars/'
+```
+
+
+
+
+
+
+
+
+
+
+
+It also mentions **Darknet**, an open source neural network framework which has several reources ([1](https://github.com/AlexeyAB/darknet), [2](https://github.com/hank-ai/darknet), [3](https://www.ccoderun.ca/programming/darknet_faq/)), I assume it's the open-source version of the [Ultralytics YOLO](https://github.com/ultralytics/ultralytics).« which I used earlier to detect cars.
 
