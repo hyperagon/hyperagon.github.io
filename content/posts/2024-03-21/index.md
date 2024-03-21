@@ -32,15 +32,5 @@ root_dir = "/content/gdrive/MyDrive/Colab Notebooks/"
 base_dir = root_dir + 'Cars/'
 ```
 
-
-
-
-
-
-
-
-
-
-
-It also mentions **Darknet**, an open source neural network framework which has several reources ([1](https://github.com/AlexeyAB/darknet), [2](https://github.com/hank-ai/darknet), [3](https://www.ccoderun.ca/programming/darknet_faq/)), I assume it's the open-source version of the [Ultralytics YOLO](https://github.com/ultralytics/ultralytics).« which I used earlier to detect cars.
+It also mentions **Darknet**, an open source neural network framework which has several reources ([1](https://github.com/AlexeyAB/darknet), [2](https://github.com/hank-ai/darknet), [3](https://www.ccoderun.ca/programming/darknet_faq/)), I assume it's the open-source version of the [Ultralytics YOLO](https://github.com/ultralytics/ultralytics). which I used earlier to detect cars.
 
