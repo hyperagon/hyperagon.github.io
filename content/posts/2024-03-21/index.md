@@ -37,8 +37,11 @@ It then mentions **Darknet**, an open source neural network framework which has 
 Now set GPU, CUDNN and OPENCV to 1, this is easy to do with Python:
 
 ```
+!git clone https://github.com/AlexeyAB/darknet # Makes a darknet folder
+
 # https://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python
-f = open('/content/yolo/Makefile', 'r')
+
+f = open('/content/darknet/Makefile', 'r')
 lines = ''
 for line in f:
     if line.find('GPU=0') != -1:
@@ -53,12 +56,12 @@ for line in f:
     lines += line
 f.close()
 
-g = open('/content/yolo/Makefile', 'w')
+g = open('/content/darknet/Makefile', 'w')
 g.write(lines)
 g.close()
 ```
 
-Now we compile Darknet.
+Then we compile Darknet.
 
 ```
 !cd /content/darknet
@@ -66,9 +69,34 @@ Now we compile Darknet.
 print("Darknet Compiled.")
 ```
 
-Note that anything starting with a bang (!) is a *shell* command and not *Python* so that print is equal to `!echo "Darkmet Compiled."`, very smooth Google.
+Note that anything starting with a bang (!) is a *shell* command and not *Python* so a *print* is equal to an `!echo "Darknet Compiled."`, very smooth Google.
 
+Now let's oonfigure YOLO itself.
 
+```
+!cp /content/darknet/cfg/yolov3.cfg /content/darknet/cfg/yolov3-train.cfg
+
+f = open('/content/darknet/cfg/yolov3-train.cfg', 'r')
+lines = ''
+for line in f:
+    if line.find('batch=1') != -1:
+        lines += line.replace('batch=1', 'batch=64')
+        continue
+    if line.find('subdivisions=1') != -1:
+        lines += line.replace('subdivisions=1', 'subdivisions=16')
+        continue
+    if line.find('max_batches=500200') != -1:
+        lines += line.replace('max_batches=500200', 'max_batches=2000')
+        continue
+    if line.find('filters=255') != -1:
+        lines += line.replace('filters=255', 'filters=18')
+        continue
+    if line.find('classes=80') != -1:
+        lines += line.replace('classes=80', 'classes=1')
+        continue
+    lines += line
+f.close()
+```
 
 
 
