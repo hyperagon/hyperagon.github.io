@@ -5,11 +5,10 @@ date = 2024-03-21T08:49:39Z
 draft = false
 tags = ['yolo', 'label-studio']
 +++
-Kept following [this guide](https://betterdatascience.com/detect-license-plates-with-yolo/) to detect license plates. The whole 
+Kept following [this guide](https://betterdatascience.com/detect-license-plates-with-yolo/) to detect license plates.
+This part is done in [Google Colab](colab.research.google.com) so let's open it. Don't forget to set the runtime to a GPU.
 
-Let's open [Google Colab](colab.research.google.com) and set the runtime to a TPU (Tensor Processing Unit).
-
-![How tob set the runtime type to TPU](google-colab.png)
+![How to set the runtime type to GPU](google-colab.png)
 
 I tried to mount Google Drive but got [this issue](https://stackoverflow.com/questions/69822304/google-colab-google-drive-can%C2%B4t-be-mounted-anymore-browser-popup-google-dri). Apparently I was using "Blue's Solution" but [this is what worked](https://stackoverflow.com/questions/57419346/how-can-i-access-my-google-drive-files-from-google-colab), adding a **Files** tab after I agreed to allow the Colab to connect to my Google Drive.
 
@@ -20,7 +19,7 @@ drive.mount('/content/gdrive', force_remount=True)
 
 ![Access to GoogleDrive](file_acess.png)
 
-Then just copy the folder path. Note that the `Ctrl+c` and `Ctrl+v` shortcuts work despite there being no Copy/Paste option in the context menu (what shows up on right-click).
+Then just copy the folder path. Note that the `Ctrl+c` and `Ctrl+v` shortcuts work despite there being no Paste option in the context menu (what shows up when you right-click).
 
 ![Copy folder Path](copy_path.png)
 
