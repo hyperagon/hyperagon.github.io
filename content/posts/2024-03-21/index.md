@@ -70,7 +70,7 @@ print("Darknet Compiled.")
 
 Note that anything starting with a bang (!) is a *shell* command and not *Python* so a *print* is equal to an `!echo "Darknet Compiled."`, very smooth Google.
 
-Now let's oonfigure YOLO itself.
+Now let's configure YOLO itself.
 
 ```
 !cp /content/darknet/cfg/yolov3.cfg /content/darknet/cfg/yolov3-train.cfg
@@ -97,16 +97,10 @@ for line in f:
 f.close()
 ```
 
+And make two new files.
 
-
-
-
-
-
-
-
-
-
-
-
-
+```
+!echo -e 'license-plate' > /content/darknet/data/obj.names 
+!echo -e 'classes = 1\ntrain = /content/darknet/data/train.txt\nvalid = /content/darknet/data/test.txt\nnames = /content/darknet/data/obj.names\nbackup = /content/yolo-license-plates' > /content/darknet/data/obj.data
+```
+# To be continued...
