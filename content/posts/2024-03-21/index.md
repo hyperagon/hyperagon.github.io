@@ -7,9 +7,9 @@ tags = ['yolo', 'label-studio']
 +++
 Kept following [this guide](https://betterdatascience.com/detect-license-plates-with-yolo/) to detect license plates. The whole 
 
-It went to [Google Colab](colab.research.google.com) and set the runtime to a TPU (Tensor Processing Unit).
+Let's open [Google Colab](colab.research.google.com) and set the runtime to a TPU (Tensor Processing Unit).
 
-![How to set the runtime type to TPU](google-colab.png)
+![How tob set the runtime type to TPU](google-colab.png)
 
 I tried to mount Google Drive but got [this issue](https://stackoverflow.com/questions/69822304/google-colab-google-drive-can%C2%B4t-be-mounted-anymore-browser-popup-google-dri). Apparently I was using "Blue's Solution" but [this is what worked](https://stackoverflow.com/questions/57419346/how-can-i-access-my-google-drive-files-from-google-colab), adding a **Files** tab after I agreed to allow the Colab to connect to my Google Drive.
 
@@ -57,4 +57,29 @@ g = open('/content/yolo/Makefile', 'w')
 g.write(lines)
 g.close()
 ```
+
+Now we compile Darknet.
+
+```
+!cd /content/darknet
+!make --silent
+print("Darknet Compiled.")
+```
+
+Note that anything starting with a bang (!) is a *shell* command and not *Python* so that print is equal to `!echo "Darkmet Compiled."`, very smooth Google.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
