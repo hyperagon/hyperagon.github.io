@@ -3,7 +3,7 @@ title = 'Object Detection'
 summary = 'As bad as Humans.'
 date = 2024-03-15T08:51:12Z
 draft = false
-tags = ['goal', 'machine learning', 'pytorch']
+tags = ['goal 3', 'machine learning', 'pytorch']
 +++
 **Goal #3** will involve detecting objects but behold ML detecting too much:
 

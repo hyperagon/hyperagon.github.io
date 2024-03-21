@@ -3,7 +3,7 @@ title = 'What to do with Labels'
 summary = 'Labeled images and exported files, now what?'
 date = 2024-03-21T08:49:39Z
 draft = false
-tags = ['yolo', 'label-studio', 'goal#3']
+tags = ['yolo', 'label-studio', 'goal 3', 'resources', 'jupyter notebook']
 +++
 Kept following [this guide](https://betterdatascience.com/detect-license-plates-with-yolo/) to detect license plates.
 Since I had the labels is done in [Google Colab](colab.research.google.com) so let's open it. Don't forget to set the runtime to a GPU.

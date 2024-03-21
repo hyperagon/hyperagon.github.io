@@ -3,7 +3,7 @@ title = 'Label Studio'
 summary = 'How to set up Label Studio locally.'
 date = 2024-03-20T00:02:03Z
 draft = false
-tags = ['docker', 'label-studio', 'goal#3']
+tags = ['docker', 'label-studio', 'goal 3']
 +++
 I was looking up some guides but they are rather outdated. [This one](https://betterdatascience.com/detect-license-plates-with-yolo/) u0sed [LabelIMG](https://github.com/HumanSignal/labelImg) (now  part of **Label Studio**).
 
