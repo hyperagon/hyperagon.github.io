@@ -32,5 +32,29 @@ root_dir = "/content/gdrive/MyDrive/Colab Notebooks/"
 base_dir = root_dir + 'Cars/'
 ```
 
-It also mentions **Darknet**, an open source neural network framework which has several reources ([1](https://github.com/AlexeyAB/darknet), [2](https://github.com/hank-ai/darknet), [3](https://www.ccoderun.ca/programming/darknet_faq/)), I assume it's the open-source version of the [Ultralytics YOLO](https://github.com/ultralytics/ultralytics). which I used earlier to detect cars.
+It then mentions **Darknet**, an open source neural network framework which has several reources ([1](https://github.com/AlexeyAB/darknet), [2](https://github.com/hank-ai/darknet), [3](https://www.ccoderun.ca/programming/darknet_faq/)), I assume it's the open-source version of the [Ultralytics YOLO](https://github.com/ultralytics/ultralytics). which I used earlier to detect cars.
+
+Now set GPU, CUDNN and OPENCV to 1, this is easy to do with Python:
+
+```
+# https://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python
+f = open('/content/yolo/Makefile', 'r')
+lines = ''
+for line in f:
+    if line.find('GPU=0') != -1:
+        lines += line.replace('GPU=0', 'GPU=1')
+        continue
+    if line.find('CUDNN=0') != -1:
+        lines += line.replace('CUDNN=0', 'CUDNN=1')
+        continue
+    if line.find('OPENCV=0') != -1:
+        lines += line.replace('OPENCV=0', 'OPENCV=1')
+        continue
+    lines += line
+f.close()
+
+g = open('/content/yolo/Makefile', 'w')
+g.write(lines)
+g.close()
+```
 
