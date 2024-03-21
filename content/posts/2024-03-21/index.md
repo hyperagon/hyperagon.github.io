@@ -6,7 +6,7 @@ draft = false
 tags = ['yolo', 'label-studio', 'goal 3', 'resources', 'jupyter notebook']
 +++
 Kept following [this guide](https://betterdatascience.com/detect-license-plates-with-yolo/) to detect license plates.
-Since I had the labels is done in [Google Colab](colab.research.google.com) so let's open it. Don't forget to set the runtime to a GPU.
+Since I had the labels I moved on to [Google Colab](colab.research.google.com). Don't forget to set the runtime to a GPU.
 
 ![How to set the runtime type to GPU](google-colab.png)
 
