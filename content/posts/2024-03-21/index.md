@@ -11,4 +11,6 @@ Head on over to [Google Colab](colab.research.google.com) and set the machine to
 ![](google-colab.png)
 *image_caption*
 
-Oh my, I tried to mount Google Drive but got [this issue](https://stackoverflow.com/questions/69822304/google-colab-google-drive-can%C2%B4t-be-mounted-anymore-browser-popup-google-dri), Apparently I was using "Blue's Solution"
+Oh my, I tried to mount Google Drive but got [this issue](https://stackoverflow.com/questions/69822304/google-colab-google-drive-can%C2%B4t-be-mounted-anymore-browser-popup-google-dri), Apparently I was using "Blue's Solution". But [this is what worked](https://stackoverflow.com/questions/57419346/how-can-i-access-my-google-drive-files-from-google-colab).
+
+
