@@ -12,7 +12,18 @@ To see how they work we can do a little test.
 
 ![How to use a variable in Jupyter.](variable.png)
 
+So let's restart.
+
 ```
+from google.colab import drive
+drive.mount('/content/gdrive', force_remount=True)
+
+root_dir = "/content/gdrive/MyDrive/Colab Notebooks/"
+base_dir = root_dir + 'Cars/'
+
 DN = "/content/darknet"
+!git clone https://github.com/AlexeyAB/darknet $DN # Makes a darknet folder
+
+
 
 ```
