@@ -61,4 +61,32 @@ Now we can compile **Darknet***.
 !cd $DN; make --silent; clear; echo "Darknet Compiled!"
 ```
 
+Then we set **YOLO** up:
+
+``* 
+cp $DN/cfg/yolov3.cfg $DN/cfg/yolov3-train.cfg
+
+f = open(DN + '/cfg/yolov3-train.cfg', 'r')
+lines = ''
+for line in f:
+    if line.find('batch=1') != -1:
+        lines += line.replace('batch=1', 'batch=64')
+        continue
+    if line.find('subdivisions=1') != -1:
+        lines += line.replace('subdivisions=1', 'subdivisions=16')
+        continue
+    if line.find('max_batches=500200') != -1:
+        lines += line.replace('max_batches=500200', 'max_batches=2000')
+        continue
+    if line.find('filters=255') != -1:
+        lines += line.replace('filters=255', 'filters=18')
+        continue
+    if line.find('classes=80') != -1:
+        lines += line.replace('classes=80', 'classes=1')
+        continue
+    lines += line
+f.close()
+```
+
+
 
