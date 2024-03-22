@@ -6,11 +6,11 @@ draft = false
 tags = ['yolo', 'label-studio', 'goal 3', 'resources', 'jupyter notebook']
 +++
 Ok everything is getting messy so let's organize.
-First off, there are long paths since everything went to the *darknet* folder so let's fix it by using variables.```
+First off, there are long paths since everything went to the *darknet* folder so let's fix it by using variables.
 
-To see holw they work we can do a little test.
+To see how they work we can do a little test.
 
-![How to define a variable.](variable.png)
+![How to use a variable in Jupyter.](variable.png)
 
 ```
 DN = "/content/darknet"
