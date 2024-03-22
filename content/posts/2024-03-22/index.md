@@ -42,12 +42,17 @@ for line in f:
     if line.find('OPENCV=0') != -1:
         lines += line.replace('OPENCV=0', 'OPENCV=1')
         continue
-    lines += line
+1    lines += line
 f.close()
 
 g = open(DN + '/Makefile', 'w')
 g.write(lines)
 g.close()
+```
+
+```
+!mkdir "$DN/data"; mkdir "$DN/data/obj"
+!unzip -q "$base_dir/cars.zip" -d "$DN/data/obj"
 ```
 
 Now we can compile **Darknet***.
