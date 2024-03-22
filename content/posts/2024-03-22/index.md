@@ -111,7 +111,7 @@ Make a list of all training images.
 Now we can merge the labels and the images.
 
 ```
-!mv $DN/data/obj/labels/* $DN/data/obj/images
+!mv $DN/data/obj/labels/* $DN/data/
 ```
 
 Now we the weights.
@@ -128,3 +128,5 @@ And, finally, run Darknet.
 I got `Error: You set incorrect value batch=1 for Training! You should set batch=64 subdivision=64` since I wasn't writing what I changed. so I fixed it.
 
 Then I got issues with the placement so I set everything (both labels and images) to go in the data folder.
+
+Got "Can't open label file. (This can be normal only if you use MSCOCO) ..." and it made me wonder [where I should place labels](https://stackoverflow.com/questions/66263909/cant-open-label-file-this-can-be-normal-only-if-you-use-mscoco-yolo).
