@@ -98,8 +98,8 @@ Don't forget to make `obj.names` and `obj.data`.
 Unzip the training data.
 
 ```
-!mkdir "$DN/data"; mkdir "$DN/data/obj"
-!unzip -q "$base_dir/cars.zip" -d "$DN/data/obj"
+!mkdir "$DN/data";
+!unzip -q "$base_dir/cars.zip" -d "$DN/data/"
 ```
 
 Make a list of all training images.
@@ -126,3 +126,5 @@ And, finally, run Darknet.
 ```
 
 I got `Error: You set incorrect value batch=1 for Training! You should set batch=64 subdivision=64` since I wasn't writing what I changed. so I fixed it.
+
+Then I got issues with the placement so I set everything (both labels and images) to go in the data folder.
