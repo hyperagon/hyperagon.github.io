@@ -34,7 +34,7 @@ It then mentions **Darknet**, an open source neural network framework which has 
 !git clone https://github.com/AlexeyAB/darknet # Makes a darknet folder
 ```
 
-Now set *GPU*, *CUDNN* and *OPENCV* to 1, this is easy to do with Python:
+Now set *GPU*, *CUDNN* and *OPENCV* to 1, this is easy to do with Python.
 
 ```
 # https://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python
