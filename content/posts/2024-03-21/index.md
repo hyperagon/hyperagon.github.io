@@ -1,7 +1,7 @@
 +++
-title = 'What to do with Labels'
-summary = 'Labeled images and exported files, now what?'
-date = 2024-03-21T08:49:39Z
+title = 'Darknet'
+summary = 'What to do with labeled images.'
+date = 2024-03-22T08:49:39Z
 draft = false
 tags = ['yolo', 'label-studio', 'goal 3', 'resources', 'jupyter notebook']
 +++
@@ -10,7 +10,7 @@ Since I had the labels I moved on to [Google Colab](colab.research.google.com). 
 
 ![How to set the runtime type to GPU](google-colab.png)
 
-I tried to mount Google Drive but got [this issue](https://stackoverflow.com/questions/69822304/google-colab-google-drive-can%C2%B4t-be-mounted-anymore-browser-popup-google-dri). Apparently I was using "Blue's Solution" but [this is what worked](https://stackoverflow.com/questions/57419346/how-can-i-access-my-google-drive-files-from-google-colab), adding a **Files** tab after I agreed to allow the Colab to connect to my Google Drive.
+I tried to mount Google Drive but got [this issue](https://stackoverflow.com/questions/69822304/google-colab-google-drive-can%C2%B4t-be-mounted-anymore-browser-popup-google-dri). Apparently I was using "Blue's Solution". [This is what worked instead](https://stackoverflow.com/questions/57419346/how-can-i-access-my-google-drive-files-from-google-colab), adding a **Files** tab after I agreed to allow the Colab to connect to my Google Drive.
 
 ```
 from google.colab import drive 
@@ -33,11 +33,13 @@ base_dir = root_dir + 'Cars/'
 
 It then mentions **Darknet**, an open source neural network framework which has several reources ([1](https://github.com/AlexeyAB/darknet), [2](https://github.com/hank-ai/darknet), [3](https://www.ccoderun.ca/programming/darknet_faq/)), I assume it's the open-source version of the [Ultralytics YOLO](https://github.com/ultralytics/ultralytics). which I used earlier to detect cars.
 
-Now set GPU, CUDNN and OPENCV to 1, this is easy to do with Python:
-
 ```
 !git clone https://github.com/AlexeyAB/darknet # Makes a darknet folder
+```
 
+Now set *GPU*, *CUDNN* and *OPENCV* to 1, this is easy to do with Python:
+
+```
 # https://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python
 
 f = open('/content/darknet/Makefile', 'r')
