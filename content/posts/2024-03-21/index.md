@@ -1,7 +1,7 @@
 +++
 title = 'Darknet'
 summary = 'What to do with labeled images.'
-date = 2024-03-22T08:49:39Z
+date = 2024-03-21T08:49:39Z
 draft = false
 tags = ['yolo', 'label-studio', 'goal 3', 'resources', 'jupyter notebook']
 +++
@@ -117,3 +117,5 @@ And use **Darknet**.
 ```
 !cd *content/darknet;./darknet detector train data/obj.data cfg/yolov3-train.cfg darknet53.conv.74 -dont_show
 ```
+
+# To be continued.
