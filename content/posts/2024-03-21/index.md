@@ -62,7 +62,7 @@ g.close()
 Then we compile Darknet.
 
 ```
-!cd "/content/darknet";make --silent;echo "Darknet Compiled."
+!cd "/content/darknet";make --silent;clear;echo "Darknet Compiled!"
 ```
 
 Note that anything starting with a bang (!) is a *shell* command and not *Python* so a *print* is equal to an `!echo "Darknet Compiled."`, very smooth ~~Google~~ Jupyter.
@@ -109,7 +109,7 @@ Now we unzip the data.
 Get the YOLO weights.
 
 ```
-!wget https://pjreddie.com/media/files/darknet53.conv.74
+!cd /content/darknet;wget https://pjreddie.com/media/files/darknet53.conv.74
 ```
 
 And use **Darknet**.
