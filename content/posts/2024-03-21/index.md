@@ -62,13 +62,10 @@ g.close()
 Then we compile Darknet.
 
 ```
-!cd /content/darknet
-!make --silent
-print("Darknet Compiled.")
+!cd "/content/darknet";make --silent;echo "Darknet Compiled."
 ```
 
 Note that anything starting with a bang (!) is a *shell* command and not *Python* so a *print* is equal to an `!echo "Darknet Compiled."`, very smooth ~~Google~~ Jupyter.
-
 Now let's configure YOLO itself.
 
 ```
@@ -103,4 +100,20 @@ And make two new files.
 !echo -e 'classes = 1\ntrain = /content/darknet/data/train.txt\nvalid = /content/darknet/data/test.txt\nnames = /content/darknet/data/obj.names\nbackup = /content/yolo-license-plates' > /content/darknet/data/obj.data
 ```
 
+Now we unzip the data.
 
+```
+!mkdir data/obj !unzip ../images.zip -d data/obj
+```
+
+Get the YOLO weights.
+
+```
+!wget https://pjreddie.com/media/files/darknet53.conv.74
+```
+
+And use **Darknet**.
+
+```
+!cd *content/darknet;./darknet detector train data/obj.data cfg/yolov3-train.cfg darknet53.conv.74 -dont_show
+```
