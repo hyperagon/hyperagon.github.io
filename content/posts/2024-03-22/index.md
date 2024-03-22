@@ -50,6 +50,8 @@ g.write(lines)
 g.close()
 ```
 
+And unzip the files.
+
 ```
 !mkdir "$DN/data"; mkdir "$DN/data/obj"
 !unzip -q "$base_dir/cars.zip" -d "$DN/data/obj"
@@ -59,6 +61,7 @@ Now we can compile **Darknet***.
 
 ```
 !cd $DN; make --silent; clear; echo "Darknet Compiled!"
+
 ```
 
 Then we set **YOLO** up:
@@ -88,11 +91,43 @@ for line in f:
 f.close()
 ```
 
-Make a list of all training image.
+Don't forget to make `obj.names` and `obj.data`.
+
+```
+!echo -e 'license-plate' > $DN/data/obj.names
+!echo -e 'classes = 1\ntrain = ${DN}/data/trQEain.txt\nvalid = ${DN}/data/test.txt\nnames = ${DN}/data/obj.names\nbackup = ${DN}/yolo-license-plates' > $DN/data/obj.data
+```
+
+Unzip the training data.
+
+```
+!mkdir "$DN/data"; mkdir "$DN/data/obj"
+!unzip -q "$base_dir/cars.zip" -d "$DN/data/obj"
+```
+
+Make a list of all training images.
 
 ```
 !find $DN/data/obj/images/* > $DN/data/train.txt
 ```
 
+Now we can merge the labels and the images.
 
+```
+!mv $DN/data/obj/labels/* $DN/data/obj/images
+```
 
+Now we the weights.
+
+```
+!cd $DN;wget https://pjreddie.com/media/files/darknet53.conv.74
+```
+And, finally, run Darknet.
+
+```
+!cd $DN;./darknet detector train $DN/data/obj.data /content/darknet/cfg/yolov3-train.cfg /content/darknet/darknet53.conv.74 -dont_show
+```
+
+Yo which I got `Error: You set incorrect value batch=1 for Training! You should set batch=64 subdivision=64`.
+
+SAo we do so.
