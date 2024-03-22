@@ -25,7 +25,7 @@ DN = "/content/darknet"
 !git clone https://github.com/AlexeyAB/darknet $DN # Makes a darknet folder
 ```
 
-Now we replace paths with the DN variable accordingly.
+Now we replace paths with the DN variable accordingly (Note: Skip if not using GPU).
 
 ```
 # https://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python
@@ -53,7 +53,7 @@ g.close()
 Now we can compile **Darknet***.
 
 ```
-!cd $DN;make --silent;clear;echo "Darknet Compiled!"
+!cd $DN; make --silent; clear; echo "Darknet Compiled!"
 ```
 
 
