@@ -63,7 +63,7 @@ Now we can compile **Darknet***.
 
 Then we set **YOLO** up:
 
-``* 
+```
 cp $DN/cfg/yolov3.cfg $DN/cfg/yolov3-train.cfg
 
 f = open(DN + '/cfg/yolov3-train.cfg', 'r')
@@ -86,6 +86,12 @@ for line in f:
         continue
     lines += line
 f.close()
+```
+
+Make a list of all training image.
+
+```
+!find $DN/data/obj/images/* > $DN/data/train.txt
 ```
 
 

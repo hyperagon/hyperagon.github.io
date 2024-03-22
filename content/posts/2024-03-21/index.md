@@ -19,7 +19,7 @@ drive.mount('/content/gdrive', force_remount=True)
 
 ![Access to GoogleDrive](file_acess.png)
 
-Then just copy the folder path. Note that the `Ctrl+c` and `Ctrl+v` shortcuts work despite there being no Paste option in the context menu (what shows up when you right-click).
+Then just copy the folder path. Note that the `Ctrl+c` and `Ctrl+v` shortcuts work ~~despite there being no Paste option~~ (It's under *Edit*) in the context menu (what shows up when you right-click).
 
 ![Copy folder Path](copy_path.png)
 
