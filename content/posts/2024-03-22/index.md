@@ -23,7 +23,37 @@ base_dir = root_dir + 'Cars/'
 
 DN = "/content/darknet"
 !git clone https://github.com/AlexeyAB/darknet $DN # Makes a darknet folder
+```
 
-
+Now we replace paths with the DN variable accordingly.
 
 ```
+# https://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python
+
+f = open(DN + '/Makefile', 'r')
+lines = ''
+for line in f:
+    if line.find('GPU=0') != -1:
+        lines += line.replace('GPU=0', 'GPU=1')
+        continue
+    if line.find('CUDNN=0') != -1:
+        lines += line.replace('CUDNN=0', 'CUDNN=1')
+        continue
+    if line.find('OPENCV=0') != -1:
+        lines += line.replace('OPENCV=0', 'OPENCV=1')
+        continue
+    lines += line
+f.close()
+
+g = open(DN + '/Makefile', 'w')
+g.write(lines)
+g.close()
+```
+
+Now we can compile **Darknet***.
+
+```
+!cd $DN;make --silent;clear;echo "Darknet Compiled!"
+```
+
+
