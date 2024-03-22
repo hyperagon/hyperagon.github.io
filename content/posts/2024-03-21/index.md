@@ -6,7 +6,7 @@ draft = false
 tags = ['yolo', 'label-studio', 'goal 3', 'resources', 'jupyter notebook']
 +++
 Kept following [this guide](https://betterdatascience.com/detect-license-plates-with-yolo/) to detect license plates.
-Since I had the labels I moved on to [Google Colab](colab.research.google.com). Don't forget to set the runtime to a GPU.
+Since I had the labels I moved on to [Google Colab](https://colab.research.google.com). Don't forget to set the runtime to a GPU.
 
 ![How to set the runtime type to GPU](google-colab.png)
 
@@ -24,9 +24,6 @@ Then just copy the folder path. Note that the `Ctrl+c` and `Ctrl+v` shortcuts wo
 ![Copy folder Path](copy_path.png)
 
 ```
-from google.colab import drive 
-drive.mount('/content/gdrive', force_remount=True)
-
 root_dir = "/content/gdrive/MyDrive/Colab Notebooks/"
 base_dir = root_dir + 'Cars/'
 ```
