@@ -3,7 +3,7 @@ title = 'Darknet 2'
 summary = 'What to do with labeled images.'
 date = 2024-03-22T15:18:47Z
 draft = false
-tags = ['yolo', 'label-studio', 'goal 3', 'resources', 'jupyter notebook']
+tags = ['yolo', 'goal 3', 'jupyter notebook']
 +++
 Ok everything is getting messy so let's organize.
 First off, there are long paths since everything went to the *darknet* folder so let's fix it by using variables.
@@ -120,7 +120,6 @@ Now we the weights.
 !cd $DN;wget https://pjreddie.com/media/files/darknet53.conv.74
 ```
 And, finally, run Darknet.
-
 ```
 !cd $DN;./darknet detector train $DN/data/obj.data /content/darknet/cfg/yolov3-train.cfg /content/darknet/darknet53.conv.74 -dont_show
 ```
