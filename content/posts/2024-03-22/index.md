@@ -130,3 +130,7 @@ I got `Error: You set incorrect value batch=1 for Training! You should set batch
 Then I got issues with the placement so I set everything (both labels and images) to go in the data folder.
 
 Got "Can't open label file. (This can be normal only if you use MSCOCO) ..." and it made me wonder [where I should place labels](https://stackoverflow.com/questions/66263909/cant-open-label-file-this-can-be-normal-only-if-you-use-mscoco-yolo).
+
+I tried to include a labels.txt and referencing it with `labels = labels.txt` but still get warning that it can't be found in images/*.txt... But it does look like it'a not stopping.
+
+
