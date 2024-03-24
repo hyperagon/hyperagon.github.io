@@ -5,7 +5,7 @@ date = 2024-03-20T00:02:03Z
 draft = false
 tags = ['docker', 'label-studio', 'goal 3']
 +++
-I was looking up some guides but they are rather outdated. [This one](https://betterdatascience.com/detect-license-plates-with-yolo/) u0sed [LabelIMG](https://github.com/HumanSignal/labelImg) (now  part of **Label Studio**).
+I was looking up some guides but they are rather outdated. [This one](https://betterdatascience.com/detect-license-plates-with-yolo/) used [LabelIMG](https://github.com/HumanSignal/labelImg) (now  part of **Label Studio**).
 
 Since **pip** failed to install it I decided to go with **Docker** and followed the [guide to install it](https://docs.docker.com/get-docker/).
 Once that was done I could open [Label Studio](https://github.com/HumanSignal/label-studio) by running `docker run -it -p 8080:8080 -v label-studio/data heartexlabs/label-studio:latest`.
