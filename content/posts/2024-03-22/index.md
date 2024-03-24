@@ -3,7 +3,7 @@ title = 'Darknet 2'
 summary = 'What to do with labeled images.'
 date = 2024-03-22T15:18:47Z
 draft = false
-tags = ['yolo', 'goal 3', 'jupyter notebook']
+tags = ['yolo', 'goal 3', 'google colab', 'jupyter notebook']
 +++
 Ok everything is getting messy so let's organize.
 First off, there are long paths since everything went to the *darknet* folder so let's fix it by using variables.
