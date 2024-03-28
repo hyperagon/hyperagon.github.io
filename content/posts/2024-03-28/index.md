@@ -9,6 +9,6 @@ Finally got results, all you need is  a file with each class per line (**classes
 
 ![Requirements to make detections.](requirements.png)
 
-This gave me a result, as bad as expedcted.
+This gave me a result, as bad as expedcted  but in the right area at least.
 
-!Poor detection but at least it's in the right places.](detected.png)
+![Poor detection but at least it's in the right places.](detected.png)
