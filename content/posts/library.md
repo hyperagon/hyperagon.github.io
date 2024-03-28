@@ -90,10 +90,12 @@ showtoc = true
 - [Papers with Code](https://paperswithcode.com/)
 - [PyLessons](https://www.pylessons.com/)
 - [Github - The Practical Guides for Large Language Models](The Practical Guides for Large Language Models)
-- [Github - Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM)
+- [Github - Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM)
 - [Github - Build a Large Language Model (From Scratch)](https://github.com/rasbt/LLMs-from-scratch)
+- [Github - Awesome ML](https://github.com/underlines/awesome-ml/tree/master)
 
 ### Course
+- [Github - Large Language Model Course](https://github.com/LouisShark/chatgpt_system_prompt/tree/a0c2ba77f6ede9c434378af7b4d81f228d9b5ff8/prompts/gpts/knowledge/LLM%20Course)
 - [Github - Large Language Model Course](https://github.com/mlabonne/llm-course)
 - [HuggingFace Course](https://huggingface.co/learn/nlp-course/chapter1/1)
 - [CodeCraft - Introduction to Machine Learning with TensorFlow.js](https://codecraft.tv/courses/tensorflowjs/introduction/introduction/)
