@@ -5,7 +5,7 @@ date = 2024-03-28T08:40:38Z
 draft = false
 tags = ['yolo', 'goal 3', 'resources', 'google colab', 'jupyter notebook']
 +++
-Finally got results, all you need is **classes.ttx**
+Finally got results, all you need is **classes.txt**
 
 ![Requirements to make detections.](requirements.png)
 
