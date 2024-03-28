@@ -7,7 +7,9 @@ comments: false
 ---
 Follow [this video](https://www.youtube.com/watch?v=XXR1XmA7iN0&t=37s) to integrate [Botpress](https://botpress.com/) bots into your website.
 
-It'll add a button on the bottom-right that opens up the webchat dialog, how nice and easy. The way that you build it reminds me of old chatbots with hard-coded options.
+It'll add a button on the bottom-right that opens up the webchat dialog, how nice and easy. The way that you build it reminds me of old chatbots with hard-coded options
+
+![Open Botpress webui.](Screenshot.png)
 
 {{<rawhtml>}}
 <script src="https://cdn.botpress.cloud/webchat/v1/inject.js"></script>
