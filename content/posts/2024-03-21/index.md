@@ -1,5 +1,5 @@
 +++
-title = 'Darknet'
+title = 'Darknet 1'
 summary = 'What to do with labeled images.'
 date = 2024-03-21T08:49:39Z
 draft = false
