@@ -9,6 +9,6 @@ Finally got results, all you need is  a file with each class per line (**classes
 
 ![Requirements to make detections.](requirements.png)
 
-This gave me a result, as bad as expedcted  but in the right area at least. Imagine if my machie«b«ne was beefier and could do it itself.
+This gave me a result, as bad as expedcted  but in the right area at least. Imagine if my machie«b«ne could do it itself.
 
 ![Poor detection but at least it's in the right places.](detected.png)
