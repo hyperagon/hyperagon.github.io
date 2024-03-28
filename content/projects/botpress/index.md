@@ -11,6 +11,8 @@ It'll add a button on the bottom-right that opens up the webchat dialog, how nic
 
 ![Open Botpress webui.](Screenshot.png)
 
+Note: The screenshot was taken with the broweser full-screen.
+
 {{<rawhtml>}}
 <script src="https://cdn.botpress.cloud/webchat/v1/inject.js"></script>
 <script src="https://mediafiles.botpress.cloud/2701c18a-76b2-49d6-87ef-b0910c145486/webchat/config.js" defer></script>
