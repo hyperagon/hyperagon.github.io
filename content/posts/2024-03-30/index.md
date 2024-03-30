@@ -1,6 +1,6 @@
 +++
-title = 'Rootkits / Darknet 6'
-summary = ''
+title = 'Darknet 7'
+summary = 'What to do with labeled images.'
 date = 2024-03-30T09:35:59Z
 draft = false
 tags = ['chkrootkit', 'yolo', 'goal 3', 'resources', 'google colab', 'jupyter notebook', 'github']
