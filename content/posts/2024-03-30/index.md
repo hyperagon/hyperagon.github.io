@@ -1,7 +1,7 @@
 +++
 title = 'Darknet 7'
 summary = 'What to do with labeled images.'
-date = 2024-03-30T09:35:59Z
+date = 2024-04-01T09:35:59Z
 draft = false
 tags = ['yolo', 'goal 3', 'google colab', 'jupyter notebook', 'github']
 +++
@@ -18,3 +18,12 @@ Aside from **_last.weights**, I was able to capture a separate result that was b
 The last detection, for now, already captures the important part of the license plate (in this case the training targets the letters and numbers and not the whole thing which the weights reflect).
 
 ![Third Detection.](detection3.png)
+
+Notice that this is found in the output.
+
+```
+New best mAP!
+Saving weights to /yolo-license-plates/yolov3-train_best.weights
+Saving weights to /yolo-license-plates/yolov3-train_last.weights
+```
+
