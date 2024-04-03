@@ -31,7 +31,7 @@ showtoc = true
 - [Github - Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/)
 - [Youtube - How a Transformer works at inference vs training time](https://www.youtube.com/watch?v=IGu7ivuy1Ag)
 - [Youtube - Transformers demystified](https://www.youtube.com/watch?v=C6ZszXYPDDw)
-- [Youtube - But what is a neural network? | Deep learning](https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=1)
+- [Youtube - But what is a neural network? | Deep learning](https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
 
 ### Python
 - [Python for Everyone](https://www.py4e.com/)
