@@ -1,3 +1,5 @@
 .hugo_build.lock
 public/
+ssh/
 up.sh
+setup.sh
