@@ -18,6 +18,6 @@ Annoyingly, the time left is very random.
 
 ![Time left](notification.png)
 
-Also found [some tipa](https://towardsdatascience.com/10-tips-for-a-better-google-colab-experience-33f8fe721b82) to keep it alive.
+Also found [some tips](https://towardsdatascience.com/10-tips-for-a-better-google-colab-experience-33f8fe721b82) to keep it alive.
 
 # To be continued
