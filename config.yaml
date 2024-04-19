@@ -1,0 +1,41 @@
+88baseURL: https://hyperagon.github.io/
+languageCode: en-us
+title: Hyperag⬡n
+theme: PaperMod
+paginate: 3
+params:
+  env: production
+  keywords:
+    - Blog
+    - Portfolio
+  author: Hyperag⬡n
+  images:
+    - static/favicon-16x16.png
+    - static/favicon-32x32.png
+    - static/favicon.png
+  comments: true
+  ShowCodeCopyButtons: true
+  homeInfoParams:
+    Title: Hyperag⬡n
+    Content: |-
+      Programmer by Day
+
+      Wizard by Night
+  socialIcons:
+    - name: Github
+      url: https://github.com/hyperagon
+    - name: itchio
+      url: https://hyperagon.itch.io/
+    - name: LinkedIn
+      url: https://www.linkedin.com/in/vím
+    - name: Twitter
+      url: https://twitter.com/alphachill8
+menu:
+  main:
+    - name: Projects
+      url: projects/
+      weight: 5
+    - name: Tags
+      url: tags/
+      weight: 10
+
