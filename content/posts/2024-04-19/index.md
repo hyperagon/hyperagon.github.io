@@ -5,7 +5,7 @@ date = 2024-04-19T15:18:47Z
 draft = false
 tags = ['yolo', 'goal 3', 'google colab', 'jupyter notebook']
 +++
-A little tired of [Google Colab](), but I seem to have found a way ti cibfurn that it is using the **GOU**,
+A little tired of [Google Colab](https://colab.research.google.com/), but I seem to have found a way to see that it is using the **GOU**,
 
 ![How to use a variable in Jupyter.](variable.png)
 
