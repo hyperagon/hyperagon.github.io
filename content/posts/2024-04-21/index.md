@@ -21,3 +21,5 @@ Or installation failed, stopping me from deploying some distributions.
 
 ![Fedora installation fail](IMG_20240408_173422.jpg)
 ![Predator installlation failed](Screenshot_20240421_151534.png)
+
+I have no doubts that someone messed with my sytem. Sure viruses can happpen, even on Linux, but someone put them here.
