@@ -8,7 +8,8 @@ tags = ['linux']
 So I've been noticing some odd behaviors on my machine.
 At first it was just an ACPI error, it affects the firmware somehow.
 
-![ACPI Error](IMG_20240403_165152.jpg) and ![ACPI error 2](IMG_20240407_162038.jpg)
+![ACPI Error](IMG_20240403_165152.jpg)
+![ACPI error 2](IMG_20240407_162038.jpg)
 
 It mostly works despite those errors.
 
