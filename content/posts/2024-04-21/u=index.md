@@ -5,6 +5,6 @@ date = 2024-04-21T08:32:49+01:00
 draft = false
 tags = ['linux']
 +++
-So I've been noticing some odd behaviors on
+So I've been noticing some odd behaviors on my
 
 ![View Resources](resources.png)
