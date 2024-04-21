@@ -6,5 +6,6 @@ draft = false
 tags = ['linux']
 +++
 So I've been noticing some odd behaviors on my machine.
+At first it was just an ACPI error, it affects the firmware somehow.
 
-![View Resources](resources.png)
+![ACPI Error](IMG_20240403_165152.jpg)
