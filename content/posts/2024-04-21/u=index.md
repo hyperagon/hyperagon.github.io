@@ -16,6 +16,6 @@ But it may ay stop altogether on boot:
 ![Lightdm issue](IMG_20240404_230444.jpg)
 ![Kernel panic](IMG_20240405_192759.jpg)
 
-And sometime installation failed altogether, stopping me from even deploying some distributions.
+And sometime installation failed altogether, stopping me from deploying some distributions.
 ![Fedora installation fail](IMG_20240408_173422.jpg)
 ![Predator installlation failed](Screenshot_20240421_151534.png)
