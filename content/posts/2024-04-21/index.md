@@ -12,7 +12,7 @@ At first it was just an ACPI error, it affects the firmware somehow.
 
 It mostly works despite those errors.
 
-But it may stop altogether on boot:
+But sometimes it may stop boot altogether:
 
 ![Lightdm issue](IMG_20240404_230444.jpg)
 ![Kernel panic](IMG_20240405_192759.jpg)
