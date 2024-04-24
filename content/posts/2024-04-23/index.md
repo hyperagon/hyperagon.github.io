@@ -8,7 +8,7 @@ tags = ['google colab']
 As anyone can see from my latest **Darknet** entries, I've made several changes to accommodate [Google Colab](https://colab.research.google.com/), some of which involved limits that aren't very obvious.
 
 
-![ACPI Error](limit.jpg)
+![Limit Reached Popup](limit.jpg)
 
 My wish-list is thus:
 - Show appropriLimit Popupate warnings/errors when bypassing limits (ex.: RAM)
