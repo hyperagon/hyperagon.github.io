@@ -10,6 +10,6 @@ As anyone can see from my latest **Darknet** entries, I've made several changes 
 ![Limit Reached Popup](limit.png)
 
 My wish-list is thus:
-- Show appropriate limit warnings/errors when bypassing limits (ex.: RAM)
+- Show appropriate limit warnings/errors when bypassing limits instead of either (ex.: RAM)
 - Make it easier to view limits in the resource tab
 - Show when the **GPU** is being used without having to open the resource tabs (there is a warning popup but that only says it once)
