@@ -31,7 +31,7 @@ class LicensePlateDetector:
   ---
 
 lpd = LicensePlateDetector(
-    pth_weights='backup/yolov3-train_last.weights',
+    pth_weights=''/content/gdrive/MyDrive/Colab/darknet/backup/yolov3-train_last.weights',
     pth_cfg='/content/gdrive/MyDrive/Colab/darknet/cfg/yolov3-train.cfg',
     pth_classes='/content/gdrive/MyDrive/Colab/darknet/data/cars/classes.txt'
 )
