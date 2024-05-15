@@ -12,3 +12,5 @@ While **darknet** is stuck around *360 hours left* I tested the last weights to 
 And the plate itself:
 
 ![Final Plate](plate.jpg)
+
+With this I'll take the exercise as complete, having successfully made *Darknet YOLO* detect license plates.
