@@ -31,9 +31,9 @@ class LicensePlateDetector:
   ---
 
 lpd = LicensePlateDetector(
-    pth_weights=DN + 'backup/yolov3-train_last.weights',
-    pth_cfg=DN + 'cfg/yolov3-train.cfg',
-    pth_classes=DN + 'data/cars/classes.txt'
+    pth_weights='backup/yolov3-train_last.weights',
+    pth_cfg='/content/gdrive/MyDrive/Colab/darknet/cfg/yolov3-train.cfg',
+    pth_classes='/content/gdrive/MyDrive/Colab/darknet/data/cars/classes.txt'
 )
 
 # Plot original image with rectangle around the plate
