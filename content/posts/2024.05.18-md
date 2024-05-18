@@ -3,7 +3,7 @@ title = 'LLM Test: Editor'
 summary = 'Ask LLMs to make a text editor'
 date = 2024-05-18T09:34:34+01:00
 draft = true
-tags = ['llm', 'test', 'editor']
+tags = ['llm test', 'editor']
 +++
 
 This time I tried adding a [full page](https://wasimlorgat.com/posts/editor.html) on how to do it but the model reached the maximum tokens (thexe include both input and output).
