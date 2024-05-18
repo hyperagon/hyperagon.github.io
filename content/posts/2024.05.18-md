@@ -1,0 +1,86 @@
++++
+title = 'Snake Game'
+summary = 'Ask LLMs to make a game'
+date = 2024-05-17T09:34:34+01:00
+draft = true
+tags = ['llm', 'snake']
++++
+One of the common tests used by Mathew Berman is to make a **snake game** but there is no need for external libraries.
+Here's an example (note that Python3 comes with the *curses* library):
+```
+# make a snake game using the curses library on python
+# Model: claude-3-opus-20240229
+
+import curses
+import random
+import time
+
+def main(stdscr):
+    curses.curs_set(0)  # Hide the cursor
+    stdscr.nodelay(1)  # Don't wait for user input
+    stdscr.timeout(100)  # Set a timeout for getch()
+
+    # Initialize game variables
+    snake = [(5, 5), (5, 4), (5, 3)]
+    food = (10, 10)
+    direction = curses.KEY_RIGHT
+
+    while True:
+        stdscr.clear()
+
+        # Draw the snake
+        for y, x in snake:
+            stdscr.addstr(y, x, '#')
+
+        # Draw the food
+        stdscr.addstr(food[0], food[1], '*')
+
+        # Get user input
+        key = stdscr.getch()
+
+        # Update the direction based on user input
+        if key == curses.KEY_UP and direction != curses.KEY_DOWN:
+            direction = curses.KEY_UP
+        elif key == curses.KEY_DOWN and direction != curses.KEY_UP:
+            direction = curses.KEY_DOWN
+        elif key == curses.KEY_LEFT and direction != curses.KEY_RIGHT:
+            direction = curses.KEY_LEFT
+        elif key == curses.KEY_RIGHT and direction != curses.KEY_LEFT:
+            direction = curses.KEY_RIGHT
+
+        # Move the snake
+        head = snake[0]
+        if direction == curses.KEY_UP:
+            new_head = (head[0] - 1, head[1])
+        elif direction == curses.KEY_DOWN:
+            new_head = (head[0] + 1, head[1])
+        elif direction == curses.KEY_LEFT:
+            new_head = (head[0], head[1] - 1)
+        elif direction == curses.KEY_RIGHT:
+            new_head = (head[0], head[1] + 1)
+
+        # Check for collision with the walls
+        if new_head[0] < 0 or new_head[0] >= stdscr.getmaxyx()[0] or new_head[1] < 0 or new_head[1] >= stdscr.getmaxyx()[1]:
+            break
+
+        # Check for collision with the snake itself
+        if new_head in snake:
+            break
+
+        snake.insert(0, new_head)
+
+        # Check if the snake ate the food
+        if new_head == food:
+            food = (random.randint(1, stdscr.getmaxyx()[0] - 2), random.randint(1, stdscr.getmaxyx()[1] - 2))
+        else:
+            snake.pop()
+
+        time.sleep(0.1)
+
+    stdscr.clear()
+    stdscr.addstr(0, 0, "Game Over!")
+    stdscr.refresh()
+    time.sleep(2)
+
+curses.wrapper(main)
+```
