@@ -6,9 +6,9 @@ draft = true
 tags = ['llm', 'editor']
 +++
 
-This time I tried adding a ffull page on how to do it but y«the model hit the maximum tokens (thexe include both input and output).
+This time I tried adding a ffull page on how to do it but the model reached the maximum tokens (thexe include both input and output).
 
-* * * 
+```
 # https://wasimlorgat.com/posts/editor.html
 
 import curses
@@ -202,4 +202,4 @@ def main(stdscr):
 
 if __name__ == "__main__":
     curses.wrapper(main)
-* * * 
+```
