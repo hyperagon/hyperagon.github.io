@@ -2,7 +2,7 @@
 title = 'LLM Test: Editor'
 summary = 'Ask LLMs to make a text editor'
 date = 2024-05-18T09:34:34+01:00
-draft = true
+draft = false
 tags = ['llm test', 'editor']
 +++
 
