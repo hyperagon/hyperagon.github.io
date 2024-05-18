@@ -6,7 +6,7 @@ draft = true
 tags = ['llm', 'editor']
 +++
 
-This time I tried adding a ffull page on how to do it but the model reached the maximum tokens (thexe include both input and output).
+This time I tried adding a [full page](https://wasimlorgat.com/posts/editor.html) on how to do it but the model reached the maximum tokens (thexe include both input and output).
 
 ```
 # https://wasimlorgat.com/posts/editor.html
