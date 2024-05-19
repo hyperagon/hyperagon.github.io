@@ -204,7 +204,7 @@ if __name__ == "__main__":
     curses.wrapper(main)
 ```
 
-Then 
+Then asked
 
 ```
 # https://wasimlorgat.com/posts/editor.htm
