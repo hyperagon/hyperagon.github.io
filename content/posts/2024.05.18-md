@@ -16,7 +16,7 @@ import sys
 import argparse
 
 class Window:
-    def __init__(self, n_rows, n_cols, row=0, col=0):
+    def __init__(self, n_rows, n_cols, row=0, col=0):asked 
         self.n_rows = n_rows
         self.n_cols = n_cols
         self.row = row
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     curses.wrapper(main)
 ```
 
-Then asked LLMs to
+Then asked LLMs to add
 
 ```
 # https://wasimlorgat.com/posts/editor.htm
