@@ -204,7 +204,7 @@ if __name__ == "__main__":
     curses.wrapper(main)
 ```
 
-Then asked LLMs to add an
+Then asked LLMs to add a menu
 
 ```
 # https://wasimlorgat.com/posts/editor.htm
