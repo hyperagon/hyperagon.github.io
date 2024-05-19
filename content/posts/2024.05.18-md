@@ -205,6 +205,7 @@ if __name__ == "__main__":
 ```
 
 Then asked LLMs to add a menu on presssing *Escape*, mske it warp from -1 to size-1 and soze to 0.
+To my surprise it used `current_row = (current_row - 1) % len(menu)` which works both ways.
 
 ```
 # https://wasimlorgat.com/posts/editor.htm
