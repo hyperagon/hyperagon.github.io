@@ -241,7 +241,7 @@ def draw_box(stdscr, y1, x1, y2, x2):
         h, w = stdscr.getmaxyx()
 
         # Draw a border around the entire window
-        draw_box(stdscr, 9, 33, 15, 45)  # Draw a box from (5, 10) to (15, 25)
+        draw_box(stdscr, 9, 33, 15, 45)  # Draw a box
 
 ...
 ```
