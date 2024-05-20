@@ -137,6 +137,9 @@ Then asked LLMs to add a menu on presssing *Escape*, make it warp from -1 to siz
 To my surprise it used `current_row = (current_row - 1) % len(menu)` which works both ways.
 
 ```
+# https://wasimlorgat.com/posts/editor.htm
+# 4 prompts
+
 ...
 
 def show_menu(stdscr):
@@ -215,6 +218,9 @@ I used [lmsys](https://chat.lmsys.org/) so tne models kept switching and I also 
 And finally, add s border around that menu.
 
 ```
+# https://wasimlorgat.com/posts/editor.htm
+# 7 prompts
+
 ...
 
 def draw_box(stdscr, y1, x1, y2, x2):
