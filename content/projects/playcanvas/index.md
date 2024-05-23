@@ -7,4 +7,4 @@ date:  2024-05-23T09:24:13Z
 This was an interestng experment, witb a verymodest file-size when exported.
 [PlayCanvas](https://playcanvas.com/) is great for teams.
 
-# [Play my experiment here](plsy.html).
+# [Play my experiment here](play.html).
