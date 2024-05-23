@@ -4,8 +4,8 @@ summary: 'Yet another Game Engine?'
 date:  2024-05-23T09:24:13Z
 ---
 
-This was an interestng experment, witb a very modest filesize (1.4 MB) when exported.
+I tried [PlayCanvas](https://playcanvas.com/), it was an interestng experment.
 
-[PlayCanvas](https://playcanvas.com/) is great for teams. The fact that it is open-source makes me think that it had something to do with [Godot](https://godotengine.org/).
-
+It is great for teams and the fact that it is open-source makes me think that it had something to do with [Godot](https://godotengine.org/) but it has no multiplayer built-in.
+ 
 # [Play it here](play.html).
