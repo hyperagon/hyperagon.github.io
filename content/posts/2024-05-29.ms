@@ -7,4 +7,4 @@ tags = ['static', 'hugo']
 +++
 Added a static page to this website. With [HUGO](https://gohugo.io/) it's really easy, just add it to the `static` folder.
 
-Do note that this requires knowing **HTML** and possibly **CSS** and **Javascript**.
+Do note that this requires knowing **HTML** and possibly **CSS**/**Javascript**.
