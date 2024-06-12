@@ -10,4 +10,4 @@ It is great for teams and the fact that it is open-source makes me think that it
  
 ### [Play it here](play.html)
 
-Or check the project on [Playcanvas itself](https://playcanvas.com/user/hyperagon).
+Or check my profile on [Playcanvas itself](https://playcanvas.com/user/hyperagon).
