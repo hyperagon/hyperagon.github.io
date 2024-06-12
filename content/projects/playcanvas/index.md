@@ -13,4 +13,4 @@ It is great for teams and the fact that it is open-source makes me think that it
 
 or check my profile at [Playcanvas itself](https://playcanvas.com/user/hyperagon).
 
-I find it funny how the Editor only works on *Chromium* but playing it is faster on *Firefox*.
+I find it funny how the Editor only works on *Chromium* but playing it is faster on th3e *Firefox* browser.
