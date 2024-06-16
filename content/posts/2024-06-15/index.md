@@ -11,6 +11,6 @@ I've been using [(Luma) Dream Machine](https://lumalabs.ai/dream-machine/creatio
 
 [Pika labs](https://pika.art/) gives you 250 credits then 30 per day once that runa out but it struggles with cartoon characters.
 
-Sadly neither undestand cartoons very well. but [(Luma) Dream Machine](https://lumalabs.ai/dream-machine/creations) moves things a lot more than [Pika](https://pika.art/).
+[(Luma) Dream Machine](https://lumalabs.ai/dream-machine/creations) moves things a lot more than [Pika](https://pika.art/).
 
 ![Dream Machine output](vlcsnap-2024-06-16-14h53m35s174.png)
