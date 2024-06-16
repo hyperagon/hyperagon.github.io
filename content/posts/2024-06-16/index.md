@@ -1,11 +1,9 @@
 +++
 title = 'Tesxt to Video'
-summary = +++
-title = 'Dream Machine'
-summary = 'Another text-to-video generator.'
+summary = ''
 date = 2024-05-15T09:34:34+01:00
 draft = true
-tags = ['dream machine']
+tags = ['dream machine'. 'pika labs']
 +++
 I've been using [Dream Machine](https://lumalabs.ai/dream-machine/creations) and getting szome odd results whenever I use cartoon images as input.
 
