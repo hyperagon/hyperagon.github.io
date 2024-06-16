@@ -13,7 +13,7 @@ Prompt + Image:
 
 ## Dream Machine
 <video width="320" height="240" controls>
-  <source src="dreammachine.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/hyperagon/hyperagon.github.io/main/content/posts/2024-06-16/dreammachine.mp4" type="video/mp4">
 </video>
 
 ## Pika Labs
