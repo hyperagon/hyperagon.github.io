@@ -9,9 +9,10 @@ So I talked about [Dream Machine](https://lumalabs.ai/dream-machine/creations) a
 
 Prompt + Image:
 `Fam talking to the camera then blowing a kiss while winking`
+![Real Fam]()
 
-
-## Dream Machine:
-![watermarked_video0b332b0c31684421baf31af435ce2eba0.mp4]
+## Dream Machine
+![Dream Maxhine output](watermarked_video0b332b0c31684421baf31af435ce2eba0.mp4)
 
 ## Pika Labs
+!Pika Labs output](watermarked_video0b332b0c31684421baf31af435ce2eba0.mp4)
