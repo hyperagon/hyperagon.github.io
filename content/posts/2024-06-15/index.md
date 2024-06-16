@@ -9,7 +9,7 @@ I've been using [(Luma) Dream Machine](https://lumalabs.ai/dream-machine/creatio
 
 "As good as Sora" is quite the stretch, although the 30 free generations per month is nice.
 
-[Pika labs](https://pika.art/) gives you 250 credits then 30 per day once that runa out but it also struggles with cartoon characters.
+[Pika labs](https://pika.art/) gives you 250 credits then 30 per day once that runa out but it struggles with cartoon characters.
 
 Sadly neither undestand cartoons very well. but [(Luma) Dream Machine](https://lumalabs.ai/dream-machine/creations) moves things a lot more than [Pika](https://pika.art/).
 
