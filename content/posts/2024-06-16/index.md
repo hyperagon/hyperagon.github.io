@@ -12,7 +12,9 @@ Prompt + Image:
 ![Real Fam](realfam.jpg)
 
 ## Dream Machine
-![Dream Machine output](dreammachine.mp4)
+<video width="320" height="240" controls>
+  <source src="dreammachine.mp4" type="video/mp4">
+</video>
 
 ## Pika Labs
 ![Pika Labs output](pikalabs.mp4)
