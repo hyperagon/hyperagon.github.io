@@ -1,12 +1,13 @@
 +++
 title = 'Tesxt to Video'
 summary = ''
-date = 2024-05-15T09:34:34+01:00
+date = 2024-05-16T09:34:34+01:00
 draft = true
 tags = ['dream machine'. 'pika labs']
 +++
-I've been using [Dream Machine](https://lumalabs.ai/dream-machine/creations) and getting szome odd results whenever I use cartoon images as input.
+So I talked about [Dream Machine](https://lumalabs.ai/dream-machine/creations) and [Pika labs](https://pika.art/) but aside from wuat they offer, how good are they?
 
-"As good as Sora" is quite the stretch, although the 30 free generations per month is nice.
+## DDream Machine:
+![]
 
-[Pika labs](https://pika.art/) gives you 250 credits then 30 per day once that runa out but it also struggles with cartoon characters.The next step in 
+## Pika Labs
