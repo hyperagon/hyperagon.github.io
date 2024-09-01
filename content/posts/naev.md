@@ -68,7 +68,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.pay(1000000000)`
 
-## [Disable](https://naev.org/api/modules/pilot.html#disable) (stops after boaerding)
+## [Disable Target](https://naev.org/api/modules/pilot.html#disable) (stops after boarding)
 
 `player.pilot():target():disable(true)`
 
@@ -100,7 +100,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.outfitAdd("Heavy Combat Vessel License")`
 
-## Accesxsories skills (you get these from some missions)
+## Accessories (you get these from some missions)
 
 `player.outfitAdd("Left Boot")`
 `player.outfitAdd("Love Letter")`
