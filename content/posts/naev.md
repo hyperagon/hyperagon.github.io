@@ -11,7 +11,7 @@ tags = ['naev']
 Anyway, the game is quite slow (the bigger the ship the slower) and it takes ages to get to the *heavy stuff*
 so I looked to [cheat and found a page ,which is outdated,](http://denshack.blogspot.com/2016/05/naev-cheats.html) then I digged around and made my own list.
 
-### Resources:
+### Resources
 - https://naev.fandom.com/wiki/Naev_Wiki
 - https://naev.org/api/index.html
 - https://github.com/naev/naev/wiki/FAQ
