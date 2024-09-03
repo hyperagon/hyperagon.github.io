@@ -24,7 +24,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.pilot():setInvincible(true)`
 
-#### Make target invinciblle (use it on your fighters)
+#### Make target invinciblle (use it on your interceptors)
 
 `player.pilot():target():setInvincible(true)`
 
