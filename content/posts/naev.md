@@ -20,15 +20,15 @@ so I looked to [cheat and found a page ,which is outdated,](http://denshack.blog
 
 Hit **F2** to enter codes, **Ctrl+V** works.
 
-### [Invincibility](https://naev.org/api/modules/pilot.html#setInvincible)
+## [Invincibility](https://naev.org/api/modules/pilot.html#setInvincible)
 
 `player.pilot():setInvincible(true)`
 
-### Make Target Invinciblle (use it on your fighters)
+#### Make Target Invinciblle (use it on your fighters)
 
 `player.pilot():target():setInvincible(true)`
 
-### [Set Armor and Shield (Percentage)](https://naev.org/api/modules/pilot.html#setHealth)
+## [Set Armor and Shield (Percentage)](https://naev.org/api/modules/pilot.html#setHealth)
 
 `player.pilot():setHealth(100, 100)`
 
@@ -58,13 +58,13 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.teleport("Sol", true)`
 
-### Visit Pirate Systems (**!!** and **\*** means that you can't land there)
+#### Visit Pirate Systems (**!!** and **\*** means that you can't land there)
 
 `player.teleport("Quorel")`
 
 `player.teleport("New Haven")`
 
-## The only way to reach the Debug System
+#### The only way to reach the Debug System
 
 `player.teleport("Zied")`
 
@@ -92,7 +92,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.outfitAdd("Hyena Bay", 2)`
 
-### Licenses (regardless of requirements)
+#### Licenses (regardless of requirements)
 
 `player.outfitAdd("Medium Weapon License")`
 
@@ -104,7 +104,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.outfitAdd("Heavy Combat Vessel License")`
 
-## Accessories (you get these from some missions)
+#### Accessories (you get these from some missions)
 
 `player.outfitAdd("Left Boot")`
 `player.outfitAdd("Love Letter")`
@@ -114,7 +114,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 `player.outfitAdd("Toy Drone")`
 `player.outfitAdd("Sandwich Holder")`
 
-## Psychic skills (your ship needs the appropriate Sirius equipment)
+#### Psychic skills (your ship needs the appropriate Sirius equipment)
 
 `player.outfitAdd("Seeking Chakra")`
 `player.outfitAdd("Feather Drive")`
@@ -151,7 +151,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 `faction.modPlayerRaw("Dvaered", 100)`
 `faction.modPlayerRaw("Traders Society", 100)`
 
-### Pirates
+#### Pirates
 
 `faction.modPlayerRaw("FLF", 100)`
 `faction.modPlayerRaw("Collective", 100)`
@@ -159,7 +159,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 `faction.modPlayerRaw("Dreamer Clan", 100)`
 `faction.modPlayerRaw("Black Lotus", 100)`
 
-## Discover systems, including neighbors (second true)
+#### Discover systems, including neighbors (second true)
 
 `system.get("Qorel"):setKnown(true, true)`
 `system.get("Eneguoz"):setKnown(true, true)`
