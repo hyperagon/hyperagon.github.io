@@ -15,6 +15,7 @@ so I looked to [cheat and found a page ,which is outdated,](http://denshack.blog
 - https://naev.fandom.com/wiki/Naev_Wiki
 - https://naev.org/api/index.html
 - https://github.com/naev/naev/wiki/FAQ
+- [Fam plays Naev 0.11.5](https://www.youtube.com/watch?v=Z0GeD2DV7Zk&list=PLoa8A9b-8ZhFvQz0Lh-c6-4tFGsBeVg7z)
 
 # Naev codes Verified for version 0.11.5
 
