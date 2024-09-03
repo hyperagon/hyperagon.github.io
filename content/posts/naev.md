@@ -115,7 +115,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 `player.outfitAdd("Toy Drone")`
 `player.outfitAdd("Sandwich Holder")`
 
-#### Psychic skills (your ship needs the appropriate Sirius equipment)
+#### Flow abilities (your ship needs the appropriate Sirius equipment)
 
 `player.outfitAdd("Seeking Chakra")`
 `player.outfitAdd("Feather Drive")`
@@ -190,7 +190,7 @@ In chapter 1, after doing missions for *Commander Soldner* you may find **Lt. Co
 
 ## Sirius
 
-If you go to **Eye of Night** and investigate the distress signal (Ruined Station) you'll get Psychic powers.
+If you go to **Eye of Night** and investigate the distress signal (Ruined Station) you'll get Flow abilities.
 
 `player.teleport("Eye of Night") player.pilot():setPos( vec2.new(8314, -21828) )`
 
