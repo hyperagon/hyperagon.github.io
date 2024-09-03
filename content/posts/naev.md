@@ -185,9 +185,12 @@ In chapter 1, after doing missions for *Commander Soldner* you may find **Lt. Co
 ## Sirius
 
 If you go to **Eye of Night** and investigate the distress signal (Ruined Station) you'll get Psychic powers.
-Then see *Starring Fyrra* in *Trall* and she'll show you the location of the Kal Tok Obelisk (it's in Ulysses), talk with it with Y and complete its puzzle to obtain the `Seeking Chakra` activated outfit.
 
 `player.teleport("Eye of Night") player.pilot():setPos( vec2.new(8314, -21828) )`
+
+Then see *Starring Fyrra* in *Trall* and she'll show you the location of the Kal Tok Obelisk (it's in Ulysses), talk with it with Y and complete its puzzle to obtain the `Seeking Chakra` activated outfit.
+
+`player.teleport("Eye of Night") player.pilot():setPos( vec2.new(-3759, -8180) )`
 
 ## Most Factions
 
