@@ -21,6 +21,10 @@ so I looked to [cheat and found a page ,which is outdated,](http://denshack.blog
 
 Hit **F2** to enter codes, **Ctrl+V** works.
 
+#### Chaining Commands also works, split by space.
+
+`player.outfitAdd("Local System Map") player.refuel()`
+
 ## [Invincibility](https://naev.org/api/modules/pilot.html#setInvincible)
 
 `player.pilot():setInvincible(true)`
