@@ -194,7 +194,7 @@ You may find **Liutenant Czesc** in a (Spaceport) Bar at *Gamma Polaris* and he'
 
 After doing 2 *Liutenant Czesc* missions you may find **Commander Soldner** in a (Spaceport) Bar at *Gamma Polaris* and he'll give dangerous missions then unlock *Heavy Weapon License* and *Heavy Combat Vessel License* in some shops.
 
-In chapter 1, after doing missions for *Commander Soldner* you may find **Lt. Commander Dimitri** at the *Omega Enclave* (in Fortitude), follow his missions then **Commodore Keer** will swap for him and tell you to crush the *ESS Trinity* (in Rockbed, get there through Fortitude -> Pontus -> Rockbed) then you'll join the battle on *C-00*. You will be able to buy *Drones* after.
+In chapter 1, after doing missions for *Commander Soldner* you may find **Lt. Commander Dimitri** at the *Omega Enclave* (in Fortitude), follow his missions then **Commodore Keer** will swap for him and tell you to crush the *ESS Trinity* (in Rockbed, get there through Fortitude -> Pontus -> Rockbed) then to join the battle on *C-00*. You will be able to buy *Drones* after.
 
 ## Sirius
 
