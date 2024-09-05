@@ -137,7 +137,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 `player.outfitAdd("Reality Rip")`
 `player.outfitAdd("House of Mirrors")`
 
-Or go there directly (not all Obelisks exist)
+Or complete the challenge after contacting (Y) the Obelisk (not all exist)
 
 `player.teleport("Ulysses") player.pilot():setPos( vec2.new(8040.138268, -4638.671909) )`
 
