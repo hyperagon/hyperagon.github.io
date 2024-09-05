@@ -135,7 +135,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 `player.outfitAdd("Astral Projection")`
 `player.outfitAdd("Avatar of Sirichana")`
 `player.outfitAdd("Reality Rip")`
-`player.outfitAdd("House of Mirrors)`
+`player.outfitAdd("House of Mirrors")`
 
 `player.teleport("Ulysses") player.pilot():setPos( vec2.new(8040.138268, -4638.671909) )`
 
