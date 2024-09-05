@@ -186,6 +186,11 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.chapterSet(2)`
 
+## [Set Fleet Capacity]https://naev.org/api/modules/player.html#fleetCapacitySet) (You get 199 on Chapter 1, letting you have more than one ship)
+
+`player.fleetCapacitySet(100)`
+
+
 # Walkthrough
 
 ## Empire
