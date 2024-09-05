@@ -21,7 +21,7 @@ so I looked to [cheat and found a page ,which is outdated,](http://denshack.blog
 
 Hit **F2** to enter codes, **Ctrl+V** works.
 
-#### Chaining Commands also works, split by space.
+Chaining Commands also works, split by space.
 
 `player.outfitAdd("Local System Map") player.refuel()`
 
@@ -57,7 +57,7 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.outfitAdd("Ultra Map")`
 
-#### Or learn [Lua](https://www.lua.org/) and hard-code it...
+Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `for _,S in pairs(system.getAll()) do S:setKnown(true, true) end`
 
