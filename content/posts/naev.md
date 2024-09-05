@@ -57,6 +57,10 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.outfitAdd("Ultra Map")`
 
+#### Or learn [Lua](https://www.lua.org/) and hard-code it...
+
+`for _,S in pairs(system.getAll()) do S:setKnown(true, true) end`
+
 ## [Teleport](https://naev.org/api/modules/player.html#teleport) (does not work while landed)
 
 `player.teleport("Gamma Polaris")`
