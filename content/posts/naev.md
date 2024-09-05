@@ -186,7 +186,8 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.chapterSet(2)`
 
-## [Set Fleet Capacity](https://naev.org/api/modules/player.html#fleetCapacitySet) (You get 100 on Chapter 1, letting you deploy more than one ship)
+## [Set Fleet Capacity](https://naev.org/api/modules/player.html#fleetCapacitySet) (You get 100 on Chapter 1)
+
 
 `player.fleetCapacitySet(100)`
 
