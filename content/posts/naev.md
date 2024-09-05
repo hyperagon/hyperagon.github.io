@@ -141,6 +141,8 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.teleport("Churchill") player.pilot():setPos( vec2.new(4792.821912, -10961.912544) )`
 
+...
+
 `player.teleport("Anarbalis") player.pilot():setPos( vec2.new(14731, 5908.31) )`
 
 `player.teleport("Aesir") player.pilot():setPos( vec2.new(-2743.756474, 5429.310318) )`
