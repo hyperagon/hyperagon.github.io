@@ -137,11 +137,11 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 `player.outfitAdd("Reality Rip")`
 `player.outfitAdd("House of Mirrors")`
 
+Or go there directly (not all Obelisks exist)
+
 `player.teleport("Ulysses") player.pilot():setPos( vec2.new(8040.138268, -4638.671909) )`
 
 `player.teleport("Churchill") player.pilot():setPos( vec2.new(4792.821912, -10961.912544) )`
-
-...
 
 `player.teleport("Anarbalis") player.pilot():setPos( vec2.new(14731, 5908.31) )`
 
