@@ -73,6 +73,10 @@ Hit **F2** to enter codes, **Ctrl+V** works.
 
 `player.teleport("Zied")`
 
+###### Or learn [Lua](https://www.lua.org/) and hard-code it...
+
+`for _,S in pairs(system.getAll()) do S:setKnown(true, true) end`
+
 ## [Get money](https://naev.org/api/modules/player.html#pay)
 
 `player.pay(1000000000)`
