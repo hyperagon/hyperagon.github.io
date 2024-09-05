@@ -77,10 +77,6 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.teleport("Zied")`
 
-###### Or learn [Lua](https://www.lua.org/) and hard-code it...
-
-`for _,Syd in pairs(system.getAll()) do Sys:setKnown(true, true) end`
-
 ## [Get money](https://naev.org/api/modules/player.html#pay)
 
 `player.pay(1000000000)`
