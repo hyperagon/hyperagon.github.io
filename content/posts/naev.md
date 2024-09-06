@@ -192,7 +192,7 @@ Or complete the challenge after contacting (Y) the Obelisk (not all exist)
 
 `player.chapterSet(2)`
 
-## [Set Fleet Capacity](https://naev.org/api/modules/player.html#fleetCapacitySet) (You get 100 on Chapter 1, resets)
+## [Set Fleet Capacity](https://naev.org/api/modules/player.html#fleetCapacitySet) (You get 100 on Chapter 1)
 
 `player.fleetCapacitySet(100)`
 
