@@ -200,7 +200,7 @@ Or complete the challenge after contacting (Y) the Obelisk (not all exist)
 
 ## Empire
 
-You may find **Liutenant Czesc** in a (Spaceport) Bar at *Gamma Polaris* and he'll give long-distance missions and unlock new types of cargo missions. (some will require a standing of 15 with the Empire)
+You may find **Liutenant Czesc** in a (Spaceport) Bar and he'll give long-distance missions and unlock new types of cargo missions. (some will require a standing of 15 with the Empire)
 
 After doing 2 *Liutenant Czesc* missions you may find **Commander Soldner** in a (Spaceport) Bar at *Gamma Polaris* and he'll give dangerous missions then unlock *Heavy Weapon License* and *Heavy Combat Vessel License* in some shops.
 
