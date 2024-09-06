@@ -21,7 +21,7 @@ so I looked to [cheat and found a page ,which is outdated,](http://denshack.blog
 
 Hit **F2** to enter codes, **Ctrl+V** works.
 
-Chaining Commands also works, split by space.
+You can also chain commands, split by space.
 
 `player.outfitAdd("Local System Map") player.refuel()`
 
