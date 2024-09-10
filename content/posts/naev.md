@@ -122,6 +122,7 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 `player.outfitAdd("Swamp Bombing")`
 `player.outfitAdd("Toy Drone")`
 `player.outfitAdd("Sandwich Holder")`
+`player.outfitAdd("Fuzzy Dice")`
 
 #### Flow abilities (your ship needs the appropriate Sirius equipment)
 
