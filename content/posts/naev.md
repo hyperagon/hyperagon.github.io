@@ -195,7 +195,7 @@ Or complete the challenge after contacting (Y) the Obelisk (not all exist)
 `system.get("Pas"):setKnown(true, true)`
 `system.get("Effetey"):setKnown(true, true)`
 
-## [Change chapter](https://naev.org/api/modules/player.html#chapterSet)
+## [Change chapter](https://naev.org/api/modules/player.html#chapterSet) (Desn't actually change things)
 
 `player.chapterSet(2)`
 
@@ -225,4 +225,4 @@ Then see *Starring Fyrra* in *Trall* and she'll show you the location of the Kal
 
 ## Most Factions
 
-To go to **Chapter 1** you need to sell *Therite*, *Kermite* and *Vixilium* to a ship near a construction site then leave the system.
+To go to **Chapter 1** you need to sell *Therite*, *Kermite* and *Vixilium* to rhw Administratoer near a construction site then leave the system.
