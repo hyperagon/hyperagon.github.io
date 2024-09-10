@@ -127,8 +127,8 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 `player.outfitAdd("Toy Drone")`
 `player.outfitAdd("Sandwich Holder")`
 `player.outfitAdd("Fuzzy Dice")`
-`player.outfitAdd("Trading Card (Common))`
-`player.outfitAdd("Trading Card (Uncommon))`
+`player.outfitAdd("Trading Card (Common)")`
+`player.outfitAdd("Trading Card (Uncommon)")`
 
 #### Flow abilities (your ship needs the appropriate Sirius equipment)
 
