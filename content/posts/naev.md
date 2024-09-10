@@ -187,7 +187,7 @@ Or complete the challenge after contacting (Y) the Obelisk (not all exist)
 `faction.modPlayerRaw("Dreamer Clan", 100)`
 `faction.modPlayerRaw("Black Lotus", 100)`
 
-## Discover systems, including neighbors (second true)
+## [Discover systems](https://naev.org/api/modules/system.html#setKnown), including neighbors (second true)
 
 `system.get("Qorel"):setKnown(true, true)`
 `system.get("Eneguoz"):setKnown(true, true)`
