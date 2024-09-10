@@ -64,6 +64,10 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 ## [Teleport](https://naev.org/api/modules/player.html#teleport) (does not work while landed)
 
 `player.teleport("Gamma Polaris")`
+`player.teleport("Halir")`
+`player.teleport("New Mars")`
+`player.teleport("Polaris Prime")`
+`player.teleport("Emperor's Fist")`
 
 `player.teleport("Sol", true)`
 
@@ -123,6 +127,8 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 `player.outfitAdd("Toy Drone")`
 `player.outfitAdd("Sandwich Holder")`
 `player.outfitAdd("Fuzzy Dice")`
+`player.outfitAdd("Trading Card (Common))`
+`player.outfitAdd("Trading Card (Uncommon))`
 
 #### Flow abilities (your ship needs the appropriate Sirius equipment)
 
