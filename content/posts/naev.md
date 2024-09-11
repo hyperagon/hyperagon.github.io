@@ -187,9 +187,13 @@ Or complete the challenge after contacting (Y) the Obelisk (not all exist)
 `faction.modPlayerRaw("Dreamer Clan", 100)`
 `faction.modPlayerRaw("Black Lotus", 100)`
 
-## [Add Intrinaic Outfit](https://naev.org/api/modules/pilot.html#outfitAddIntrinsic)
+## [Add Intrinaic Outfit](https://naev.org/api/modules/pilot.html#outfitAddIntrinsic) (default quantity is 1)
 
 `player.pilot():outfitAddIntrinsic("Port & Polish")`
+
+#### You can see these in "Toggle Display"
+
+`player.pilot():outfitAddIntrinsic("Internal Flow Amplifier")`
 
 ## [Discover systems](https://naev.org/api/modules/system.html#setKnown), including neighbors (second true)
 
