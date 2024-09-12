@@ -99,6 +99,8 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.outfitAdd("Laser Turret MK1", 4)`
 
+#### An easy way to get rare outfits
+
 `player.outfitAdd("Antimatter Lance")`
 
 `player.outfitAdd("Energy Harpoon", 2)`
