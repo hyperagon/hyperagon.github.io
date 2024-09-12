@@ -232,6 +232,7 @@ If you go to **Eye of Night** and investigate the distress signal (Ruined Statio
 Then see *Starring Fyrra* in *Trall* and she'll show you the location of the Kal Tok Obelisk (it's in Ulysses), talk with it with Y and complete its puzzle to obtain the `Seeking Chakra` activated outfit.
 
 `player.teleport("Eye of Night") player.pilot():setPos( vec2.new(-3759, -8180) )`
+`player.teleport("Trall")`
 
 ## Most Factions
 
