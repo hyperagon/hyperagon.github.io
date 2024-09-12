@@ -99,6 +99,10 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.outfitAdd("Laser Turret MK1", 4)`
 
+`player.outfitAdd("Antimatter Lance")`
+
+`player.outfitAdd("Energy Harpoon", 2)`
+
 #### For bay slots (with an airplane) you can use docks or bays (hold the **6** key to use)
 
 `player.outfitAdd("Lancelot Bay", 2)`
