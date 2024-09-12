@@ -219,9 +219,15 @@ Or complete the challenge after contacting (Y) the Obelisk (not all exist)
 
 You may find **Liutenant Czesc** in a (Spaceport) Bar and he'll give long-distance missions and unlock new types of cargo missions. (some will require a standing of 15 with the Empire)
 
+`player.teleport("Halir")`
+
 After doing 2 *Liutenant Czesc* missions you may find **Commander Soldner** in a (Spaceport) Bar at *Gamma Polaris* and he'll give dangerous missions then unlock *Heavy Weapon License* and *Heavy Combat Vessel License* in some shops.
 
+`player.teleport("Halir")`
+
 In chapter 1, after doing missions for *Commander Soldner* you may find **Lt. Commander Dimitri** at the *Omega Enclave* (in Fortitude), follow his missions then **Commodore Keer** will swap for him and tell you to crush the *ESS Trinity* (in Rockbed, get there through Fortitude -> Pontus -> Rockbed) then to join the battle on *C-00*. You will be able to buy *Drones* after.
+
+`player.teleport("Omega Enclave")`
 
 ## Sirius
 
@@ -229,10 +235,9 @@ If you go to **Eye of Night** and investigate the distress signal (Ruined Statio
 
 `player.teleport("Eye of Night") player.pilot():setPos( vec2.new(8314, -21828) )`
 
-Then see *Starring Fyrra* in *Trall* and she'll show you the location of the Kal Tok Obelisk (it's in Ulysses), talk with it with Y and complete its puzzle to obtain the `Seeking Chakra` activated outfit.
+Then see *Starring Fyrra* in *Traal* and she'll show you the location of the Kal Tok Obelisk (it's in Ulysses), talk with it with Y and complete its puzzle to obtain the `Seeking Chakra` activated outfit.
 
-`player.teleport("Eye of Night") player.pilot():setPos( vec2.new(-3759, -8180) )`
-`player.teleport("Trall")`
+`player.teleport("Traal")`
 
 ## Most Factions
 
