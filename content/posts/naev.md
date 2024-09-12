@@ -145,15 +145,15 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 `player.outfitAdd("Reality Rip")`
 `player.outfitAdd("House of Mirrors")`
 
-Or complete the challenge after contacting (Y) the Obelisk (not all exist)
+#### Or complete the challenge after contacting (Y) the Obelisk (not all exist)
 
-`player.teleport("Ulysses") player.pilot():setPos( vec2.new(8040.138268, -4638.671909) )`
+`player.teleport("Kal Atok Obelisk")`
 
-`player.teleport("Churchill") player.pilot():setPos( vec2.new(4792.821912, -10961.912544) )`
+`player.teleport("Kal Nuit Obelisk")`
 
-`player.teleport("Anarbalis") player.pilot():setPos( vec2.new(14731, 5908.31) )`
+`player.teleport("Kal Maeo Obelisk")`
 
-`player.teleport("Aesir") player.pilot():setPos( vec2.new(-2743.756474, 5429.310318) )`
+`player.teleport("Kal Sitra Obelisk")`
 
 ## [Get another ship](https://naev.org/api/modules/player.html#shipAdd) (must be on a planet, swap in the *Equipment* tab)
 
