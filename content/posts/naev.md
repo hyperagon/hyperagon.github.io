@@ -153,7 +153,7 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.teleport("Kal Vora Obelisk")`
 
-`player.teleport("Kal Maeo Obelisk")`
+`player.teleport("Kal Maro Obelisk")`
 
 `player.teleport("Kal Sitra Obelisk")`
 
