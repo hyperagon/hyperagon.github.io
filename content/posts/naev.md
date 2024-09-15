@@ -134,6 +134,7 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 `player.outfitAdd("Sandwich Holder")`
 `player.outfitAdd("Fuzzy Dice")`
 `player.outfitAdd("Cyborg Feather")`
+`player.outfitAdd("Broken Nebula Shielding Prototype")`
 `player.outfitAdd("Trading Card (Common)")`
 `player.outfitAdd("Trading Card (Uncommon)")`
 
