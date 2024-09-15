@@ -265,3 +265,5 @@ Then see *Starring Fyrra* in *Traal* and she'll show you the location of the Kal
 ## Most Factions
 
 To go to **Chapter 1** you need to sell *Therite*, *Kermite* and *Vixilium* to rhw Administratoer near a construction site then leave the system.
+
+To increase fleet capacity you can do the *Taioni* missions triggered by exploring one of the ships in *Bastion*.
