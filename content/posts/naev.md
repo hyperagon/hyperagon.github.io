@@ -229,7 +229,9 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 `player.pilot():intrinsicSet( "fbay_rate", 200 )`
 `player.pilot():intrinsicSet( "fbay_reload", 200 )`
 `player.pilot():intrinsicSet( "cargo_mod", 300 )`
-`player.pilot():intrinsicSet( "fuel_mod", 300 )`
+`player.pilot():intrinsicSet( "fuel_mod", 200 )`
+`player.pilot():intrinsicSet( "ew_jump_detect", 200 )`
+`player.pilot():intrinsicSet( "ew_detect", 200 )`
 `player.pilot():intrinsicSet( "misc_hidden_jump_detect", 1 )`
 `player.pilot():intrinsicSet( "misc_instant_jump", 1 )`
 `player.pilot():intrinsicSet( "misc_reverse_thrust", 1 )`
