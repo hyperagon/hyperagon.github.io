@@ -1,7 +1,7 @@
 +++
 title = "Naev Cheats"
 summary = "Getting to the fun faster."
-date = 2024-09-12T08:10:34+01:00
+date = 2024-09-15T08:10:34+01:00
 postedon = 2024-08-14T08:10:34+01:00
 draft = false
 tags = ['naev']
@@ -220,6 +220,19 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 ## [Set Fleet Capacity](https://naev.org/api/modules/player.html#fleetCapacitySet) (You get 100 on Chapter 1)
 
 `player.fleetCapacitySet(100)`
+
+## Set player/ship limits (percentage)
+
+`player.pilot():intrinsicSet( "fbay_health", 200 )`
+`player.pilot():intrinsicSet( "fbay_damage", 200 )`
+`player.pilot():intrinsicSet( "fbay_capacity", 200 )`
+`player.pilot():intrinsicSet( "fbay_rate", 200 )`
+`player.pilot():intrinsicSet( "fbay_reload", 200 )`
+`player.pilot():intrinsicSet( "cargo_mod", 300 )`
+`player.pilot():intrinsicSet( "fuel_mod", 300 )`
+`player.pilot():intrinsicSet( "misc_hidden_jump_detect", 1 )`
+`player.pilot():intrinsicSet( "misc_instant_jump", 1 )`
+`player.pilot():intrinsicSet( "misc_reverse_thrust", 1 )`
 
 # Walkthrough
 
