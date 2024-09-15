@@ -268,7 +268,7 @@ Do mission for *Lucas* and you'll end up finding that you can accept missions fo
 
 ## Wild Ones
 
-Complete all missions in *Minerva station*, located in **Limbo**.
+Complete all missions in *Minerva station*, located in **Limbo**. You'll then be told to go to **New Haven** to get your rewards.
 
 ## Most Factions
 
