@@ -221,7 +221,7 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.fleetCapacitySet(100)`
 
-## Set player/ship limits (percentage)
+## Set pilot/ship limits (percentage)
 
 `player.pilot():intrinsicSet( "fbay_health", 200 )`
 `player.pilot():intrinsicSet( "fbay_damage", 200 )`
