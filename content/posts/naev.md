@@ -262,8 +262,16 @@ Then see *Starring Fyrra* in *Traal* and she'll show you the location of the Kal
 
 `player.teleport("Traal")`
 
+## Raven Claw Clan
+
+Do mission for *Lucas* and you'll end up finding that you can accept missions for them in **Pas**.
+
+## Wild Ones
+
+Complete all missions in *Minerva station*, located in **Limbo**.
+
 ## Most Factions
 
-To go to **Chapter 1** you need to sell *Therite*, *Kermite* and *Vixilium* to rhw Administratoer near a construction site then leave the system.
+To go to **Chapter 1** you need to sell *Therite*, *Kermite* and *Vixilium* to an *Administrator* near a construction site then leave the system.
 
-To increase fleet capacity you can do the *Taioni* missions triggered by exploring one of the ships in *Bastion*.
+To increase fleet capacity you can do the missions in *Taioni* found by exploring one of the ships in *Bastion*.
