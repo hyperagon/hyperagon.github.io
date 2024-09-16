@@ -1,8 +1,7 @@
 +++
 title = "Naev Cheats"
-summary = "Getting to the fun faster."
+summary = "Getting to the fun faster.
 date = 2024-09-15T08:10:34+01:00
-update = 2024-08-14T08:10:34+01:00
 draft = false
 tags = ['naev']
 +++
@@ -12,6 +11,7 @@ Anyway, the game is quite slow (the bigger the ship the slower) and it takes age
 so I looked to [cheat and found a page ,which is outdated,](http://denshack.blogspot.com/2016/05/naev-cheats.html) then I digged around and made my own list.
 
 ### Resources
+
 - https://naev.fandom.com/wiki/Naev_Wiki
 - https://naev.org/api/index.html
 - https://github.com/naev/naev/wiki/FAQ
@@ -269,7 +269,7 @@ Do mission for *Lucas* and you'll end up finding that you can accept missions fo
 
 ## Wild Ones
 
-Complete all missions in *Minerva station*, located in **Limbo**. You'll then be told to go to **New Haven** to get your rewards.
+Complete all missions in *Minerva station*, located in **Limbo**. You'll then be told to go to **New Haven** to get your reward.
 
 ## Most Factions
 
