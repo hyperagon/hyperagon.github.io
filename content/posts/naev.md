@@ -272,7 +272,7 @@ Do mission for *Lucas* and you'll end up finding that you can accept missions fo
 
 ## Wild Ones
 
-Complete all missions in *Minerva station*, located in **Limbo**. You'll then be told to go to **New Haven** to get your reward.
+Complete all missions in *Minerva Station*, located in **Limbo**. You'll then be told to go to **New Haven** to get your reward.
 
 `player.teleport("Minerfa Station")`
 
