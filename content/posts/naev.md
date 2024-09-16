@@ -266,9 +266,9 @@ Then see *Starring Fyrra* in *Traal* and she'll show you the location of the Kal
 
 ## Raven Claw Clan
 
-Do mission for *Lucas* and you'll end up finding that you can accept missions for them in **Pas**.
+Do mission for *Lucas* and you'll end up finding that you can accept missions for them in **Shangris Station**, located in *Pas*.
 
-`player.teleport("Shangris Stations")`
+`player.teleport("Shangris Station")`
 
 ## Wild Ones
 
