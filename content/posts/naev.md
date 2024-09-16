@@ -29,7 +29,7 @@ You can also chain commands, split by space.
 
 `player.pilot():setInvincible(true)`
 
-#### Make target invinciblle (use it on your interceptors)
+#### Make target invincible (use it on your interceptors)
 
 `player.pilot():target():setInvincible(true)`
 
