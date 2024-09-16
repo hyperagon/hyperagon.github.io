@@ -2,7 +2,7 @@
 title = "Naev Cheats"
 summary = "Getting to the fun faster."
 date = 2024-09-15T08:10:34+01:00
-updated = 2024-08-14T08:10:34+01:00
+update = 2024-08-14T08:10:34+01:00
 draft = false
 tags = ['naev']
 +++
