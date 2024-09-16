@@ -268,9 +268,13 @@ Then see *Starring Fyrra* in *Traal* and she'll show you the location of the Kal
 
 Do mission for *Lucas* and you'll end up finding that you can accept missions for them in **Pas**.
 
+`player.teleport("Shangris Stations")`
+
 ## Wild Ones
 
 Complete all missions in *Minerva station*, located in **Limbo**. You'll then be told to go to **New Haven** to get your reward.
+
+`player.teleport("Minerfa Station")`
 
 ## Most Factions
 
