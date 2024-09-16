@@ -280,4 +280,4 @@ Complete all missions in *Minerva Station*, located in **Limbo**. You'll then be
 
 To go to **Chapter 1** you need to sell *Therite*, *Kermite* and *Vixilium* to an *Administrator* near a construction site then leave the system.
 
-To increase fleet capacity you can do the missions in *Taioni* found by exploring one of the ships in *Bastion*.
+To increase fleet capacity you can do the missions in *Taioni* found by exploring one of the derelict ships in *Bastion*.
