@@ -1,6 +1,6 @@
 +++
 title = "Naev Cheats"
-summary = "Getting to the fun faster.
+summary = "Getting to the fun faster."
 date = 2024-09-15T08:10:34+01:00
 postedon = 2024-08-14T08:10:34+01:00
 draft = false
