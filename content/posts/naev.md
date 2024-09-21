@@ -98,9 +98,10 @@ Permanent if *false*.
 
 `player.pilot():target():kill()`
 
-Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kill every enermy.
+Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kill everything.
 
-` for _,Enemy in pairs(player.pilot():getEnemies()) do Enemy:kill() end`
+`for _,Enemy in pairs(player.pilot():getEnemies()) do Enemy:kill() end`
+`for _,Ally in pairs(player.pilot():getAllies()) do Ally:kill() end`
 
 ## [Add outfit to player](https://naev.org/api/modules/player.html#outfitAdd) (default quantity is 1)
 
