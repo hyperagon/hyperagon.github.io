@@ -88,6 +88,10 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 ## [Disable Target](https://naev.org/api/modules/pilot.html#disable)
 
+`player.pilot():target():disable(ftrue)`
+
+Permanent if *false*.
+
 `player.pilot():target():disable(false)`
 
 ## [Kill Target](https://naev.org/api/modules/pilot.html#kill) (["With great power comes great responsibility"](https://youtu.be/guuYU74wU70?t=71))
