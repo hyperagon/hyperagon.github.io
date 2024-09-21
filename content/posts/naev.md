@@ -82,7 +82,7 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.teleport("Zied")`
 
-## [Get money](https://naev.org/api/modules/player.html#pay)
+## [Get money](https://naev.org/api/modules/player.html#pay) (can be negative)
 
 `player.pay(1000000000)`
 
@@ -169,11 +169,15 @@ Permanent if *false*.
 
 `player.shipAdd("Hawking")`
 
+`player.shipAdd("Goddard")`
+
 `player.shipAdd("Empire Peacemaker")`
 
 `player.shipAdd("Ze'lek Diablo")`
 
 `player.shipAdd("Sirius Divinity")`
+
+`player.shipAdd("Pirate Kestrel")`
 
 ## [Add cargo to ship](https://naev.org/api/modules/pilot.html#cargoAdd) (capped by ships cargo)
 
