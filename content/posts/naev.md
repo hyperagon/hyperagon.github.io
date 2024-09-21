@@ -98,6 +98,10 @@ Permanent if *false*.
 
 `player.pilot():target():kill()`
 
+Or if you're a mwgLOMniC kill every enermy.
+
+` for _,Enemy in pairs(player.pilot():getEnemies()) do Enemy:kill() end`
+
 ## [Add outfit to player](https://naev.org/api/modules/player.html#outfitAdd) (default quantity is 1)
 
 `player.outfitAdd("Laser Cannon MK1", 2)`
