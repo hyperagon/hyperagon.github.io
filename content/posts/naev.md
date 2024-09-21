@@ -86,9 +86,9 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.pay(1000000000)`
 
-## [Disable Target](https://naev.org/api/modules/pilot.html#disable) (stops after boarding)
+## [Disable Target](https://naev.org/api/modules/pilot.html#disable)
 
-`player.pilot():target():disable(true)`
+`player.pilot():target():disable(false)`
 
 ## [Kill Target](https://naev.org/api/modules/pilot.html#kill) (["With great power comes great responsibility"](https://youtu.be/guuYU74wU70?t=71))
 
