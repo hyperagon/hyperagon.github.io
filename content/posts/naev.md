@@ -98,7 +98,7 @@ Permanent if *false*.
 
 `player.pilot():target():kill()`
 
-Or if you're a mwgLOMniC kill every enermy.
+Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kill every enermy.
 
 ` for _,Enemy in pairs(player.pilot():getEnemies()) do Enemy:kill() end`
 
