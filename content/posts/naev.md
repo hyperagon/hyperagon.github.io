@@ -135,7 +135,6 @@ Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kil
 
 #### Accessories (you get these from some missions)
 
-`player.outfitAdd("Left Boot")`
 `player.outfitAdd("Love Letter")`
 `player.outfitAdd("Pilot Doll")`
 `player.outfitAdd("Satellite Mock-up")`
@@ -147,6 +146,9 @@ Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kil
 `player.outfitAdd("Broken Nebula Shielding Prototype")`
 `player.outfitAdd("Trading Card (Common)")`
 `player.outfitAdd("Trading Card (Uncommon)")`
+`player.outfitAdd("Left Boot")`
+`player.outfitAdd("Fancy Keyc Chain`
+`player.outfitAdd("Star of Valor")`
 
 #### Flow abilities (your ship needs the appropriate Sirius equipment)
 
