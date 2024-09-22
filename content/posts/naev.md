@@ -172,7 +172,7 @@ Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kil
 
 `player.teleport("Kal Sitra Obelisk")`
 
-## [Get another ship](https://naev.org/api/modules/player.html#shipAdd) (must be on a planet, swap in the *Equipment* tab)
+## [Get another ship](https://naev.org/api/modules/player.html#shipAdd) (must be on a planet with a Shipyard, swap in the *Equipment* tab)
 
 `player.shipAdd("Hawking")`
 
