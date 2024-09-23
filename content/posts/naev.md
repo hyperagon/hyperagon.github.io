@@ -218,7 +218,7 @@ Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kil
 
 `player.pilot():outfitAddIntrinsic("Port & Polish")`
 
-`player.pilot():outfitAddIntrinsic("Crimson Gauntlet Deluxe")`
+`player.pilot():outfitAddIntrinsic("Gauntlet Deluxe")`
 
 `player.pilot():outfitAddIntrinsic("Internal Flow Amplifier")`
 
