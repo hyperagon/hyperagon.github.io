@@ -86,9 +86,9 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.pay(1000000000)`
 
-## [Disable Target](https://naev.org/api/modules/pilot.html#disable)
+## [Disable Target](https://naev.org/api/modules/pilot.html#disable) (permanent if false)
 
-`player.pilot():target():disable(ftrue)`
+`player.pilot():target():disable(false)`
 
 Permanent if *false*.
 
@@ -147,7 +147,7 @@ Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kil
 `player.outfitAdd("Trading Card (Common)")`
 `player.outfitAdd("Trading Card (Uncommon)")`
 `player.outfitAdd("Left Boot")`
-`player.outfitAdd("Fancy Keyc Chain`
+`player.outfitAdd("Fancy Key Chain`
 `player.outfitAdd("Star of Valor")`
 
 #### Flow abilities (your ship needs the appropriate Sirius equipment)
@@ -214,11 +214,11 @@ Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kil
 `faction.modPlayerRaw("Dreamer Clan", 100)`
 `faction.modPlayerRaw("Black Lotus", 100)`
 
-## [Add Intrinaic Outfit](https://naev.org/api/modules/pilot.html#outfitAddIntrinsic) (default quantity is 1)
+## [Add Intrinaic Outfit](https://naev.org/api/modules/pilot.html#outfitAddIntrinsic) (see these in "Toggle Display")
 
 `player.pilot():outfitAddIntrinsic("Port & Polish")`
 
-#### You can see these in "Toggle Display"
+`player.pilot():outfitAddIntrinsic("Crimson Gauntlet Deluxe")`
 
 `player.pilot():outfitAddIntrinsic("Internal Flow Amplifier")`
 
