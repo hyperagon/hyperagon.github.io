@@ -30,7 +30,7 @@ You can also chain commands, split by space.
 
 `player.pilot():setInvincible(true)`
 
-#### Make fleet invincible (not couting interceptors)
+#### Make fleet invincible (not couting your ship or interceptors)
 
 `for _,Ship in pairs(player.fleetList()) do Ship:setInvincible() end`
 
