@@ -76,7 +76,7 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.teleport("Sol", true)`
 
-#### Visit Pirate Systems (**!!** and **\*** means that you can't land there)
+#### Visit Pirate Systems (**!!** means that you can't land there)
 
 `player.teleport("Quorel")`
 
