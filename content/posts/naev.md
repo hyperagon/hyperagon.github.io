@@ -151,7 +151,7 @@ Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kil
 `player.outfitAdd("Trading Card (Common)")`
 `player.outfitAdd("Trading Card (Uncommon)")`
 `player.outfitAdd("Left Boot")`
-`player.outfitAdd("Fancy Key Chain`
+`player.outfitAdd("Fancy Key Chain#")`
 `player.outfitAdd("Star of Valor")`
 
 #### Flow abilities (your ship needs the appropriate Sirius equipment)
