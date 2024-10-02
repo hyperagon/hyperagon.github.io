@@ -6,7 +6,7 @@ postdate = 2024-08-14T08:10:34+01:00
 draft = false
 tags = ['naev']
 +++
-[Naev](https://naev.org/) is a pretty nice [open-source](https://github.com/naev/naev/) game, made with a mixture of [C](https://en.wikipedia.org/wiki/C_(programming_language)) (it uses the [SDL](https://www.libsdl.org/) library) and [Lua](https://www.lua.org/).
+[NAEV](https://naev.org/) is a pretty nice [open-source](https://github.com/naev/naev/) game, made with a mixture of [C](https://en.wikipedia.org/wiki/C_(programming_language)) (it uses the [SDL](https://www.libsdl.org/) library) and [Lua](https://www.lua.org/).
 
 Anyway, the game is quite slow (the bigger the ship the slower) and it takes ages to get to the *heavy stuff*
 so I looked to [cheat and found a page ,which is outdated,](http://denshack.blogspot.com/2016/05/naev-cheats.html) then I digged around and made my own list.
@@ -18,7 +18,7 @@ so I looked to [cheat and found a page ,which is outdated,](http://denshack.blog
 - https://github.com/naev/naev/wiki/FAQ
 - [Fam plays Naev 0.11.5](https://www.youtube.com/watch?v=Z0GeD2DV7Zk&list=PLoa8A9b-8ZhFvQz0Lh-c6-4tFGsBeVg7z)
 
-# Naev codes Verified for version 0.11.5
+# Verified for version 0.11.5
 
 Hit **F2** to enter codes, **Ctrl+V** works.
 
