@@ -42,6 +42,8 @@ http://www.macworld.com/article/2057221/how-to-view-the-library-folder-in-maveri
 	"Fuel Pod" 99
   ```
 
+While you could just edit the ships *fuel* and *cargo space* not all parameters work.
+
 ### Replace Thrusters
 
 ```
