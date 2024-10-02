@@ -300,6 +300,7 @@ Do mission for *Lucas* and you'll end up finding that you can accept missions fo
 Complete all missions in *Minerva Station*, located in **Limbo**. You'll then be told to go to **New Haven** to get your reward.
 
 `player.teleport("Minerva Station")`
+`player.teleport("New Haven")`
 
 ## Most Factions
 
