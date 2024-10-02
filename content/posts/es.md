@@ -32,7 +32,8 @@ I looked to [cheat and found a discussion,](https://steamcommunity.com/app/40441
 ### [Mac OS / OS X](https://steamcommunity.com/app/404410/discussions/0/492379439666619018/)
 `~/Library/ApplicationSupport/endless-sky/saves/`
 
-The Library folder is hidden by default on recent OS X versions. See this article to show it:
+"The Library folder is hidden by default on recent OS X versions. See [this article](
+http://www.macworld.com/article/2057221/how-to-view-the-library-folder-in-mavericks.html) to show it."
 
 ## Add Outifts (they all take mass but outfits space will go negative and still work)
 
@@ -265,8 +266,6 @@ visited Zubeneschamali
 harvested
 logbook
 ```
-
-http://www.macworld.com/article/2057221/how-to-view-the-library-folder-in-mavericks.html
 
 
 
