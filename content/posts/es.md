@@ -41,7 +41,7 @@ The Library folder is hidden by default on recent OS X versions. See this articl
 	"Fuel Pod" 99
   ```
 
-## Replace Thrusters
+### Replace Thrusters
 
 ```
 	"Tyrant Plasma Steering"
