@@ -34,7 +34,7 @@ I looked to [cheat and found a discussion,](https://steamcommunity.com/app/40441
 
 The Library folder is hidden by default on recent OS X versions. See this article to show it:
 
-## Discover Map
+## Discover Map (so much for Endless)
 
 Replace the following
 
