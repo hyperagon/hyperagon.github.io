@@ -57,8 +57,6 @@ Replace the following
 # What you know:
 ...
 harvested
-...
-logbook
 ```
 
 by
@@ -264,7 +262,6 @@ visited Zosma
 visited Zubenelgenubi
 visited Zubeneschamali
 harvested
-logbook
 ```
 
 
