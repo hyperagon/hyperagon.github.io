@@ -21,7 +21,7 @@ I looked to [cheat and found a discussion,](https://steamcommunity.com/app/40441
 
 # Verified for version 0.10.8
 
-## [Save File Location](https://www.reddit.com/r/endlesssky/comments/ob0vsy/where_are_savefiles_located/)
+## [Save File Location](https://www.reddit.com/r/endlesssky/comments/ob0vsy/where_are_savefiles_located/) (each snapshot is a .TXT file)
 
 ### Windows
 `C:\Users\yourusername\AppData\Roaming\endless-sky\saves\`    
