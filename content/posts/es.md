@@ -16,6 +16,7 @@ I looked to [cheat and found a discussion,](https://steamcommunity.com/app/40441
 - https://endless-sky.github.io/
 - https://github.com/endless-sky/endless-sky
 - https://endless-sky.fandom.com/wiki/Endless_Sky_Wiki
+- https://github.com/endless-sky/endless-sky/wiki/PlayersManual
 - https://www.reddit.com/r/endlesssky/
 - [Fam plays ES 0.10.8](https://www.youtube.com/watch?v=H8Ja1rXFIQQ&list=PLoa8A9b-8ZhHNbTAPue7R5ZQ8NgUa11rt)
 
