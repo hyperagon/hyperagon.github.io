@@ -267,7 +267,7 @@ visited Zubeneschamali
 harvested
 ```
 
-### Add Quarg euipment (AlLien tedchnology is simply better)
+### Add Quarg euipment (Alien tedchnology is simply better)
 
 ```
 	outfits
