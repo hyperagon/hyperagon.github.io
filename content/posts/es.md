@@ -267,5 +267,16 @@ visited Zubeneschamali
 harvested
 ```
 
+$$$ Add Quarg euipment (AlLien tedchnology is simply better, except for engines)
 
-
+```
+	"Antimatter Core" 1
+	"Intrusion Countermeasures" 20
+	"Jump Drive"
+	"Medium Graviton Steering"
+	"Medium Graviton Thruster"
+	"Nanotech Battery"
+	"Quantum Shield Generator"
+	"Quarg Anti-Missile" 2
+	"Quarg Skylance" 4
+```
