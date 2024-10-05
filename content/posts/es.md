@@ -267,9 +267,10 @@ visited Zubeneschamali
 harvested
 ```
 
-$$$ Add Quarg euipment (AlLien tedchnology is simply better, except for engines)
+### Add Quarg euipment (AlLien tedchnology is simply better)
 
 ```
+	outfits
 	"Antimatter Core" 1
 	"Intrusion Countermeasures" 20
 	"Jump Drive"
