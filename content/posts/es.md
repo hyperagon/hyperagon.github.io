@@ -271,7 +271,7 @@ harvested
 
 ```
 	outfits
-	"Antimatter Core" 1
+	"Antimatter Core"
 	"Intrusion Countermeasures" 20
 	"Jump Drive"
 	"Medium Graviton Steering"
