@@ -39,6 +39,8 @@ http://www.macworld.com/article/2057221/how-to-view-the-library-folder-in-maveri
 ## Add Outifts (they all take mass but outfits space will go negative and still work)
 
 ```
+	outfits
+	...
 	"Cargo Expansion" 99
 	"Fuel Pod" 99
   ```
@@ -48,9 +50,27 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 ### Replace Thrusters
 
 ```
+	outfitS
+	...
 	"Tyrant Plasma Steering"
 	"Tyrant Plasma Thruster"
 ```
+
+### Add Quarg euipment (Alien technology is simply better)
+
+```
+	outfits
+	"Antimatter Core"
+	"Intrusion Countermeasures" 20
+	"Jump Drive"
+	"Medium Graviton Steering"
+	"Medium Graviton Thruster"
+	"Nanotech Battery"
+	"Quantum Shield Generator"
+	"Quarg Anti-Missile" 2
+	"Quarg Skylance" 4
+```
+
 
 ## Discover Map (so much for Endless)
 
@@ -265,19 +285,4 @@ visited Zosma
 visited Zubenelgenubi
 visited Zubeneschamali
 harvested
-```
-
-### Add Quarg euipment (Alien technology is simply better)
-
-```
-	outfits
-	"Antimatter Core"
-	"Intrusion Countermeasures" 20
-	"Jump Drive"
-	"Medium Graviton Steering"
-	"Medium Graviton Thruster"
-	"Nanotech Battery"
-	"Quantum Shield Generator"
-	"Quarg Anti-Missile" 2
-	"Quarg Skylance" 4
 ```
