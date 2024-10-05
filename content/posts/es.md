@@ -60,6 +60,7 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 
 ```
 	outfits
+	...
 	"Antimatter Core"
 	"Intrusion Countermeasures" 20
 	"Jump Drive"
