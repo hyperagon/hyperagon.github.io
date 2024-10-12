@@ -50,7 +50,7 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 ### Replace Thrusters
 
 ```
-	outfitS
+	outfits
 	...
 	"Tyrant Plasma Steering"
 	"Tyrant Plasma Thruster"
