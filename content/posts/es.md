@@ -73,7 +73,7 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 ```
 
 
-## Discover Map (so much for Endless)
+## Discover Republic/Free Worlds/Syndicate Map
 
 Replace the following
 
