@@ -74,11 +74,11 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 
 ### Discover the Hai
 
-Enter the jump-gate at `Ultima Thule`.
+Enter the wormhole at `Ultima Thule`.
 
 ### Discover the Remnant
 
-Enter the red jump-gate at `Terminus`, you'll need a *Quantum Key Stone*.
+Enter the red wormhole at `Terminus`, you'll need a *Quantum Key Stone*.
 
 ### Add Korath equipment (their crew use *Thermal Repeater Rifle*. making it hard to capture them)
 
