@@ -56,7 +56,7 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 	"Tyrant Plasma Thruster"
 ```
 
-### Add Quarg euipment (Alien technology is mostly better)
+### Add Quarg equipment (Alien technology is mostly better)
 
 ```
 	outfits
@@ -80,7 +80,7 @@ Enter the jump-gate at `Ultima Thule`.
 
 Enter the red jump-gate at `Terminus`, you'll need a *Quantum Key Stone*.
 
-### Add Korath euipment (their crew use *Thermal Repeater Rifle*. making it hard to capture them)
+### Add Korath equipment (their crew use *Thermal Repeater Rifle*. making it hard to capture them)
 
 ```
 	outfits
