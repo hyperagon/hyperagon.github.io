@@ -56,7 +56,7 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 	"Tyrant Plasma Thruster"
 ```
 
-### Add Quarg euipment (Alien technology is simply better)
+### Add Quarg euipment (Alien technology is mostly better)
 
 ```
 	outfits
@@ -72,6 +72,38 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 	"Quarg Skylance" 4
 ```
 
+### Discover the Hai
+
+Enter the jump-gate at `Ultima Thule`.
+
+### Discover the Remnant
+
+Enter the red jump-gate at `Terminus`, you'll need a *Quantum Key Stone*.
+
+### Add Korath euipment (their crew use *Thermal Repeater Rifle*. making it hard to capture them)
+
+```
+	outfits
+	...
+	"Afterburner (Asteroid Class)"
+	"Banisher Grav-Turret"
+	"Bow Drive (Meteor Class)"
+	"Firelight Missile Bank" 2
+	"Firelight Storage Rack"
+	"Fuel Processor"
+	"Grab-Strike Turret" 4
+	Hyperdrive
+	"Jump Drive"
+	"Liquid Sodium Cooler"
+	"Outfits Expansion" 2
+	"Small Heat Shunt"
+	"Steering (Planetary Class)"
+	"Systems Core (Medium)"
+	"Thermal Repeater Rifle" 196
+	"Thruster (Planetary Class)"
+	"Triple Plasma Core"
+	"Warder Anti-Missile"
+```
 
 ## Discover Republic/Free Worlds/Syndicate Map
 
