@@ -78,7 +78,7 @@ Enter the wormhole at `Ultima Thule`.
 
 ### Discover the Remnant
 
-Enter the red wormhole at `Terminus`, you'll need a *Quantum Key Stone*.
+Enter the red wormhole at `Terminus`, you'll need a *Quantum Key Stone*, also 500 fuel just to reach them.
 
 ### Add Korath equipment (their crew use *Thermal Repeater Rifle*. making it hard to capture them)
 
