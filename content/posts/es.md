@@ -319,3 +319,528 @@ visited Zubenelgenubi
 visited Zubeneschamali
 harvested
 ```
+
+## Discover Full Map
+
+```
+visited "1 Axis"
+visited "10 Pole"
+visited "11 Autumn Above"
+visited "11 Spring Below"
+visited "12 Autumn Above"
+visited "14 Pole"
+visited "14 Summer Above"
+visited "14 Winter Below"
+visited "16 Autumn Rising"
+visited "3 Axis"
+visited "3 Pole"
+visited "3 Spring Rising"
+visited "4 Axis"
+visited "4 Spring Rising"
+visited "4 Summer Rising"
+visited "4 Winter Rising"
+visited "5 Axis"
+visited "5 Spring Below"
+visited "5 Summer Above"
+visited "5 Winter Above"
+visited "7 Autumn Rising"
+visited "8 Winter Below"
+visited "9 Spring Above"
+visited Ablodab
+visited Ablub
+visited Acamar
+visited Achernar
+visited Acnanjo
+visited Acrux
+visited Actannka
+visited Adhara
+visited "Ae Ce L-332"
+visited "Ae Ce Q-761"
+visited "Ae Il A-3"
+visited "Ae Il B-11"
+visited "Ae Il F-46"
+visited "Ae Il G-66"
+visited "Ae Il H-24"
+visited "Ae Il I-99"
+visited "Ae Il M-77"
+visited "Ae Il O-96"
+visited Aescolanus
+visited Aierena
+visited "Aik Kamgatake"
+visited Aki'il
+visited Aksek
+visited "Al Dhanab"
+visited Albaldah
+visited Albireo
+visited Alcyone
+visited Aldebaran
+visited Alderamin
+visited Aldhibain
+visited Aleit
+visited Algenib
+visited Algieba
+visited Algol
+visited Algorel
+visited Alheka
+visited Alhena
+visited Alioth
+visited Alkaid
+visited Almaaz
+visited Almach
+visited Alnair
+visited Alnasl
+visited Alnilam
+visited Alnitak
+visited Alniyat
+visited "Alpha Arae"
+visited "Alpha Centauri"
+visited "Alpha Hydri"
+visited Alphard
+visited Alphecca
+visited Alpheratz
+visited Alpherg
+visited Altair
+visited Aludra
+visited Anbrim
+visited "Ancient Hope"
+visited Ankaa
+visited Answer
+visited Antares
+visited Antevorta
+visited Ap'arak
+visited Arcturus
+visited Arculus
+visited Arneb
+visited Ascella
+visited Asikafarnut
+visited Asio
+visited Aspidiske
+visited Atik
+visited Atria
+visited Auhru
+visited Avior
+visited "Avo Chigo"
+visited Aya'k'k
+visited Beginning
+visited Belenos
+visited Bellatrix
+visited Belonging
+visited Belug
+visited Belugt
+visited "Beta Lupi"
+visited Betelgeuse
+visited Bloptab
+visited Blubipad
+visited Blugtad
+visited Boral
+visited "Bore Fah"
+visited "Bosuno Le"
+visited "Bote Asu"
+visited "Bright Void"
+visited "Broken Bowl"
+visited Caeculus
+visited Canopus
+visited Capella
+visited Caph
+visited Cardax
+visited Cardea
+visited Castor
+visited Cebalrai
+visited Celeborim
+visited Chikatip
+visited Chimitarp
+visited Chirr'ay'akai
+visited Chornifath
+visited Chy'chra
+visited Cinxia
+visited Citadelle
+visited Coluber
+visited Companion
+visited Convector
+visited "Cor Caroli"
+visited Cotpoxi
+visited Cshudlye
+visited "Da Ent"
+visited "Da Lest"
+visited Dabih
+visited Danoa
+visited "Dark Hills"
+visited Debrugt
+visited Delia
+visited "Delta Capricorni"
+visited "Delta Sagittarii"
+visited "Delta Velorum"
+visited Deneb
+visited Denebola
+visited Diphda
+visited Dixere
+visited Dschubba
+visited Dubhe
+visited "Due Yoot"
+visited Durax
+visited E-4183
+visited E-9182
+visited Eber
+visited Eblumab
+visited Edusa
+visited Eebu
+visited "Ehma Ti"
+visited Ek'kek'ru
+visited Ekuarik
+visited "Elabi Choati"
+visited Elifennka
+visited Elnath
+visited "Elo Chigo"
+visited Eltanin
+visited Empeles
+visited Eneremprukt
+visited "Eneva Katta"
+visited Enif
+visited Eogho
+visited "Epsilon Leonis"
+visited "Era Natta"
+visited "Eragaru Le"
+visited Es'sprak'ai
+visited Eshkoshtar
+visited Esix
+visited Eteron
+visited Evrae
+visited "Fah Root"
+visited "Fah Soom"
+visited Fala
+visited "Fallen Leaf"
+visited "Far Horizon"
+visited Farbutero
+visited Farinus
+visited Faronektu
+visited Fasitopfar
+visited Fearis
+visited "Fell Omen"
+visited Feraticus
+visited Fereti
+visited Feroteri
+visited Ferukistek
+visited Fingol
+visited Flugbu
+visited Fomalhaut
+visited Fornarep
+visited "Four Pillars"
+visited Fscher
+visited Fumalsamakah
+visited Furmeliki
+visited G-3191
+visited G-6183
+visited G-719
+visited G-819
+visited Gacrux
+visited "Gamma Cassiopeiae"
+visited "Gamma Corvi"
+visited Gaungu
+visited "Genta Bo"
+visited "Gento Ah"
+visited Gerenus
+visited Ghhil
+visited Gienah
+visited Giribea
+visited Girtab
+visited Glubatub
+visited Gomeisa
+visited "Good Omen"
+visited Gorvi
+visited Graffias
+visited Gualetri
+visited Gupta
+visited H-8188
+visited H-9187
+visited Hadar
+visited Hamal
+visited Han
+visited Hassaleh
+visited Hatysa
+visited "Heia Due"
+visited Hesselpost
+visited Heutesl
+visited "Hi Yahr"
+visited Hintar
+visited Holeb
+visited Homeward
+visited Host
+visited Hunter
+visited Huud
+visited Iigen
+visited Iinjma
+visited Iise
+visited Ik'kara'ka
+visited Ildaria
+visited Iliniza
+visited Ilirco
+visited "Imo Dep"
+visited Insitor
+visited "Io Lowe"
+visited "Io Mann"
+visited Ipsing
+visited "Is Ce B-139"
+visited "Is Ce F-422"
+visited "Is Ce G-460"
+visited "Is Ce J-591"
+visited "Is Il T-127"
+visited "Is Il T-94"
+visited "Is Il V-263"
+visited "Is Il X-626"
+visited "Is Il Z-59"
+visited "Is Il Z-814"
+visited Iyech'yek
+visited Izar
+visited "Jentu Centi"
+visited "Jentu Le"
+visited Jied
+visited Jyelio
+visited Ka'ch'chrai
+visited Ka'pru
+visited Kaliptari
+visited Kanguwa
+visited "Kappa Centauri"
+visited Karhio
+visited Kashikt
+visited Kasikfar
+visited "Kaus Australis"
+visited "Kaus Borealis"
+visited "Ki War Ek"
+visited "Kifrana Terberah"
+visited Kilema
+visited Kiluit
+visited Kiro'ku
+visited Kiru'kichi
+visited Kneirc
+visited Kochab
+visited "Kor Ak'Mari"
+visited "Kor En'lakfar"
+visited "Kor Fel'tar"
+visited "Kor Men"
+visited "Kor Nor'peli"
+visited "Kor Tar'bei"
+visited "Kor Zena'i"
+visited Kornephoros
+visited Korsmanath
+visited Kraz
+visited Kugel
+visited Kursa
+visited L-118
+visited L-6181
+visited "Last Word"
+visited Lesath
+visited Levana
+visited Limen
+visited Lire
+visited Lloloi
+visited Lolami
+visited "Lom Tahr"
+visited "Lone Cloud"
+visited Lucina
+visited Lurata
+visited M-1188
+visited MC-42
+visited MS-219
+visited Makferuti
+visited Maoni
+visited Markab
+visited Markeb
+visited Matar
+visited Mebla
+visited Meblumem
+visited Mebsuta
+visited Meftarkata
+visited "Mego Faro"
+visited "Mego Inito"
+visited "Mego Seo"
+visited "Mei Yohn"
+visited Men
+visited Menkalinan
+visited Menkar
+visited Menkent
+visited Merak
+visited Mesuket
+visited Miaplacidus
+visited Miblulub
+visited Mimosa
+visited Minkar
+visited Mintaka
+visited Mirach
+visited Mirfak
+visited Mirzam
+visited Misam
+visited Mizar
+visited Mnashyu
+visited Mohuwo
+visited Moktar
+visited Mora
+visited Msalbit
+visited Muhlifain
+visited Muphrid
+visited Naos
+visited Naper
+visited Nenia
+visited Nihal
+visited Nnatai
+visited Nnaug
+visited Nocte
+visited Nona
+visited Nunki
+visited O-3184
+visited Oblate
+visited Oihaug
+visited Ookmya
+visited Oosuoro
+visited Orbona
+visited Orvala
+visited Pantica
+visited Parca
+visited "Paru Paru"
+visited Pbelnep
+visited Peacock
+visited Pelubta
+visited Peragenor
+visited Peresedersi
+visited Perfica
+visited Persian
+visited Persitar
+visited Phact
+visited Phecda
+visited Pherkad
+visited Phurad
+visited Piadenli
+visited Pik'ro'iyak
+visited Plort
+visited Polaris
+visited Polerius
+visited Pollux
+visited Porrima
+visited Prakacha'a
+visited Procyon
+visited Ptetubo
+visited Ptobeh
+visited Pukako
+visited Quaru
+visited Queri
+visited Rajak
+visited Rasalhague
+visited Rastaban
+visited "Rati Cal"
+visited "Ravu Kon"
+visited Regor
+visited Regulus
+visited Relifer
+visited Remembrance
+visited Rigel
+visited Ritilas
+visited Rouseu
+visited Ruchbah
+visited Rutilicus
+visited Sabik
+visited Sabriset
+visited Sadalmelik
+visited Sadalsuud
+visited Sadr
+visited "Sagittarius A*"
+visited Saiph
+visited Salipastart
+visited Saquergen
+visited Sargas
+visited Sarin
+visited Sayaiban
+visited Scheat
+visited Schedar
+visited Scija
+visited Segesta
+visited Seginus
+visited Seketra
+visited Sepetrosk
+visited Sepriaptu
+visited "Sera Natta"
+visited Sevrelect
+visited Shaula
+visited Sheratan
+visited "Shini Bori"
+visited Si'yak'ku
+visited Sich'ka'ara
+visited Silikatakfar
+visited "Silver Bell"
+visited "Silver String"
+visited Similisti
+visited Sirius
+visited Skeruto
+visited Sko'karak
+visited Sobarati
+visited Sol
+visited "Sol Arach"
+visited "Sol Kimek"
+visited "Sol Saryd"
+visited Solifar
+visited Sospi
+visited Speloog
+visited Spica
+visited "Steep Roof"
+visited Stercutus
+visited Suhail
+visited Sumar
+visited Tais
+visited Talita
+visited "Tania Australis"
+visited Tarazed
+visited Tebuteb
+visited Tejat
+visited Terminus
+visited "Thshybo Le"
+visited Thuban
+visited Torbab
+visited Tortor
+visited Tscera
+visited Turais
+visited U-5188
+visited Uhebe
+visited "Ula Mon"
+visited "Ultima Thule"
+visited Umbral
+visited Unagi
+visited Unukalhai
+visited "Urba Pest"
+visited Uttna
+visited "Uwa Fahn"
+visited "Uwo Seija"
+visited V-2189
+visited Vaiov
+visited Vanguwo
+visited Vega
+visited Vesvii
+visited Vilacira
+visited Vindemiatrix
+visited Volax
+visited Vorsuke
+visited Vulcuja
+visited W-3197
+visited "Wah Ki"
+visited "Wah Oh"
+visited "Wah Yoot"
+visited Waypoint
+visited Wazn
+visited Wei
+visited Wezen
+visited Wreoul
+visited "Xutluno Fali"
+visited "Xutluno Rees"
+visited "Ya Hai"
+visited "Yed Prior"
+visited Yerser
+visited Yli
+visited Yllke
+visited Yranjiu
+visited Zaurak
+visited Zeinar
+visited "Zeta Aquilae"
+visited "Zeta Centauri"
+visited Zolpulti
+visited Zosma
+visited "Zuba Zub"
+visited Zubenelgenubi
+visited Zubeneschamali
+```
