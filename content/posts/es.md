@@ -40,8 +40,9 @@ http://www.macworld.com/article/2057221/how-to-view-the-library-folder-in-maveri
 
 ```
 licenses
-	Pilot's
+	Militia
 	Navy
+	Pilot's
 	"Navy Auxiliary"
 	"Navy Carrier"
 	"Navy Cruiser"
@@ -52,7 +53,6 @@ licenses
 	"Wanderer Outfits"
 	Coalition
 	Heliarch
-	Militia
 account
 ```
 
