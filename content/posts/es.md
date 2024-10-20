@@ -41,6 +41,12 @@ http://www.macworld.com/article/2057221/how-to-view-the-library-folder-in-maveri
 ```
 licenses
 	Pilot's
+	Navy
+	"Navy Auxiliary"
+	"Navy Carrier"
+	"Navy Cruiser"
+	City-Ship
+	"Navy 
 	Remnant
 	"Remnant Capital"
 	Wanderer
