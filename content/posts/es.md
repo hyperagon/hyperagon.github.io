@@ -52,6 +52,7 @@ licenses
 	"Wanderer Outfits"
 	Coalition
 	Heliarch
+	Militia
 account
 ```
 
