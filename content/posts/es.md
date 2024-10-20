@@ -521,6 +521,7 @@ visited Eogho
 visited "Epsilon Leonis"
 visited "Era Natta"
 visited "Eragaru Le"
+visited "Erba Yle"
 visited Es'sprak'ai
 visited Eshkoshtar
 visited Esix
@@ -714,6 +715,8 @@ visited Ookmya
 visited Oosuoro
 visited Orbona
 visited Orvala
+visited Ossipago
+visited Paeli
 visited Pantica
 visited Parca
 visited "Paru Paru"
@@ -818,6 +821,7 @@ visited Tortor
 visited Tscera
 visited Turais
 visited U-5188
+visited Uelawan
 visited Uhebe
 visited "Ula Mon"
 visited "Ultima Thule"
