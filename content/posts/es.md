@@ -46,7 +46,6 @@ licenses
 	"Navy Carrier"
 	"Navy Cruiser"
 	City-Ship
-	"Navy 
 	Remnant
 	"Remnant Capital"
 	Wanderer
