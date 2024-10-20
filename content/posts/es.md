@@ -323,6 +323,7 @@ harvested
 ## Discover Full Map
 
 ```
+What you know:
 visited "1 Axis"
 visited "10 Pole"
 visited "11 Autumn Above"
@@ -843,4 +844,5 @@ visited Zosma
 visited "Zuba Zub"
 visited Zubenelgenubi
 visited Zubeneschamali
+harvedted
 ```
