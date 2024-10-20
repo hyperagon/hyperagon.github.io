@@ -36,6 +36,18 @@ I looked to [cheat and found a discussion,](https://steamcommunity.com/app/40441
 "The Library folder is hidden by default on recent OS X versions. See [this article](
 http://www.macworld.com/article/2057221/how-to-view-the-library-folder-in-mavericks.html) to show it."
 
+## Add Licenses
+
+```
+licenses
+	Pilot's
+	Remnant
+	"Remnant Capital"
+	Wanderer
+	"Wanderer Outfits"
+account
+```
+
 ## Add Outifts (they all take mass but outfits space will go negative and still work)
 
 ```
