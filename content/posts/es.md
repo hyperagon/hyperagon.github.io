@@ -50,6 +50,8 @@ licenses
 	"Remnant Capital"
 	Wanderer
 	"Wanderer Outfits"
+	Coalition
+	Heliarch
 account
 ```
 
