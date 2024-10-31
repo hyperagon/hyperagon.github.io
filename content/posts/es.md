@@ -40,13 +40,13 @@ http://www.macworld.com/article/2057221/how-to-view-the-library-folder-in-maveri
 
 ```
 licenses
+	City-Ship
 	Militia
 	Navy
-	Pilot's
 	"Navy Auxiliary"
 	"Navy Carrier"
 	"Navy Cruiser"
-	City-Ship
+	Pilot's
 	Remnant
 	"Remnant Capital"
 	Wanderer
