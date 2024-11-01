@@ -56,6 +56,15 @@ licenses
 account
 ```
 
+## Get credits
+
+```
+account
+	credits 1000000000000000
+	"salaries income"
+		"Free Worlds" 2100
+```
+
 ## Add Outifts (they all take mass but outfits space will go negative and still work)
 
 ```
