@@ -107,7 +107,7 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 	"Quarg Skylance" 4
 ```
 
-### Vyuir ship (You can find it at Kanguwa but you'll never capture it)
+### Ultimate (Vyuir) ship (You can find it at Kanguwa but you'll never capture it)
 
 ```
 ship vyu-Ir
