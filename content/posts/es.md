@@ -129,6 +129,7 @@ ship vyu-Ir
 		automaton 1
 		bunks 100
 		"cargo space" 1000
+		cooling 100
 		cloak 0.04
 		"disruption protection" 2
 		drag 30
