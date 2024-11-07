@@ -107,7 +107,7 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 	"Quarg Skylance" 4
 ```
 
-### Ultimate (Vyuir) ship (You can find it at Kanguwa but you'll never capture it)
+### Mymic Vyuir ship (At Kanguwa)
 
 ```
 ship vyu-Ir
@@ -216,7 +216,7 @@ Enter the wormhole at `Ultima Thule`.
 
 Enter the red wormhole at `Terminus`, you'll need a *Quantum Key Stone*, also 500 fuel just to reach them.
 
-### Add Korath equipment (their crew use *Thermal Repeater Rifle*. making it hard to capture them)
+### Add Korath equipment (their crew use *Thermal Repeater Rifle*s)
 
 ```
 	outfits
@@ -456,7 +456,7 @@ visited Zubeneschamali
 harvested
 ```
 
-## Discover Full Map
+## Discover Full Map (Pre-Pug)
 
 ```
 What you know:
