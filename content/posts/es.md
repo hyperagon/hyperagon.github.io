@@ -129,6 +129,7 @@ ship vyu-Ir
 		automaton 1
 		bunks 100
 		"cargo space" 1000
+		cloak 0.04
 		"disruption protection" 2
 		drag 30
 		"energy capacity" 60000
@@ -144,6 +145,7 @@ ship vyu-Ir
 		"hull repair rate" 1.9
 		"ion protection" 2
 		"outfit space" 1000
+		ramcoop 100
 		"required crew" 1
 		"reverse thrust" 75
 		"reverse thrusting energy" 20
@@ -160,8 +162,6 @@ ship vyu-Ir
 		"turning energy" 10
 		"turning heat" 5
 		"weapon capacity" 1000
-		cloak 0.04
-		ramcoop 100
 	outfits
 		"Abyssal Composer"
 		"Fate Divider" 2
