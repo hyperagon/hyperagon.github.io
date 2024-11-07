@@ -160,6 +160,8 @@ ship vyu-Ir
 		"turning energy" 10
 		"turning heat" 5
 		"weapon capacity" 1000
+		cloak 0.04
+		ramcoop 100
 	outfits
 		"Abyssal Composer"
 		"Fate Divider" 2
