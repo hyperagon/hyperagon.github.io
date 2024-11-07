@@ -107,7 +107,7 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 	"Quarg Skylance" 4
 ```
 
-### Mymic Vyuir ship (At Kanguwa)
+### Vyuir ship (At Kanguwa)
 
 ```
 ship vyu-Ir
