@@ -107,14 +107,13 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 	"Quarg Skylance" 4
 ```
 
-### Vyuir ship (At Kanguwa)
+### Improved Vyuir ship (At Kanguwa)
 
 ```
 ship vyu-Ir
 	name Solemnity
 	noun entity
 	sprite ship/vyuir/vyuir
-		"frame rate" 4.0000002
 	thumbnail thumbnail/vyuir
 	"never disabled"
 	swizzle 0
@@ -129,12 +128,12 @@ ship vyu-Ir
 		automaton 1
 		bunks 100
 		"cargo space" 1000
-		cooling 100
 		cloak 0.04
+		cooling 200
 		"disruption protection" 2
 		drag 30
 		"energy capacity" 60000
-		"energy generation" 80
+		"energy generation" 800
 		"energy protection" 2
 		"engine capacity" 1000
 		"force protection" 1
@@ -146,9 +145,9 @@ ship vyu-Ir
 		"hull repair rate" 1.9
 		"ion protection" 2
 		"outfit space" 1000
-		ramcoop 100
+		ramscoop 1000
 		"required crew" 1
-		"reverse thrust" 75
+		"reverse thrust" 4000
 		"reverse thrusting energy" 20
 		"reverse thrusting heat" 10
 		"scramble protection" 2
@@ -156,10 +155,10 @@ ship vyu-Ir
 		"shield generation" 13
 		shields 68000
 		"slowing protection" 1
-		thrust 75
-		"thrusting energy" 20
+		thrust 5000
+		"thrusting energy" 200
 		"thrusting heat" 10
-		turn 900
+		turn 2000
 		"turning energy" 10
 		"turning heat" 5
 		"weapon capacity" 1000
@@ -167,12 +166,16 @@ ship vyu-Ir
 		"Abyssal Composer"
 		"Fate Divider" 2
 		"Fate Sealer" 2
+		Hyperdrive
 		"Jump Drive"
+		"Systems Core (Large)" 7
+		"Systemxs Core (Medium)"
+		"Pug Biodefenses" 100
 	crew 0
-	fuel 1000.0002
+	fuel 1000
 	shields 68000
 	hull 49000
-	position -2905.5565 963.48589
+	position 649.83431 -411.60477
 	engine 0 200
 		zoom 1
 		angle 0
