@@ -111,13 +111,12 @@ While you could just edit the ships *fuel* and *cargo space* not all parameters 
 
 ```
 ship vyu-Ir
-	name Solemnity
+	name "Nightmare"
 	noun entity
 	sprite ship/vyuir/vyuir
 	thumbnail thumbnail/vyuir
 	"never disabled"
-	swizzle 0
-	uuid 553341ea-546d-48b4-a2b0-eec5ad7bc2e7
+	uuid 190ae631-fd24-4528-b217-b6f603ea05e5
 	attributes
 		category "Heavy Warship"
 		cost 77777777
@@ -125,57 +124,55 @@ ship vyu-Ir
 		"flare sound" "impulse engine"
 		"reverse flare sound" "impulse engine"
 		"steering flare sound" "impulse engine"
-		automaton 1
+		automaton -1
 		bunks 100
 		"cargo space" 1000
-		cloak 0.04
-		cooling 200
 		"disruption protection" 2
 		drag 30
 		"energy capacity" 60000
-		"energy generation" 800
-		"energy protection" 2
-		"engine capacity" 1000
-		"force protection" 1
-		"fuel capacity" 1000
+		"energy generation" 1000
+		"energy protection" 100
+		"engine capacity" 100000
+		"force protection" 100
+		"fuel capacity" 100000
 		"gun ports" 5
-		"heat dissipation" 6.7
-		"heat generation" 20
+		"heat dissipation" 100
 		hull 49000
-		"hull repair rate" 1.9
-		"ion protection" 2
-		"outfit space" 1000
+		"hull repair rate" 4900
+		"ion protection" 100
+		"ion resistance" 100
+		"outfit space" 100000
 		ramscoop 1000
 		"required crew" 1
-		"reverse thrust" 4000
-		"reverse thrusting energy" 20
-		"reverse thrusting heat" 10
-		"scramble protection" 2
-		"shield energy" 13
-		"shield generation" 13
-		shields 68000
-		"slowing protection" 1
-		thrust 5000
-		"thrusting energy" 200
-		"thrusting heat" 10
-		turn 2000
-		"turning energy" 10
-		"turning heat" 5
-		"weapon capacity" 1000
+		"reverse thrust" 750
+		"scramble protection" 100
+		"scramble resistance" 100
+		"shield generation" 1300
+		shields 6800000
+		"slowing protection" 100
+		thrust 750
+		turn 2400
+		"turret mounts" 14
+		"weapon capacity" 100000
 	outfits
 		"Abyssal Composer"
+		"Drak Anti-Missile Field" 2
+		"Drak Anti-Missile Field (Augmented)" 2
+		"Drak Distancer" 2
+		"Drak Draining Field"
+		"Drak Draining Field (Augmented)"
+		"Drak Turret" 3
+		"Drak Turret (Augmented)" 3
 		"Fate Divider" 2
 		"Fate Sealer" 2
 		Hyperdrive
 		"Jump Drive"
-		"Systems Core (Large)" 7
-		"Systemxs Core (Medium)"
-		"Pug Biodefenses" 100
+		"Systems Core (Large)" 100
 	crew 0
-	fuel 1000
-	shields 68000
+	fuel 100000
+	shields 6800000
 	hull 49000
-	position 649.83431 -411.60477
+	position -762.33152 -209.94623
 	engine 0 200
 		zoom 1
 		angle 0
@@ -202,6 +199,34 @@ ship vyu-Ir
 		under
 	gun 0 -90 "Abyssal Composer"
 		under
+	turret 0 -10 "Drak Anti-Missile Field"
+		over
+	turret 0 -10 "Drak Anti-Missile Field"
+		over
+	turret 0 -10 "Drak Anti-Missile Field (Augmented)"
+		under
+	turret 0 -10 "Drak Anti-Missile Field (Augmented)"
+		under
+	turret 0 -10 "Drak Draining Field"
+		over
+	turret 0 -10 "Drak Draining Field (Augmented)"
+		under
+	turret -40 -13 "Drak Turret"
+		over
+	turret -40 -13 "Drak Turret (Augmented)"
+		under
+	turret 40 -13 "Drak Turret"
+		over
+	turret 40 -13 "Drak Turret (Augmented)"
+		under
+	turret 0 81 "Drak Turret"
+		over
+	turret 0 81 "Drak Turret (Augmented)"
+		under
+	turret -55 16 "Drak Distancer"
+		over
+	turret 55 16 "Drak Distancer"
+		over
 	explode "huge explosion" 15
 	explode "large explosion" 50
 	explode "medium explosion" 70
