@@ -31,8 +31,8 @@ Wizard by Night"""
     url = "https://www.linkedin.com/in/vím"
 
     [[params.socialIcons]]
-    name = "Twitter"
-    url = "https://twitter.com/alphachill8"
+    name = "X"
+    url = "https://x.com/alphachill8"
 
 #    [[params.socialIcons]]
 #    name = "email"
