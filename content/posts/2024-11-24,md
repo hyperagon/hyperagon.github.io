@@ -1,9 +1,13 @@
 +++
 title = "No Politics"
 summary = "A new game engine?"
-date = 2024-11-19T08:10:34+01:00
+date = 2024-11-24T08:10:34+01:00
 draft = false
-tags = ['godot', 'redot']
+tags = ['godot', 'redot', 'blazium']
 +++
-I recewntly learned about [Redot](https://www.redotengine.org/). a fork of the [Godot game engine](https://godotengine.org/) that was made in response to its [Community issues](https://www.youtube.com/watch?v=KzZhJVgBKiI).
-Sadly it's mostly judt a recolor for now.
+I recently learned about [Redot](https://www.redotengine.org/). a fork of the [Godot game engine](https://godotengine.org/) that was made in response to its [community issues](https://www.youtube.com/watch?v=KzZhJVgBKiI).
+Sadly it's mostly just a recolor for now but it hsf s [game jam](https://itch.io/jam/redotgamjam).
+
+Wait, then [Blazium](https://github.com/blazium-engine/blazium) was made [due to taking donations for things that they did not create](https://www.youtube.com/watch?v=cGc6DRaKqH4).
+
+What a mess.
