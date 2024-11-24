@@ -1,0 +1,9 @@
++++
+title = "No Politics"
+summary = "A new game engine?"
+date = 2024-11-19T08:10:34+01:00
+draft = false
+tags = ['godot', 'redot']
++++
+I recewntly learned about [Redot](https://www.redotengine.org/). a fork of the [Godot game engine](https://godotengine.org/) that was made in response to its [Community issues](https://www.youtube.com/watch?v=KzZhJVgBKiI).
+Sadly it's mostly judt a recolor for now.
