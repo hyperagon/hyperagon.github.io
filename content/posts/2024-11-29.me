@@ -1,15 +1,34 @@
++++
+title = "How to Update?"
+summary = "Configuration shenanigans."
+date = 2024-11-20T08:10:34+01:00
+draft = false
+tags = ['parrot os']
++++
+I was getting errors when using `apt update` on **Parrot OS** about `lory*  being mixed with `parrot`.
+Turns out that this OS uses two files to list repositorires anf they had different configurations.
 
+### sudo nano  /etc/apt/sources.list
 
-I was getting errors when using `apt update` on Parrot OS about "lory" being mixed with "parrot".
-Turns out that Parrrot uses two files to list repositorires anf they had different configurations.
-
-sudo nano  /etc/apt/sources.list
-
+```
 deb http://deb.parrot.sh/parrot lory main contrib non-free non-free-firmwarei
 deb-src http://deb.parrot.sh/parrot lory main contrib non-free non-free-firmware
+```
 
+### sudo nano  /etc/apt/sources.list.d/parrot.list
 
-sudo nano  /etc/apt/sources.list.d/parrot.list
+Replace `deb https://deb.parrot.sh/parrot parrot main contrib non-free` with `deb http://deb.parrot.sh/parrot lory main contrib non-free non-free-firmware`.
 
-#deb https://deb.parrot.sh/parrot parrot main contrib non-free
-deb http://deb.parrot.sh/parrot lory main contrib non-free non-free-firmware
+Apparently *lory* is the name for the long term support and there is somwe got confusion on the configuration.
+
+## Update!
+
+```
+sudo apt-get update
+sudo apt-get upgrade
+```
+
+## Resources:
+- [Documentation on Package Manager](https://www.parrotsec.org/docs/configuration/parrot-software-management/#package-manager)
+- [Sudo apt-get issues on Parrot](https://usercomp.com/news/1404006/parrot-os-5-2-sudo-apt-get-update-issue)
+- [The Repository](https://deb.parrot.sh/parrot/dists/lory/)
