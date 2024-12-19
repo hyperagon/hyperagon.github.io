@@ -77,6 +77,11 @@ showtoc = true
 - [PyTorch Hub for Researchers](https://pytorch.org/hub/research-models)
 - [Github - Open LLMs](https://github.com/eugeneyan/open-llms)
 
+## Alignment
+- [Mesa-Optimizers and Inner Alignment](https://www.youtube.com/watch?v=KUkHhVYv3jU)
+- [Deceptive Misaligned Mesa-Optimisers?](https://www.youtube.com/watch?v=IeWljQw3UgQ)
+- [Why Does AI Lie, and What Can We Do About It?](https://www.youtube.com/watch?v=w65p_IIp6JY)
+
 ### List
 - [Format Converter](https://roboflow.com/formats/yolo-darknet-txt)
 - [Netron - Model viewer](https://github.com/lutzroeder/netron?tab=readme-ov-file)
