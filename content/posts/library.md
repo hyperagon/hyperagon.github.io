@@ -82,7 +82,7 @@ showtoc = true
 - [Deceptive Misaligned Mesa-Optimisers?](https://www.youtube.com/watch?v=IeWljQw3UgQ)
 - [Why Does AI Lie, and What Can We Do About It?](https://www.youtube.com/watch?v=w65p_IIp6JY)
 
-### List
+## List
 - [Format Converter](https://roboflow.com/formats/yolo-darknet-txt)
 - [Netron - Model viewer](https://github.com/lutzroeder/netron?tab=readme-ov-file)
 - [Deeplearning - Chatgpt Prompt Engineering](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
@@ -99,7 +99,7 @@ showtoc = true
 - [Github - Awesome ML](https://github.com/underlines/awesome-ml/tree/master)
 - [Github - Build a Large Language Model (From Scratch)](https://github.com/rasbt/LLMs-from-scratch)
 
-### Course
+## Course
 - [Github - Large Language Model Course](https://github.com/LouisShark/chatgpt_system_prompt/tree/a0c2ba77f6ede9c434378af7b4d81f228d9b5ff8/prompts/gpts/knowledge/LLM%20Course)
 - [Github - Large Language Model Course](https://github.com/mlabonne/llm-course)
 - [HuggingFace Course](https://huggingface.co/learn/nlp-course/chapter1/1)
