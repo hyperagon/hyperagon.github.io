@@ -1,7 +1,7 @@
 +++
 title = 'Learning AI (Library)'
 summary = 'A big list of learning resources.'
-date = 2024-03-08T11:30:03+01:01
+date = 2026-01-22T11:30:03+01:01
 draft = false
 weight = 1 # Pin it
 tags = ['machine learning', 'library', 'learn']
@@ -46,6 +46,7 @@ showtoc = true
 - [Learn PyTorch](https://www.learnpytorch.io/)
 - [Youtube - Learn PyTorch for deep learning in a day](https://www.youtube.com/watch?v=Z_ikDlimN6A)
 - [PyTorch Tutorial (2017)](https://github.com/MorvanZhou/PyTorch-Tutorial)
+- [Neural Networks: Zero to Hero](https://www.youtube.com/watch?v=PaCmpygFfXo&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ)
 
 ### TensorFlow (Python / Javascript / Mobile)
 - [Youtube - TensorFlow in 100 Seconds](https://www.youtube.com/watch?v=i8NETqtGHms)
