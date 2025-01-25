@@ -1,0 +1,29 @@
++++
+title = "Jupyter Notebook Setup"
+summary = "How to set Jupyter Notebook up"
+date = 2025-01-25T08:10:34+01:00
+draft = false
+tags = ['jupyter lab', 'pytorch']
++++
+So I've been watching [Andrej Karpathy's](https://www.youtube.com/@AndrejKarpathy) videos and he makes good use of [Jupyter Notebook](https://jupyter.org/) and [PyTorch](https://pytorch.org/).
+
+I decided to make a post noting how to installl both of these in a [Python](https://www.python.org/downloads/) environment.
+To start off we make said environment.
+`python -m venv env`
+
+Then just adtivate it and install everything.
+```
+source env/bin/activate
+pip install --upgrade pip
+pip install --upgrade ipython jupyter
+pip install --upgrade torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+```
+You can get thesw commands from the [Jupyter Lab website](https://jupyter.org/install) and [PyTorch website](https://pytorch.org/get-started/locally/), respevtively.
+I added the --upgrade to future-proof it.
+
+Now just make a bash script to run it.
+```
+#!/bin/bash
+source env/bin/activate
+jupyter notebook
+```
