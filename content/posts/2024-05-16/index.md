@@ -5,7 +5,7 @@ date = 2024-05-16T09:34:34+01:00
 draft = false
 tags = ['dream machine', 'pika labs', 'text to video']
 +++
-I've been using [(Luma) Dream Machine](https://lumalabs.ai/dream-machine/creations) and getting szome odd results whenever I use cartoon images as input.
+I've been using [(Luma) Dream Machine](https://lumalabs.ai/dream-machine/creations) and getting some odd results whenever I use cartoon images as input.
 
 "As good as Sora" is quite the stretch although the 30 free generations per month is nice.
 
