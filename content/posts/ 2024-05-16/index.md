@@ -3,7 +3,7 @@ title = 'Dream Machine'
 summary = 'Another text-to-video generator.'
 date = 2024-05-16T09:34:34+01:00
 draft = false
-tags = ['dream machine', 'pika labs', 'tert to video']
+tags = ['dream machine', 'pika labs', 'text to video']
 +++
 I've been using [(Luma) Dream Machine](https://lumalabs.ai/dream-machine/creations) and getting szome odd results whenever I use cartoon images as input.
 
