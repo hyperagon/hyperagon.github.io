@@ -18,7 +18,7 @@ pip install --upgrade pip
 pip install --upgrade ipython jupyter
 pip install --upgrade torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 ```
-You can get the commands from the [Jupyter Lab website](https://jupyter.org/install) and [PyTorch website](https://pytorch.org/get-started/locally/), respevtively.
+You can get the commands from the [Jupyter Lab website](https://jupyter.org/install) and [PyTorch website](https://pytorch.org/get-started/locally/), respectively.
 I added the --upgrade to future-proof it.
 
 Now just make a bash script to run it.
