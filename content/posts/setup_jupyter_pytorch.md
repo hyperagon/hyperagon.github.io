@@ -29,4 +29,4 @@ jupyter notebook
 ```
 And it's ready to use. Do make sure that you are editing **.ipynb** files or you'll get a basic text-editor, it happened to me when editing a **.py** file.
 
-Note that this is folder-specific so don't renme it.
+Note that this is folder-specific so don't rename it.
