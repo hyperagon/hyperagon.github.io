@@ -280,7 +280,7 @@ Replace the following
 harvested
 ```
 
-by
+with
 
 ```
 # What you know:
