@@ -14,4 +14,4 @@ while it does not have cheats per-se, you can move and copy save files (the path
 
 [*Hellfire*](https://en.wikipedia.org/wiki/Diablo%3A_Hellfire) brought extra spells, oils, the Monk class and 8 new levels.
 
-If you're using Windows you may find [the Bobafett Hero Editor/Cheat Engine](https://github.com/iccugs/bobafett_compiled_with_cheat_table) useful as well as other tools by [Diasurgical](https://github.com/diasurgical).
+If you're using Windows you may find [the Bobafett Hero Editor](https://github.com/iccugs/bobafett_compiled_with_cheat_table)/[Cheat Engine](https://fearlessrevolution.com/viewtopic.php?t=16678) useful as well as other tools by [Diasurgical](https://github.com/diasurgical).
