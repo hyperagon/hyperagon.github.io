@@ -10,7 +10,7 @@ while it does not have cheats per-se, you can move and copy save files (the path
 
 # Produced in version 1.5.3
 
-[My Save Files](/devilution.zip) have the stash (Gillian) chock-full of goodies, both the [*Diablo*](https://en.wikipedia.org/wiki/Diablo_(video_game)) (.sv) and [*Hellfire*](https://en.wikipedia.org/wiki/Diablo%3A_Hellfire) (.hsv) versions, although *Hellfire* reset everything and the later also has items.
+[My Save Files](/devilution.zip) have the stash (Gillian) chock-full of goodies, both the [*Diablo*](https://en.wikipedia.org/wiki/Diablo_(video_game)) (.sv) and [*Hellfire*](https://en.wikipedia.org/wiki/Diablo%3A_Hellfire) (.hsv) versions, although *Hellfire* reset everything and the save also has items.
 
 [*Hellfire*](https://en.wikipedia.org/wiki/Diablo%3A_Hellfire) brought extra spells, oils, the Monk class and 8 new levels.
 
