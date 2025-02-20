@@ -17,7 +17,7 @@ while it does not have cheats per-se, you can move and copy save files (the path
 If you're using Windows you may find [the Bobafett Hero Editor](https://github.com/iccugs/bobafett_compiled_with_cheat_table)/[Cheat Engine](https://fearlessrevolution.com/viewtopic.php?t=16678) useful as well as other tools by [Diasurgical](https://github.com/diasurgical).
 
 ### Resources (courtesy of [Mistral](https://chat.mistral.ai/chat))
-- [Ladik MPQ Editor](https://www.hiveworkshop.com/threads/ladiks-mpq-editor.249562/)
+- [Ladik MPQ Editor](https://www.hiveworkshop.com/threads/ladiks-mpq-editor.249562/) (this is an older version but it extracts well)
 - [Zezula MPQ Editor](https://www.zezula.net/en/mpq/download.html)
 - [StormLib](https://github.com/ladislav-zezula/StormLib) (what the MPQ Editors use)
 - [Ghast's Groto](https://mgpat-gm.github.io/index.html) (listfiles)
