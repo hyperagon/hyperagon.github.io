@@ -20,4 +20,4 @@ If you're using Windows you may find [the Bobafett Hero Editor](https://github.c
 - [Ladik MPQ Editor](https://www.hiveworkshop.com/threads/ladiks-mpq-editor.249562/) (this is an older version but it extracts well)
 - [Zezula MPQ Editor](https://www.zezula.net/en/mpq/download.html)
 - [StormLib](https://github.com/ladislav-zezula/StormLib) (what the MPQ Editors use)
-- [Ghast's Groto](https://mgpat-gm.github.io/index.html) (listfiles, required to know what some files are named)
+- [Ghast's Groto](https://mgpat-gm.github.io/index.html) (listfiles, required to know what files are named)
