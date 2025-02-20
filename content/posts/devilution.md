@@ -1,7 +1,7 @@
 +++
 title = "DevilutionX"
 summary = "Reviving Diablo"
-date = 2025-02-03T08:10:34+01:00
+date = 2025-02-20T08:10:34+01:00
 draft = false
 tags = ['devilution']
 +++
@@ -15,3 +15,8 @@ while it does not have cheats per-se, you can move and copy save files (the path
 [*Hellfire*](https://en.wikipedia.org/wiki/Diablo%3A_Hellfire) brought extra spells, oils, the Monk class and 8 new levels.
 
 If you're using Windows you may find [the Bobafett Hero Editor](https://github.com/iccugs/bobafett_compiled_with_cheat_table)/[Cheat Engine](https://fearlessrevolution.com/viewtopic.php?t=16678) useful as well as other tools by [Diasurgical](https://github.com/diasurgical).
+
+With the help of [Mistral](https://chat.mistral.ai/chat) I was able to find these useful resources:
+- [Ladik MPQ Editor](https://www.hiveworkshop.com/threads/ladiks-mpq-editor.249562/)
+- [Zezula MPQ Editor](https://www.zezula.net/en/mpq/download.html)
+- [StormLib](https://github.com/ladislav-zezula/StormLib)
