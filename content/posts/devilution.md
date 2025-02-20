@@ -18,6 +18,6 @@ If you're using Windows you may find [the Bobafett Hero Editor](https://github.c
 
 With the help of [Mistral](https://chat.mistral.ai/chat) I was able to find these useful resources:
 - [Zezula MPQ Editor](https://www.zezula.net/en/mpq/download.html)
-- [Ladik MPQ Editor](https://www.hiveworkshop.com/threads/ladiks-mpq-editor.249562/) (same but version 3.6)
-- [StormLib](https://github.com/ladislav-zezula/StormLib) (What the MPQ Editor users)
+- [Ladik MPQ Editor](https://www.hiveworkshop.com/threads/ladiks-mpq-editor.249562/)
+- - [StormLib](https://github.com/ladislav-zezula/StormLib) (What the MPQ Editor users)
 - [Ghast's Groto](https://mgpat-gm.github.io/index.html) (listfiles)
