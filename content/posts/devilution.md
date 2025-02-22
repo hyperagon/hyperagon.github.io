@@ -22,4 +22,4 @@ If you're using Windows you may find [the Bobafett Hero Editor](https://github.c
 - [StormLib](https://github.com/ladislav-zezula/StormLib) (what the MPQ Editors use)
 - [Ghast's Groto](https://mgpat-gm.github.io/index.html) (listfiles, required to know what files are named)
 
-The lisfiles on **Diasurgical** are more complete, like the one for [save-games](https://github.com/diasurgical/devilutionx-mpq-tools/blob/main/data/save-listfile.txt).
+*Update:* The lisfiles on **Diasurgical** are more complete, like the one for [save-games](https://github.com/diasurgical/devilutionx-mpq-tools/blob/main/data/save-listfile.txt).
