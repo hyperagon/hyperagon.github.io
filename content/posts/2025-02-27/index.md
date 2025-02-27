@@ -72,7 +72,7 @@ for i in range(1000):
 
 env.close()
 
-if not train:
+if not render and not train:
     save = input("Save GIF (y/N) ? ")
     if 'y' in save.lower():
         import imageio # pip install imageio
