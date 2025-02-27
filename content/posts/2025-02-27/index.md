@@ -10,4 +10,4 @@ Unfortunately some of the times it does not work, and it's no wonder if we're ju
 
 Anyway it is still amazing when it does work.
 
-![A mostly working example.](best2.png)
+![A mostly working example.](best2.gif)
