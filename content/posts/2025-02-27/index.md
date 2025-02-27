@@ -14,7 +14,7 @@ Anyway it is still amazing when it does work.
 
 This example uses the default environment (*LunarLander-v3*). Thanks to [Mistral](https://chat.mistral.ai/chat) for the code to save a GIF.
 
-Here's the [Python](https://www.python.org/) script in case you want to try yourself.
+Here's the [Python](https://www.python.org/) script in case you want to try yourself:
 
 ```
 # pip intall gymnasium==1.0.0
