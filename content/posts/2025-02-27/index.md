@@ -15,9 +15,10 @@ Anyway it is still amazing when it does work.
 This example is one of the simplest, uding the default environment.
 
 ```
-$ pip intall gymnasium
-# pip show stable-baselines3
+# pip intall gymnasium==1.0.0
+# pip show gymnasium
 # pip install stable-baselines3==2.5.0
+# pip show stable-baselines3
 
 import numpy as np
 import gymnasium as gym
