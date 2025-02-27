@@ -3,7 +3,8 @@ title = "RL does not work?"
 summary = "70% of the times."
 date = 2025-02-27T08:10:34+01:00
 draft = false
-tags = ['stable baselines 3', 'python']
+tags = ['ai', 'games', 'gymnasium', 'stable baselines 3', 'python']
++++
 +++
 Unfortunately some of the times it does not work, and it's no wonder since we're just checking if mostly random results that we got performs well. It's a brute-force method.
 
