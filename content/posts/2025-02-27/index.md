@@ -45,7 +45,6 @@ if 'y' in render.lower():
 else:
     env = gym.make("LunarLander-v3", render_mode='rgb_array')
     train = input("Train (y/N) ? ")
-    
                              
 env = Monitor(env, LOGDIR)
 
