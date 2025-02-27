@@ -71,14 +71,15 @@ for i in range(1000):
 
 env.close()
 
-save = input("Save GIF (y/N) ? ")
-if 'y' in save.lower():
-    import imageio # pip install imageio
-    GIF_PATH = 'best.gif'
+if not train:
+    save = input("Save GIF (y/N) ? ")
+    if 'y' in save.lower():
+        import imageio # pip install imageio
+        GIF_PATH = 'best.gif'
+        
+        # Reset the environment and unpack the tuple
+        obs, info = env.reset()  # Gym API returns (obs, info)
     
-    # Reset the environment and unpack the tuple
-    obs, info = env.reset()  # Gym API returns (obs, info)
-
-    imageio.mimsave(GIF_PATH, frames, fps=12)
-    print(f"GIF saved to {GIF_PATH}")
+        imageio.mimsave(GIF_PATH, frames, fps=12)
+        print(f"GIF saved to {GIF_PATH}")
 ```
