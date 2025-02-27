@@ -9,3 +9,5 @@ Unfortunately some of the times it does not work, and it's no wonder if we're ju
 [Check this article out, it's a realistic take on the subject.](https://www.alexirpan.com/2018/02/14/rl-hard.html)
 
 Anyway it is still amazing when it does work.
+
+![A mostly working example.](best2.png)
