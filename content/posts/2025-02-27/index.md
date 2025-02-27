@@ -12,7 +12,7 @@ Anyway it is still amazing when it does work.
 
 ![A mostly working example.](best2.gif)
 
-This example is one of the simplest, uding the default environment.
+This example is one of the simplest, using the default environment. Thanks to [Mistral](https://chat.mistral.ai/chat) for the code to save a GIF.
 
 ```
 # pip intall gymnasium==1.0.0
