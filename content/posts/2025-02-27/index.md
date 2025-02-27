@@ -13,6 +13,7 @@ Anyway it is still amazing when it does work.
 ![A mostly working example.](best2.gif)
 
 This example uses the default environment (*LunarLander-v3*). Thanks to [Mistral](https://chat.mistral.ai/chat) for the code to save a GIF.
+Here's the script with a bunch of coments, I added several y/N options in case you want to try yourself.
 
 ```
 # pip intall gymnasium==1.0.0
