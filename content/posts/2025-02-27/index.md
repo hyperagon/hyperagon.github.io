@@ -5,7 +5,7 @@ date = 2025-02-27T08:10:34+01:00
 draft = false
 tags = ['stable baselines 3', 'python']
 +++
-Unfortunately some of the times it does not work, and it's no wonder since we're just checkkining if the random results that we got performs well. It's a brute-force method.
+Unfortunately some of the times it does not work, and it's no wonder since we're just checking if the random results that we got performs well. It's a brute-force method.
 [Check this article out, it's a realistic take on the subject.](https://www.alexirpan.com/2018/02/14/rl-hard.html)
 
 Anyway it is still amazing when it does work.
