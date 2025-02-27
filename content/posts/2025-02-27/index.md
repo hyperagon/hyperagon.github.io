@@ -3,7 +3,7 @@ title = "RL does not work?"
 summary = "70% of the times."
 date = 2025-02-27T08:10:34+01:00
 draft = false
-tags = ['stable baselines 3']
+tags = ['stable baselines 3', 'python']
 +++
 Unfortunately some of the times it does not work, and it's no wonder if we're just seeing if the got performs well after a lot of random attempts. It's a brute-force method.
 [Check this article out, it's a realistic take on the subject.](https://www.alexirpan.com/2018/02/14/rl-hard.html)
@@ -13,7 +13,7 @@ Anyway it is still amazing when it does work.
 ![A mostly working example.](best2.gif)
 
 This example uses the default environment (*LunarLander-v3*). Thanks to [Mistral](https://chat.mistral.ai/chat) for the code to save a GIF.
-Here's the script with a bunch of coments, I added several y/N options in case you want to try yourself.
+Here's the [Python](https://www.python.org/) script, I added several y/N options in case you want to try yourself.
 
 ```
 # pip intall gymnasium==1.0.0
