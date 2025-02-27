@@ -9,7 +9,7 @@ Unfortunately some of the times it does not work, and it's no wonder since we're
 
 [Check this article out, it's a realistic take on the subject.](https://www.alexirpan.com/2018/02/14/rl-hard.html)
 
-Anyway it is still amazing when it does work. [Even outdated environments can teach you a lot.](https://towardsdatascience.com/how-to-train-an-ai-to-play-any-game-f1489f3bc5c/)
+Anyway it is still amazing when it does work. [Even outdated environments can teach you.](https://towardsdatascience.com/how-to-train-an-ai-to-play-any-game-f1489f3bc5c/)
 
 ![A mostly working example.](best2.gif)
 
