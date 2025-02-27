@@ -1,5 +1,5 @@
 +++
-title = "RL does not work ?"
+title = "RL does not work?"
 summary = "70% of the times."
 date = 2025-02-27T08:10:34+01:00
 draft = false
