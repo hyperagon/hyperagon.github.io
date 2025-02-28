@@ -22,6 +22,6 @@ If you're using Windows you may find the [Bobafett Hero Editor](https://github.c
 - [StormLib](https://github.com/ladislav-zezula/StormLib) (what the MPQ Editors use)
 - [Ghast's Groto](https://mgpat-gm.github.io/index.html)
 
-It missed [this one](http://www.guardiansofjustice.com/diablo/Frames/Fileindex.htm) which is no wonder as *Trainers* locks you out.
+It missed [this one](http://www.guardiansofjustice.com/diablo/Frames/Fileindex.htm) which is no wonder as many links are dead.
 
 *Update:* The lisfiles on **Diasurgical** are more complete, like the one for [save-games](https://github.com/diasurgical/devilutionx-mpq-tools/blob/main/data/save-listfile.txt).
