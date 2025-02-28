@@ -63,7 +63,7 @@ frames = []
 for i in range(1000):
     action, _states = model.predict(obs, deterministic=True)
     obs, reward, done, info = vec_env.step(action)
-    if not train:
+    if not render and not train:
         frame = vec_env.render(mode='rgb_array')
         frames.append(frame)
     # VecEnv resets automatically
