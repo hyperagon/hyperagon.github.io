@@ -5,7 +5,7 @@ date = 2025-03-05T08:10:34+01:00
 draft = false
 tags = ['ai']
 +++
-So I asked **Grok** what time it was and got curious about the counter but it got defensive over my question.
+So I asked **Grok** what time it was and got curious about the counter but it got defensive over my question. No wonder that you can't use it without an account again.
 
 ![Grok being defensive.](grok.png)
 
