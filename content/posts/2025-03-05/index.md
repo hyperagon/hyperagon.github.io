@@ -15,4 +15,4 @@ Afterwards I asked **Deepseek** to make a script and got this incredible piece o
 
 Prompt was something along the lines of "I told you that the savefiles have the MPQ header before they are decryoted,"
 
-For non-coders: It does not decrypt checks if it already has the MPQ header. Which is quite the opposite of what I warned it about.
+For non-coders: It checks if it already has the MPQ header, in which case it does not decrypt. Which is quite the opposite of what I warned it about.
