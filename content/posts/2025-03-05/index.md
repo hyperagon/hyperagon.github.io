@@ -12,3 +12,5 @@ So I asked **Grok** what time it was and got curious about the counter but it go
 Afterwards I asked **Deepseek** to make that same script and got this incredible piece of code:
 
 ![Grok being defensive.](deepseek.png)
+
+Prompt was something along the lines of "I told you that the savefiles have the MPQ header before they are decryoted,"
