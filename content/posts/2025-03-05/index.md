@@ -7,7 +7,7 @@ tags = ['ai']
 +++
 So I asked **Grok** what time it was and got curious about the counter but it got defensive over my question.
 
-![Grok being defensive.](grok.png)
+![Grok being defensive.](Screenshot at 2025-02-28 20-33-15.png)
 
 Diablo 1 save-game editor and it kept insisting that it wasn't an MPQ file.
 Despite having MPQ in the header... you really have to do a lot beforehand until they can produce anything usable.
