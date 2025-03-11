@@ -30,7 +30,7 @@ It missed [this one](http://www.guardiansofjustice.com/diablo/Frames/Fileindex.h
 
 On version 1.6 (development) I was able to change some parameters by having a **txtdata** folders with .TSV (tab-separated-values). You can get the original files [from the repository](https://github.com/diasurgical/DevilutionX/tree/master/assets/txtdata) and place it in the data folder (with your .sv/.hsv save-files) then change them accordingly. Make sure that you do not run an older version or it will overrite your save-files.
 
-Here's an example `spell/spelldat.tsv` where every spell gets cheaper to cast with each level (minMana):
+Here's an example `spell/spelldat.tsv` where every spell gets cheaper to cast with each level (minMana is 1):
 ```
 id	name	soundId	bookCost10	staffCost10	manaCost	flags	bookLevel	staffLevel	minIntelligence	missiles	manaMultiplier	minMana	staffMin	staffMax
 Firebolt	Firebolt	CastFire	100	5	6	Fire,Targeted	1	1	15	Firebolt	1	1	40	80
