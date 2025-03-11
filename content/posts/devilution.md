@@ -28,7 +28,7 @@ It missed [this one](http://www.guardiansofjustice.com/diablo/Frames/Fileindex.h
 
 ### Version 1.6 Modding
 
-On version 1.6 (development) I was able to change some parameters by having a **txtdata** folders with .TSV (tab-separated-values). You can get the original files [from the repository](https://github.com/diasurgical/devilutionX/tree/master/assets/txtdata nd place it in the data folder (with your .sv/.hsv save-files) and change them accordingly. Make sure that you do not run an older version or it will overrite your save-files.
+On version 1.6 (development) I was able to change some parameters by having a **txtdata** folders with .TSV (tab-separated-values). You can get the original files [from the repository](https://github.com/diasurgical/devilutionX/tree/master/assets/?txtdata) and place it in the data folder (with your .sv/.hsv save-files) then change them accordingly. Make sure that you do not run an older version or it will overrite your save-files.
 
 Here's an example `spell/spelldat.tsv` where every spell gets cheaper to cast with each level (minMana):
 ```
