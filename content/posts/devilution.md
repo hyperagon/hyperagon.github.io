@@ -85,5 +85,3 @@ RuneOfNova	Rune of Nova	CastHealing	800	30	255	Magic,Targeted	-1	-1	48	RuneOfNov
 RuneOfImmolation	Rune of Immolation	CastHealing	800	30	255	Magic,Targeted	-1	-1	48	RuneOfImmolation	1	10	40	80
 RuneOfStone	Rune of Stone	CastHealing	800	30	255	Magic,Targeted	-1	-1	48	RuneOfStone	1	10	40	80
 ```
-
-It's pointless to make some spells available since the game does not actually have them (ex: Etherialize).
