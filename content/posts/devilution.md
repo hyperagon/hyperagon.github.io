@@ -8,7 +8,7 @@ tags = ['devilution', 'games']
 I've been playing [DevilutionX](https://github.com/diasurgical/devilutionX) in preparation for **Fam plays** since,
 while it does not have cheats per-se, you can move and copy save files (the path is [probably in here](https://github.com/diasurgical/devilutionX/blob/master/docs/installing.md)).
 
-### Produced in version 1.5.3
+### Save files for version 1.5.3
 
 [My Save Files](/devilution.zip) have the stash (Gillian) chock-full of goodies, both the [*Diablo*](https://en.wikipedia.org/wiki/Diablo_(video_game)) (.sv) and [*Hellfire*](https://en.wikipedia.org/wiki/Diablo%3A_Hellfire) (.hsv) versions, although *Hellfire* reset everything and the save has more pages with assorted items.
 
