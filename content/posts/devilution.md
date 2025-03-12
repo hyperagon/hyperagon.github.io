@@ -30,7 +30,7 @@ It missed [this one](http://www.guardiansofjustice.com/diablo/Frames/Fileindex.h
 
 On version 1.6 (development) I was able to change some parameters by having a **txtdata** folder with .TSV (tab-separated-values). You can get the original files [from the repository](https://github.com/diasurgical/DevilutionX/tree/master/assets/txtdata) and place it in the data folder (with your .sv/.hsv save-files) then change them accordingly. Make sure that you do not run an older version or it will overrite your save-files.
 
-To compile the new executable at `build/devilutionx` (.exe if you're on Windows) you simply have to follow the instructions in **docs/building.md**.
+To compile the new executable at `build/devilutionx` (.exe if you're on Windows) you simply have to follow the instructions in **docs/building.md**. In my case the laptop kept running out of RAM but worked with `cmake --build build -j 1`.
 
 Here's an example `spell/spelldat.tsv` where every spell gets cheaper to cast with each level (minMana is 1):
 ```
