@@ -87,3 +87,9 @@ RuneOfNova	Rune of Nova	CastHealing	800	30	255	Magic,Targeted	-1	-1	48	RuneOfNov
 RuneOfImmolation	Rune of Immolation	CastHealing	800	30	255	Magic,Targeted	-1	-1	48	RuneOfImmolation	1	10	40	80
 RuneOfStone	Rune of Stone	CastHealing	800	30	255	Magic,Targeted	-1	-1	48	RuneOfStone	1	10	40	80
 ```
+
+Still don't feel overpowered enough? Maybe replacing this with some of the entries of *items/unique_iyrm.tsv` would help. You'll have to figure out which items this replaces but they are easy to get:
+```
+Hypering		TRING	1	99999	LIFE	250	250	SPLLVLADD	50	100	ALLRES	100	100	MAG	250	250	MANA	250	250	ATTRIBS	250	250
+Hyperblade		GRISWOLD	1	99999	FIREDAM	1	10	TOHIT	250	250	FASTATTACK	4	4	TARGAC	2	2	STEALMANA	5	5			
+```
