@@ -93,3 +93,5 @@ Still don't feel overpowered enough? Maybe replacing this with some of the entri
 Cheater's Ring		TRING	1	999999	DEX	250	250	SPLLVLADD	7	7	ALLRES	100	100	MAG	250	250	STR	250	250	ATTRIBS	250	250
 Cheater's Blade		GRISWOLD	1	999999	SETDAM	250	250	TOHIT	250	250	FASTATTACK	4	4	TARGAC	2	2	STEALMANA	5	5	LIGHT	5	5
 ```
+
+Note that these items will motph according to the server settings which stops you from using it in others games.
