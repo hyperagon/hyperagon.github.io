@@ -1,7 +1,7 @@
 +++
 title = "DevilutionX"
 summary = "Reviving Diablo"
-date = 2025-03-11T08:10:34+01:00
+date = 2025-03-19T08:10:34+01:00
 draft = false
 tags = ['devilution', 'games']
 +++
@@ -90,6 +90,6 @@ RuneOfStone	Rune of Stone	CastHealing	800	30	255	Magic,Targeted	-1	-1	48	RuneOfS
 
 Still don't feel overpowered enough? Maybe replacing this with some of the entries of *items/unique_iyrm.tsv` would help. You'll have to figure out which items this replaces but they are easy to get:
 ```
-Hypering		TRING	1	99999	LIFE	250	250	SPLLVLADD	50	100	ALLRES	100	100	MAG	250	250	MANA	250	250	ATTRIBS	250	250
-Hyperblade		GRISWOLD	1	99999	FIREDAM	1	10	TOHIT	250	250	FASTATTACK	4	4	TARGAC	2	2	STEALMANA	5	5			
+Cheater's Ring		TRING	1	999999	DEX	250	250	SPLLVLADD	7	7	ALLRES	100	100	MAG	250	250	STR	250	250	ATTRIBS	250	250
+Cheater's Blade		GRISWOLD	1	999999	SETDAM	250	250	TOHIT	250	250	FASTATTACK	4	4	TARGAC	2	2	STEALMANA	5	5	LIGHT	5	5
 ```
