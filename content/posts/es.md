@@ -4,7 +4,7 @@ summary = "Getting to the fun faster."
 date = 2024-11-19T08:10:34+01:00
 postdate = 2024-08-14T08:10:34+01:00
 draft = false
-tags = ['endless sky', 'game']
+tags = ['endless sky', 'games']
 +++
 [Endless Sky]((https://endless-sky.github.io/)) is another [open-source](https://github.com/endless-sky/endless-sky) game, made with [C++](https://en.wikipedia.org/wiki/C++).
 
