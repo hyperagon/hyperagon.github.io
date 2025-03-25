@@ -1,7 +1,7 @@
 +++
 title = "DevilutionX"
 summary = "Reviving Diablo"
-date = 2025-03-19T08:10:34+01:00
+date = 2025-03-25T08:10:34+01:00
 draft = false
 tags = ['devilution', 'games']
 +++
@@ -94,4 +94,4 @@ Cheater's Ring		TRING	1	9	DEX	250	250	SPLLVLADD	7	7	ALLRES	100	100	MAG	250	250	S
 Cheater's Blade		GRISWOLD	1	9	SETDAM	250	250	TOHIT	250	250	FASTATTACK	4	4	TARGAC	2	2	STEALMANA	5	5	LIGHT	5	5
 ```
 
-Note that these items will motph according to the server settings which stops you from using it in others games.
+Note that these items will morph according to the server settings which stops you from using it in others games, aaaaaaai a  had a case where I was given a cheat item and my stash went back a day. Make sure that you play online without cheats.
