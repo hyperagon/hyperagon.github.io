@@ -88,7 +88,7 @@ RuneOfImmolation	Rune of Immolation	CastHealing	800	30	255	Magic,Targeted	-1	-1	
 RuneOfStone	Rune of Stone	CastHealing	800	30	255	Magic,Targeted	-1	-1	48	RuneOfStone	1	10	40	80
 ```
 
-Still don't feel overpowered enough? Maybe replacing this with some of the entries of *items/unique_itemdat.tsv` would help. You'll have to figure out which items this replaces but they are easy to get:
+Still don't feel overpowered enough? Maybe replacing this with some of the entries of `items/unique_itemdat.tsv` would help. You'll have to figure out which items this replaces but they are easy to get:
 ```
 Cheater's Ring		TRING	1	9	DEX	250	250	SPLLVLADD	7	7	ALLRES	100	100	MAG	250	250	STR	250	250	ATTRIBS	250	250
 Cheater's Blade		GRISWOLD	1	9	SETDAM	250	250	TOHIT	250	250	FASTATTACK	4	4	TARGAC	2	2	STEALMANA	5	5	LIGHT	5	5
