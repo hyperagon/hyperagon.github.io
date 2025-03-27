@@ -26,7 +26,7 @@ It missed [this one](http://www.guardiansofjustice.com/diablo/Frames/Fileindex.h
 
 *Update:* The lisfiles on **Diasurgical** are more complete, like the one for [save-games](https://github.com/diasurgical/devilutionx-mpq-tools/blob/main/data/save-listfile.txt).
 
-### Version 1.6 Modding
+### Dev Version (1.6) Modding
 
 On version 1.6 (development) I was able to change some parameters by having a **txtdata** folder with .TSV (tab-separated-values). You can get the original files [from the repository](https://github.com/diasurgical/DevilutionX/tree/master/assets/txtdata) and place it in the data folder (with your .sv/.hsv save-files) then change them accordingly. Make sure that you do not run an older version or it will overrite your save-files.
 
