@@ -1,7 +1,7 @@
 +++
 title = "DevilutionX"
 summary = "Reviving Diablo"
-date = 2025-03-25T08:10:34+01:00
+date = 2025-03-27T08:10:34+01:00
 draft = false
 tags = ['devilution', 'games']
 +++
