@@ -95,6 +95,4 @@ Cheater's Armor		ARMOFVAL	1	1	SETAC	9999	9999	VIT	250	250	GETHIT	9999	9999	FASTR
 Cheater's Blade		GRISWOLD	1	1	SETDAM	250	250	TOHIT	250	250	FASTATTACK	4	4	TARGAC	2	2	ADDMANAAC	250	250	LIGHT	5	5
 ```
 
-Note
-
-Note that these items may morph according to the server settings, I  had a case where I was given a cheat item and my stash went back a day so make sure that you play online without cheats.
+Note that these items will likely morph according to the server settings, I  had a case where I was given a cheat item and my stash went back a day so make sure that you play online without cheats.
