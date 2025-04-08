@@ -92,7 +92,7 @@ Still don't feel overpowered enough? Maybe replacing this with some of the entri
 ```
 Cheater's Ring		TRING	1	9	DEX	250	250	SPLLVLADD	7	7	VIT	250	250	MAG	250	250	STR	250	250	ATTRIBS	250	250
 Cheater's Armor		ARMOFVAL	1	9	SETAC	9999	9999	ABSHALFTRAP			GETHIT	9999	9999	FASTRECOVER	3	3	ALLRES	100	100	MANA	250	250
-Cheater's Blade		GRISWOLD	1	1	SETDAM	250	250	TOHIT	250	250	FASTATTACK	4	4	TARGAC	2	2	ADDMANAAC	250	250	LIGHT	5	5
+Cheater's Blade		GRISWOLD	1	1	SETDAM	250	250	TOHIT	9999	9999	FASTATTACK	4	4	TARGAC	2	2	ADDMANAAC	250	250	LIGHT	5	5
 ```
 
 Note that these items will likely morph according to the server settings, I had a case where I was given a cheat item and my stash went back a day so make sure that you play online without cheats (use earlier versions).
