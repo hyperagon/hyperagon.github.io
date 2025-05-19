@@ -7,4 +7,4 @@ Hello, I am **Hyperag⬡n** and here are some facts about me:
 - I make videos of [Fam playing games](https://www.youtube.com/@famfandango) weekly.
 - I was previously known as [Vimino](https://vimino.gitlab.io/) but don't confuse it with the [product](https://www.amazon.in/Shrimps-Vitamin-Complex-Billion-Bacteria/dp/B0963691WP).
 
-view my website at [hyperagon.github.io](https://hyperagon.github.io/).
+View my website at [hyperagon.github.io](https://hyperagon.github.io/).
