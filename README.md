@@ -1,6 +1,6 @@
 Hello, I am **Hyperagon** and here are some facts about me:
 
-- I am interested in [*Machine Learnind*](https://en.wikipedia.org/wiki/Machine_learning) and [*Video Games*](https://en.wikipedia.org/wiki/Video_games)
+- I am interested in [*Machine Learning*](https://en.wikipedia.org/wiki/Machine_learning) and [*Video Games*](https://en.wikipedia.org/wiki/Video_games)
 - I occasionally sketch on my Android smartphone
 - I love and prefer to use open source ([Linux](https://www.linux.org/))
 - I speak English rather well but it is [very American, not Bri-ish](https://www.speakmoreclearly.com/english-pronunciation-tips/the-difference-between-a-british-and-american-accent/)
