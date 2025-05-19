@@ -1,6 +1,6 @@
 +++
 title = "Pingus Cheats"
-summary = "In case it crashes."
+summary = "In case it freezes."
 date = 2025-05-19T08:10:34+01:00
 draft = false
 tags = ['pingus', 'games']
