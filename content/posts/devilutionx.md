@@ -96,3 +96,8 @@ Cheater's Blade		GRISWOLD	1	1	SETDAM	250	250	TOHIT	9999	9999	FASTATTACK	4	4	TARG
 ```
 
 Note that these items will likely morph according to the server settings, I had a case where I was given a cheat item and my stash went back a day so make sure that you play online without cheats (use earlier versions).
+
+### Ports
+
+- [ZeroTier: 9993](https://help.mikrotik.com/docs/spaces/ROS/pages/83755083/ZeroTier)
+- [Client-Server: 6112](https://github-wiki-see.page/m/diasurgical/devilutionX/wiki/Multiplayer)
