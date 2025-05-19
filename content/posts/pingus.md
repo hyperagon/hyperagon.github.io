@@ -16,3 +16,119 @@ flatpak install flathub org.seul.pingus
 flatpak run org.seul.pingus
 ```
 
+### Cheay (enable all levels)
+
+- Run it once
+- Edit /home/username/.var/app/org.seul.pingus/config/pingus-0.8/savegames/savegames.scm
+
+```
+(pingus-savegame
+  (levels
+    (level
+      (filename "tutorial/digger-tutorial2-grumbel")
+      (status "accessible")
+      (time 1960)
+      (saved-pingus 10))
+    (level
+      (filename "tutorial/floater-tutorial-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow7-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow8-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/basher-tutorial-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow9-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow10-grumbel")
+      (status "accessible")
+      (time 4944)
+      (saved-pingus 20))
+    (level
+      (filename "tutorial/snow11-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/jumper-tutorial-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow12-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow22-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/miner-tutorial2-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow17-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow16-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow20-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/bomber-tutorial2-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow15-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow14-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow21-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/solid-tutorial-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))
+    (level
+      (filename "tutorial/snow19-grumbel")
+      (status "accessible")
+      (time 0)
+      (saved-pingus 0))))
+
+;; EOF ;;
+```
