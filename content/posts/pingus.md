@@ -16,7 +16,7 @@ flatpak install flathub org.seul.pingus
 flatpak run org.seul.pingus
 ```
 
-### Cheay (enable all levels)
+### Unlock all levels
 
 - Run it once
 - Edit /home/username/.var/app/org.seul.pingus/config/pingus-0.8/savegames/savegames.scm
