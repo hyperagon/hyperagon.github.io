@@ -132,3 +132,5 @@ flatpak run org.seul.pingus
 
 ;; EOF ;;
 ```
+
+It's not a very a hard game but it occasionally freezes.
