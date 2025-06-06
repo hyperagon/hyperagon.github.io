@@ -1,6 +1,6 @@
 +++
 title = "AstroMenace"
-summary = "A 3d Shoot-em-up"
+summary = "A 3d Shoot-em-up."
 date = 2025-06-06T08:10:34+01:00
 draft = false
 tags = ['astronmenace', 'games']
@@ -10,3 +10,7 @@ I've been playing [AstroMenace](https://viewizard.com/) in preparation for **Fam
 ### Save files for version 1.4
 
 These [Save Files](/PilotProfiles_1.4.data) contain a profile that has every level unlocked, just place `PilotProfiles_1.4.data` in `/home/username/.config/astromenace`.
+
+They both have a **Destroyer** with two *Lasers* and 2 *Masers*.
+
+You can use *F2* to show FPS, *F5* to slow the game down and *F6* to speed it up.
