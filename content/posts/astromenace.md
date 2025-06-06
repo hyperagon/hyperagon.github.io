@@ -11,6 +11,6 @@ I've been playing [AstroMenace](https://viewizard.com/) in preparation for **Fam
 
 These [Save Files](/PilotProfiles_1.4.data) contain a profile that has every level unlocked, just place `PilotProfiles_1.4.data` in `/home/username/.config/astromenace` (you'll need to figure it out if you're not using Linux).
 
-They both have a **Destroyer** with two *Lasers* and two *Masers*.
+All profiles have a **Destroyer** with two *Lasers* and two *Masers*.
 
 You can use *F2* to show FPS, *F5* to slow the game down and *F6* to speed it up.
