@@ -9,4 +9,4 @@ I've been playing [AstroMenace](https://viewizard.com/) in preparation for **Fam
 
 ### Save files for version 1.4
 
-[Fam's Save Files](/PilotProfiles_1.4.data) have every level unlocked, just place `PilotProfiles_1.4.data` in `/home/username/.config/astromenace`.
+These [Save Files](/PilotProfiles_1.4.data) contain a profile that has every level unlocked, just place `PilotProfiles_1.4.data` in `/home/username/.config/astromenace`.
