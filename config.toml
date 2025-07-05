@@ -26,9 +26,9 @@ Wizard by Night"""
     name = "itchio"
     url = "https://hyperagon.itch.io/"
 
-    [[params.socialIcons]]
-    name = "LinkedIn"
-    url = "https://www.linkedin.com/in/vím"
+#    [[params.socialIcons]]
+#    name = "LinkedIn"
+#    url = "https://www.linkedin.com/in/vím"
 
     [[params.socialIcons]]
     name = "youtube"
