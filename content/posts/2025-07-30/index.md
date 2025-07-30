@@ -11,4 +11,4 @@ So I asked [**Lumo**](https://lumo.proton.me/guest) a basic steawberry-inspired 
 
 While this and similar questions stump non-thinking models it's nice that [Mistral's Le Chat](https://mistral.ai/products/le-chat) got some company, making for two cat-inspired AI's in Europe.
 
-(I wasn't trying to mess with Lumo, I misread it as seventeeth letter)
+(I wasn't trying to mess with Lumo, I misread it as seventeeth letter it got him to correvt it)
