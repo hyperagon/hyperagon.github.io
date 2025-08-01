@@ -1,6 +1,6 @@
 +++
 title = "Lumo, another Cat AI"
-summary = "Europe muat love cats"
+summary = "Europe loves cats"
 date = 2025-07-30T08:10:34+01:00
 draft = false
 tags = ['ai']
