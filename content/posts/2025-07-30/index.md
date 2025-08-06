@@ -5,7 +5,7 @@ date = 2025-07-30T08:10:34+01:00
 draft = false
 tags = ['ai']
 +++
-So I asked [**Lumo**](https://lumo.proton.me/guest) a basic steawberry-inspired question and it tripped but was able to recover.
+So I asked [**Lumo**](https://lumo.proton.me/guest) a basic strawberry-inspired question and it tripped but was able to recover.
 
 ![Lumo](lumo.png)
 
