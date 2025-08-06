@@ -9,6 +9,10 @@ I made a [video showing how to use 3 separate free (no login) Image to Video gen
 
 Example:
 ![input](input.png)
+Prompt:
+```
+Two black-and-white cows drive toy cars against each other on the same lane. They crash and explode together into liquid white milk that covers the camera.
+```
 
 - [Vheer](www.vheer.com/app/image-to-video)
   [![output](Vheer.mp4)]
