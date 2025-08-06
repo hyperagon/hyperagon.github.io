@@ -12,6 +12,6 @@ I made a [video showing how to use 3 separate free (no login) Image to Video gen
 - [LTX](www.vheer.com/app/image-to-video)
   [![output](ltx.mp4)]
 - [Vidnoz](https://www.vidnoz.com/image-to-video-ai.html)
-  [![output]vidnoz.mp4)]
+  [![output](vidnoz.mp4)]
 
 One thing that I noticed is that a lot of "free video generators" were just using **LTX** and adding their watermark to the rezulting video.
