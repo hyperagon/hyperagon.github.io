@@ -21,4 +21,4 @@ Two black-and-white cows drive toy cars against each other on the same lane. The
 - [Vidnoz](https://www.vidnoz.com/image-to-video-ai.html)
   [(output)](vidnoz.mp4)
 
-One thing that I noticed is that a lot of "free video generators" were just using **LTX** and adding their watermark to the rezulting video.
+One thing that I noticed is that a lot of "free video generators" were just using **LTX** and adding their watermark to the resulting video.
