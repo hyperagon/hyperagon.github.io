@@ -15,10 +15,10 @@ Two black-and-white cows drive toy cars against each other on the same lane. The
 ```
 
 - [Vheer](www.vheer.com/app/image-to-video)
-  [![output](Vheer.mp4)]
+  ![(output)](Vheer.mp4)]
 - [LTX](www.vheer.com/app/image-to-video)
-  [![output](ltx.mp4)]
+  ![(output)](ltx.mp4)
 - [Vidnoz](https://www.vidnoz.com/image-to-video-ai.html)
-  [![output](vidnoz.mp4)]
+  ![(output)](vidnoz.mp4)
 
 One thing that I noticed is that a lot of "free video generators" were just using **LTX** and adding their watermark to the rezulting video.
