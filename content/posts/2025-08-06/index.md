@@ -8,10 +8,10 @@ tags = ['ai', 'video generation']
 I made a [video showing how to use 3 separate free (no login) Image to Video generators](https://www.youtube.com/watch?v=7E8cTR_GsnE).
 
 - [Vheer](www.vheer.com/app/image-to-video)
-  ![Vheer](vheer.mp4)
+https://github.com/user-attachments/assets/678ddf99-f1f7-4a7d-a125-3782b6954165
 - [LTX](www.vheer.com/app/image-to-video)
-  ![LTX](ltx.mp4)
+  ![Output](ltx.mp4)
 - [Vidnoz](https://www.vidnoz.com/image-to-video-ai.html)
-  ![Vidnoz](vidnoz.mp4)
+  ![(output)](vidnoz.mp4)
 
 One thing that I noticed is that a lot of "free video generators" were just using **LTX** and adding their watermark to the rezulting video.
