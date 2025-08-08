@@ -17,7 +17,7 @@ Two black-and-white cows drive toy cars against each other on the same lane. The
   [(output)](vheer.mp4)
 - [LTX](https://huggingface.co/spaces/Lightricks/ltx-video-distilled/)
   [(output)](ltx.mp4)
-- [Vidnoz](https://www.vidnoz.com/image-to-video-ai.html/)
+- [Vidnoz](https://www.vidnoz.com/image-to-video-ai.html)
   [(output)](vidnoz.mp4)
 
 One thing that I noticed is that a lot of "free video generators" were just using **LTX** and adding their watermark to the resulting video.
