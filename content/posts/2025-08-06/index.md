@@ -13,7 +13,7 @@ Prompt:
 Two black-and-white cows drive toy cars against each other on the same lane. They crash and explode together into liquid white milk that covers the camera.
 ```
 
-- [Vheer](www.vheer.com/app/image-to-video/)
+- [Vheer](https://www.vheer.com/app/image-to-video/)
   [(output)](vheer.mp4)
 - [LTX](https://huggingface.co/spaces/Lightricks/ltx-video-distilled/)
   [(output)](ltx.mp4)
