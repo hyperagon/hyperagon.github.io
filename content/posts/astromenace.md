@@ -3,7 +3,7 @@ title = "AstroMenace"
 summary = "A 3d Shoot-em-up."
 date = 2025-06-06T08:10:34+01:00
 draft = false
-tags = ['astronmenace', 'games']
+tags = ['games']
 +++
 I've been playing [AstroMenace](https://viewizard.com/) in preparation for **Fam plays** with [cheats](https://github.com/richelbilderbeek/astro_menace_cheat).
 
