@@ -1,5 +1,5 @@
 +++
-title = "2006scape"
+title = "2006scape Cheats"
 summary = "Another Runescape emulation"
 date = 2025-08-22T08:10:34+01:00
 draft = false
