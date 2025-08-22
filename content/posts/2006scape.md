@@ -87,4 +87,4 @@ character-bank = 12	566	999999999
 character-bank = 13	567	999999999
 ```
 
-You could also do it with **2009scape**, it has [JSON](https://www.json.org/json-en.html) files in the `2009Scape/game/data/players/` directory, yet those files are huge, making it a lot less convenient.
+You could also do it with **2009scape**, it has [JSON](https://www.json.org/json-en.html) files in the `2009Scape/game/data/players/` directory. However those files are huge, making it a lot less convenient.
