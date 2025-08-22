@@ -7,7 +7,7 @@ tags = ['2006scape', 'games']
 +++
 I didn't miss this one, it was just harder to setup than *2009scape* since its instructions relied on [IntelliJ](https://www.jetbrains.com/idea/) instead of plain *Command Line*/*Terminal*. I got it working and made a pull request with the new files, but you can just use the [source](https://github.com/2006-Scape/2006Scape).
 
-Anyway, onto cheating. The `::commands` are sparse but the savefiles are in plain text, meaning that you can just logout and edit them (after a refresh since it saves on logout). These can be found at `2006Scape/2006Scape Server/data/characters/USERNAME.txt`
+Anyway, onto cheating. The `::commands` are sparse but the savefiles are in plain text (.TXT), meaning that you can just logout and edit them (after a refresh since it saves on logout). These can be found at `2006Scape/2006Scape Server/data/characters/`
 
 Want all skills at 99/99? Replace *[SKILLS]* with:
 ```
@@ -87,4 +87,4 @@ character-bank = 12	566	999999999
 character-bank = 13	567	999999999
 ```
 
-You could also do it with **2009scape**, it has [JSON](https://www.json.org/json-en.html) files in the `2009Scape/game/data/players` directory, yet those files are huge, making it a lot less convenient.
+You could also do it with **2009scape**, it has [JSON](https://www.json.org/json-en.html) files in the `2009Scape/game/data/players/` directory, yet those files are huge, making it a lot less convenient.
