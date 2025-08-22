@@ -3,7 +3,7 @@ title = "2006scape Cheats"
 summary = "Another Runescape emulation"
 date = 2025-08-22T08:10:34+01:00
 draft = false
-tags = ['2006scape', 'games']
+tags = ['games']
 +++
 I didn't miss this one, it was just harder to setup than *2009scape* since its instructions relied on [IntelliJ](https://www.jetbrains.com/000000000000idea/) instead of plain *Command Line/Terminal*. I got it working and made a [pull request with helpful scripts](https://github.com/hyperagon/2006Scape) but you can just use the [source](https://github.com/2006-Scape/2006Scape).
 
