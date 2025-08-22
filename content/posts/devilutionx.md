@@ -3,7 +3,7 @@ title = "DevilutionX"
 summary = "Reviving Diablo"
 date = 2025-04-08T08:10:34+01:00
 draft = false
-tags = ['devilutionx', 'games']
+tags = ['games']
 +++
 I've been playing [DevilutionX](https://github.com/diasurgical/devilutionX) in preparation for **Fam plays** since,
 while it does not have cheats per-se, you can move and copy save files (the path is [probably in here](https://github.com/diasurgical/devilutionX/blob/master/docs/installing.md)).
