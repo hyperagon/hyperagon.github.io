@@ -5,7 +5,7 @@ date = 2025-08-22T08:10:34+01:00
 draft = false
 tags = ['2006scape', 'games']
 +++
-I didn't miss this one, it was just harder to setup than *2009scape* since its instructions relied on [IntelliJ](https://www.jetbrains.com/idea/) instead of plain *Command Line*/*Terminal*. I got it working and made a pull request with the new files, but you can just use the [source](https://github.com/2006-Scape/2006Scape).
+I didn't miss this one, it was just harder to setup than *2009scape* since its instructions relied on [IntelliJ](https://www.jetbrains.com/idea/) instead of plain *Command Line/Terminal*. I got it working and made a pull request with the new files, but you can just use the [source](https://github.com/2006-Scape/2006Scape).
 
 Anyway, onto cheating. The `::commands` are sparse but the savefiles are in plain text (.TXT), meaning that you can just logout and edit them (after a refresh since it saves on logout). These can be found at `2006Scape/2006Scape Server/data/characters/`
 
