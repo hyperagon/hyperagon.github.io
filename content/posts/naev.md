@@ -4,7 +4,7 @@ summary = "Getting to the fun faster."
 date = 2024-10-02T08:10:34+01:00
 postdate = 2024-08-14T08:10:34+01:00
 draft = false
-tags = ['naev', 'games']
+tags = ['games']
 +++
 [NAEV](https://naev.org/) is a pretty nice [open-source](https://github.com/naev/naev/) game, made with a mixture of [C](https://en.wikipedia.org/wiki/C_(programming_language)) (it uses the [SDL](https://www.libsdl.org/) library) and [Lua](https://www.lua.org/).
 
