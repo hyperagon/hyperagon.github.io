@@ -4,8 +4,8 @@ summary = "Not Supported"
 date = 2025-10-02T08:10:34+01:00
 draft = false
 tags = ['glaxnimate', 'svg']
-+++
-I've been trying to get animations on [SVG](https://en.wikipedia.org/wiki/SVG) to then import it to [Glaxnimate](https://glaxnimate.org/) but jokes on me, it doesn't support scaling *animateTransform*...
+++
+I've been trying to get animations on [SVG](https://en.wikipedia.org/wiki/SVG) to then import it to [Glaxnimate](https://glaxnimate.org/) but jokes on me, it doesn't support it...
 
 This works finee:
 ```
@@ -18,7 +18,7 @@ This works finee:
 </svg>
 ```
 
-![animation_example2](https://github.com/user-attachments/assets/3c6ba8af-194a-475b-b5a7-0c5db2b34d0c)<svg width="100" height="100">
+![Circle Animation](https://github.com/user-attachments/assets/3c6ba8af-194a-475b-b5a7-0c5db2b34d0c)<svg width="100" height="100">
   <title>Attribute Animation with SMIL</title>
   <rect x="0" y="0" width="100" height="100" stroke="black" stroke-width="1"></rect>
   <circle cx="50" cy="50" r="50" fill="blue" stroke="black" stroke-width="1">
@@ -28,4 +28,32 @@ This works finee:
 
 This however does not:
 ```
+<svg width="100" height="100" viewBox="0 0 100 100">
+  <title>Centered Rectangle Scaling Animation with SMIL</title>
+  <rect x="50" y="50" width="0" height="0" stroke="black" stroke-width="1">
+    <animate attributeName="x" from="50" to="0" dur="5s" repeatCount="indefinite" 
+             values="50;0;50" keyTimes="0;0.5;1" />
+    <animate attributeName="y" from="50" to="0" dur="5s" repeatCount="indefinite" 
+             values="50;0;50" keyTimes="0;0.5;1" />
+    <animate attributeName="width" from="0" to="100" dur="5s" repeatCount="indefinite" 
+             values="0;100;0" keyTimes="0;0.5;1" />
+    <animate attributeName="height" from="0" to="100" dur="5s" repeatCount="indefinite" 
+             values="0;100;0" keyTimes="0;0.5;1" />
+  </rect>
+</svg>
 ``
+
+![Rect Animation](https://github.com/user-attachments/assets/6b3fc384-3eb4-423d-89e6-b31468d5a6a8)
+<svg width="100" height="100" viewBox="0 0 100 100">
+  <title>Centered Rectangle Scaling Animation with SMIL</title>
+  <rect x="50" y="50" width="0" height="0" stroke="black" stroke-width="1">
+    <animate attributeName="x" from="50" to="0" dur="5s" repeatCount="indefinite" 
+             values="50;0;50" keyTimes="0;0.5;1" />
+    <animate attributeName="y" from="50" to="0" dur="5s" repeatCount="indefinite" 
+             values="50;0;50" keyTimes="0;0.5;1" />
+    <animate attributeName="width" from="0" to="100" dur="5s" repeatCount="indefinite" 
+             values="0;100;0" keyTimes="0;0.5;1" />
+    <animate attributeName="height" from="0" to="100" dur="5s" repeatCount="indefinite" 
+             values="0;100;0" keyTimes="0;0.5;1" />
+  </rect>
+</svg>
