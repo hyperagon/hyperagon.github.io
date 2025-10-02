@@ -42,16 +42,4 @@ This however does not:
 </svg>
 ```
 
-![Rect Animation](https://github.com/user-attachments/assets/6b3fc384-3eb4-423d-89e6-b31468d5a6a8)
-<svg width="100" height="100" viewBox="0 0 100 100">
-  <rect x="50" y="50" width="0" height="0" stroke="black" stroke-width="1">
-    <animate attributeName="x" from="50" to="0" dur="5s" repeatCount="indefinite" 
-             values="50;0;50" keyTimes="0;0.5;1" />
-    <animate attributeName="y" from="50" to="0" dur="5s" repeatCount="indefinite" 
-             values="50;0;50" keyTimes="0;0.5;1" />
-    <animate attributeName="width" from="0" to="100" dur="5s" repeatCount="indefinite" 
-             values="0;100;0" keyTimes="0;0.5;1" />
-    <animate attributeName="height" from="0" to="100" dur="5s" repeatCount="indefinite" 
-             values="0;100;0" keyTimes="0;0.5;1" />
-  </rect>
-</svg>
+![Rect Animation](rect.html)
