@@ -19,7 +19,6 @@ This works finee:
 ```
 
 ![Circle Animation](https://github.com/user-attachments/assets/3c6ba8af-194a-475b-b5a7-0c5db2b34d0c)<svg width="100" height="100">
-  <title>Attribute Animation with SMIL</title>
   <rect x="0" y="0" width="100" height="100" stroke="black" stroke-width="1"></rect>
   <circle cx="50" cy="50" r="50" fill="blue" stroke="black" stroke-width="1">
     <animate attributeName="r" from="0" to="350" dur="5s" repeatCount="indefinite"></animate>
