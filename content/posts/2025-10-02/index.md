@@ -40,7 +40,7 @@ This however does not:
              values="0;100;0" keyTimes="0;0.5;1" />
   </rect>
 </svg>
-``
+```
 
 ![Rect Animation](https://github.com/user-attachments/assets/6b3fc384-3eb4-423d-89e6-b31468d5a6a8)
 <svg width="100" height="100" viewBox="0 0 100 100">
