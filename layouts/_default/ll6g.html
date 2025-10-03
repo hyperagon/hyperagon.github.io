@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html>
+<!--
+Copyright 2016-2025 Hyperagon (https://hyperagon.github.io/)
+
+    This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    For more informtion, visit <https://www.gnu.org/licenses/agpl-3.0.html>.
+-->
+<title>Loopy Looper 6</title>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="ROBOTS" content="NOINDEX,NOFOLLOW" />
+  <style>
+body {
+    padding: 0;
+    margin: 0;
+    color: #cccccc;
+    background-color: #444444;
+}
+div#title {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+div#title h1 {
+    margin: 0;
+    padding: 1ex;
+}
+div#title a {
+    text-decoration: none;
+}
+div#title a:link {
+    color: #aaaaaa;
+}
+div#title a:visited {
+    color: #aaaaaa;
+}
+div#title a:hover {
+    color: #ffffff;
+}
+div#title a:active {
+    color: #ffffff;
+}
+div.menu {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+div.menu ul {
+    padding: 0;
+    list-style-type: none;
+}
+div.menu li {
+    margin: 0 auto;
+    margin-top: 3ex;
+    margin-bottom: 3ex;
+    padding: 0;
+}
+div.menu li:first-child {
+    margin-top: 0;
+}
+div.menu li:last-child {
+    margin-bottom: 0;
+}
+div.menu li a {
+    display: inline;
+    margin: 0;
+    padding: 5px;
+    border: 2px solid #aaaaaa;
+    font-weight: bolder;
+    text-decoration: none;
+    border-radius: 1ex;
+}
+div.menu li a:link {
+    color: #aaaaaa;
+    background-color: #555555;
+}
+div.menu li a:visited {
+    color: #aaaaaa;
+    background-color: #555555;
+}
+div.menu li a:hover {
+    color: #ffffff;
+    background-color: #aaaaaa;
+}
+div.menu li a:active {
+    color: #ffffff;
+    background-color: #aaaaaa;
+}
+div.content {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+div.content div {
+    display: inline-block;
+    margin: 0 auto;
+    padding: 1ex;
+    margin-bottom: 0.5ex;
+    text-align: center;
+    background-color: #555555;
+    border-radius: 1ex;
+}
+div.content #canvas {
+    border: 2px solid #aaaaaa;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+    border-radius: 1ex;
+}
+div.content p {
+    margin: 0;
+}
+div.content #description {
+    font-weight: bolder;
+    background-color: #333333;
+}
+div.content input,
+div.content select,
+div.content textarea {
+    border: 2px solid #aaaaaa;
+    margin: 0 auto;
+    padding: 2px;
+    color: #ffffff;
+    background-color: #777777;
+    border-radius: 1ex;
+}
+
+/* Context Menu Styles */
+.context-menu {
+    position: absolute;
+    background-color: #555555;
+    border: 2px solid #aaaaaa;
+    border-radius: 5px;
+    padding: 5px 0;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.context-menu-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    color: #cccccc;
+}
+
+.context-menu-item:hover {
+    background-color: #777777;
+    color: #ffffff;
+}
+
+/* Export notification */
+.export-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #555555;
+    border: 2px solid #aaaaaa;
+    border-radius: 5px;
+    padding: 10px 15px;
+    color: #ffffff;
+    display: none;
+    z-index: 1001;
+}
+  </style>
+  <script>
+// https://stackoverflow.com/questions/69888029/how-to-call-a-function-declared-in-a-javascript-module-type-module-from-an-htm
+const GLOBAL = {};
+let canvas = null;
+let context = null;
+var step = 216.0;
+var detail = 10;
+var maxr = 100;
+var minr = 0;
+var lw = 20;
+var ic = "#ffff64";
+var oc = "#ffc832";
+var delay = 0;
+
+// Context menu functionality
+let contextMenu, exportPNG, exportSVG, exportRAWR, exportNotification;
+
+// Initialize context menu elements and event listeners
+function initContextMenu() {
+    contextMenu = document.getElementById('contextMenu');
+    exportPNG = document.getElementById('exportPNG');
+    exportSVG = document.getElementById('exportSVG');
+    exportRAWR = document.getElementById('exportRAWR');
+    exportNotification = document.getElementById('exportNotification');
+    
+    // Hide context menu when clicking elsewhere
+    document.addEventListener('click', () => {
+        contextMenu.style.display = 'none';
+    });
+
+    // Show custom context menu on canvas right-click
+    canvas.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = `${e.pageX}px`;
+        contextMenu.style.top = `${e.pageY}px`;
+        return false;
+    });
+
+    // Export to PNG functionality
+    exportPNG.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportToPNG();
+        contextMenu.style.display = 'none';
+        return false;
+    });
+
+    // Export to SVG functionality
+    exportSVG.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportToSVG();
+        contextMenu.style.display = 'none';
+        return false;
+    });
+
+    // Export to Glaxnimate RAWR functionality
+    exportRAWR.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportToRAWR();
+        contextMenu.style.display = 'none';
+        return false;
+    });
+}
+
+function showNotification(message, duration = 3000) {
+    exportNotification.textContent = message;
+    exportNotification.style.display = 'block';
+    
+    setTimeout(() => {
+        exportNotification.style.display = 'none';
+    }, duration);
+}
+
+function exportToPNG() {
+    try {
+        // Try to use the download method first
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        // Check if we're in a sandboxed environment
+        try {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'loopy-looper.png';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (e) {
+            // If direct download fails, show the image in a new window
+            const win = window.open();
+            win.document.write(`<img src="${dataUrl}" alt="Loopy Looper">`);
+            showNotification('Right-click and "Save image as..." to download');
+        }
+    } catch (error) {
+        console.error('PNG export failed:', error);
+        showNotification('Export failed. Please try again.');
+    }
+}
+
+function exportToSVG() {
+    try {
+        // Get current values
+        const cwidth = canvas.width;
+        const chwidth = cwidth / 2;
+        const cheight = canvas.height;
+        const chheight = cheight / 2;
+        let angle = -90.0;
+        let position = chwidth;
+        const or = maxr / 100;
+        const ir = or * (minr / 100);
+        const dstep = detail / 10;
+        const iposition = chwidth * or;
+        const fposition = chwidth * ir;
+        
+        // Create an SVG element
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', cwidth);
+        svg.setAttribute('height', cheight);
+        svg.setAttribute('viewBox', `0 0 ${cwidth} ${cheight}`);
+        
+        // Calculate color gradient
+        const icolor = hex2rgb(ic);
+        const fcolor = hex2rgb(oc);
+        let r = fcolor.red;
+        let g = fcolor.green;
+        let b = fcolor.blue;
+        const rs = getColorStep(iposition, fposition, r, icolor.red) * (detail / 10);
+        const gs = getColorStep(iposition, fposition, g, icolor.green) * (detail / 10);
+        const bs = getColorStep(iposition, fposition, b, icolor.blue) * (detail / 10);
+        
+        // Calculate the starting point
+        let rad = deg2rad(angle);
+        let x = chwidth + Math.cos(rad) * iposition;
+        let y = chheight + Math.sin(rad) * iposition;
+        let px = x;
+        let py = y;
+        
+        // Create a group for all the path segments
+        const ng = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        
+        // Calculate the path segments
+        for (position = iposition; position > fposition; position -= dstep) {
+            // Calculate the next position
+            rad = deg2rad(angle);
+            x = chwidth + Math.cos(rad) * position;
+            y = chheight + Math.sin(rad) * position;
+            
+            // Create a path for this segment
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            
+            // Set the path data for this segment
+            const pathData = `M ${px} ${py} L ${x} ${y}`;
+            path.setAttribute('d', pathData);
+            path.setAttribute('stroke', rgb2hex(r, g, b));
+            path.setAttribute('stroke-width', lw / 10);
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            path.setAttribute('fill', 'none');
+            
+            // Add the path to the group
+            ng.appendChild(path);
+            
+            // Update the previous position
+            px = x;
+            py = y;
+            
+            // Update the angle
+            angle += step;
+            angle -= angle > 360 ? 360 : 0;
+            
+            // Update the color
+            r += rs;
+            r = r > 255 ? 255 : r;
+            r = r < 0 ? 0 : r;
+            g += gs;
+            g = g > 255 ? 255 : g;
+            g = g < 0 ? 0 : g;
+            b += bs;
+            b = b > 255 ? 255 : b;
+            b = b < 0 ? 0 : b;
+        }
+        
+        // Add the group to the SVG
+        svg.appendChild(ng);
+        
+        // Now use the 5-step method to export the SVG
+        // Step 1: Get the SVG element (we already have it)
+        
+        // Step 2: Get SVG source by XMLSerializer
+        const serializer = new XMLSerializer();
+        let source = serializer.serializeToString(svg);
+        
+        // Step 3: Add namespaces
+        if (!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+            source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+        }
+        if (!source.match(/^<svg[^>]+"http:\/\/www\.w3\.org\/1999\/xlink"/)) {
+            source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+        }
+        
+        // Add XML declaration
+        source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+        
+        // Step 4: Construct URL data scheme
+        const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+        
+        // Step 5: Set URL to href attribute of an anchor element
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'loopy-looper.svg';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showNotification('SVG exported successfully');
+    } catch (error) {
+        console.error('SVG export failed:', error);
+        showNotification('Export failed. Please try again.');
+    }
+}
+
+function exportToRAWR() {
+    try {
+        // Get current values
+        const cwidth = canvas.width;
+        const chwidth = cwidth / 2;
+        const cheight = canvas.height;
+        const chheight = cheight / 2;
+        let angle = -90.0;
+        const or = maxr / 100;
+        const ir = or * (minr / 100);
+        const dstep = detail / 10;
+        const iposition = chwidth * or;
+        const fposition = chwidth * ir;
+        
+        // Calculate color gradient
+        const icolor = hex2rgb(ic);
+        const fcolor = hex2rgb(oc);
+        let r = fcolor.red;
+        let g = fcolor.green;
+        let b = fcolor.blue;
+        const rs = getColorStep(iposition, fposition, r, icolor.red) * (detail / 10);
+        const gs = getColorStep(iposition, fposition, g, icolor.green) * (detail / 10);
+        const bs = getColorStep(iposition, fposition, b, icolor.blue) * (detail / 10);
+        
+        // Calculate the starting point
+        let rad = deg2rad(angle);
+        let x = chwidth + Math.cos(rad) * iposition;
+        let y = chheight + Math.sin(rad) * iposition;
+        
+        // Determine if we're creating an animation
+        const isAnimated = delay > 0;
+        
+        // Calculate FPS based on the actual animation logic in the code
+        // The actual delay between frames is (delay * 10) / 100 = delay / 10 milliseconds
+        // So the FPS should be 1000 / (delay / 10) = 10000 / delay
+        // But cap it at 60 since that's the practical limit for JavaScript animations
+        const calculatedFps = 10000 / delay;
+        const fps = isAnimated ? Math.min(60, Math.max(1, calculatedFps)) : 1;
+        
+        // Calculate total points
+        const totalPoints = Math.floor((iposition - fposition) / dstep);
+        
+        // Calculate base frames (drawing animation)
+        const baseFrames = isAnimated ? Math.min(180, totalPoints) : 1;
+        
+        // Calculate completion frames (equal to drawing time)
+        const completionFrames = baseFrames;
+        
+        // Total frames
+        const totalFrames = baseFrames + completionFrames;
+        
+        // Create RAWR format data structure
+        const rawrData = {
+            assets: {
+                __type__: "Assets",
+                colors: {
+                    __type__: "NamedColorList",
+                    name: "",
+                    uuid: generateUUID(),
+                    values: []
+                },
+                compositions: {
+                    __type__: "CompositionList",
+                    name: "",
+                    uuid: generateUUID(),
+                    values: [
+                        {
+                            __type__: "Composition",
+                            animation: {
+                                __type__: "AnimationContainer",
+                                first_frame: 0,
+                                last_frame: totalFrames - 1
+                            },
+                            fps: fps,
+                            group_color: "#00000000",
+                            height: cheight,
+                            locked: false,
+                            name: "LoopyLooper",
+                            shapes: [],
+                            uuid: generateUUID(),
+                            visible: true,
+                            width: cwidth
+                        }
+                    ]
+                },
+                fonts: {
+                    __type__: "FontList",
+                    name: "",
+                    uuid: generateUUID(),
+                    values: []
+                },
+                gradient_colors: {
+                    __type__: "GradientColorsList",
+                    name: "",
+                    uuid: generateUUID(),
+                    values: []
+                },
+                gradients: {
+                    __type__: "GradientList",
+                    name: "",
+                    uuid: generateUUID(),
+                    values: []
+                },
+                images: {
+                    __type__: "BitmapList",
+                    name: "",
+                    uuid: generateUUID(),
+                    values: []
+                },
+                name: "",
+                uuid: generateUUID()
+            },
+            format: {
+                format_version: 8,
+                generator: "Glaxnimate",
+                generator_version: "0.5.4+appimage-dc26f367"
+            },
+            info: {
+                author: "",
+                description: "Created with Loopy Looper 6",
+                keywords: []
+            },
+            metadata: {}
+        };
+        
+        // Get the composition
+        const composition = rawrData.assets.compositions.values[0];
+        
+        // Calculate all path segments first
+        const allPoints = [];
+        let position = iposition;
+        
+        // Reset color values
+        r = fcolor.red;
+        g = fcolor.green;
+        b = fcolor.blue;
+        
+        while (position > fposition) {
+            // Calculate the next position
+            rad = deg2rad(angle);
+            x = chwidth + Math.cos(rad) * position;
+            y = chheight + Math.sin(rad) * position;
+            
+            // Add point to the array
+            allPoints.push({
+                pos: {
+                    x: x,
+                    y: y
+                },
+                tan_in: {
+                    x: x,
+                    y: y
+                },
+                tan_out: {
+                    x: x,
+                    y: y
+                },
+                type: 0  // Corner type
+            });
+            
+            // Update the angle
+            angle += step;
+            angle -= angle > 360 ? 360 : 0;
+            
+            // Update the color
+            r += rs;
+            r = r > 255 ? 255 : r;
+            r = r < 0 ? 0 : r;
+            g += gs;
+            g = g > 255 ? 255 : g;
+            g = g < 0 ? 0 : g;
+            b += bs;
+            b = b > 255 ? 255 : b;
+            b = b < 0 ? 0 : b;
+            
+            // Update position
+            position -= dstep;
+        }
+        
+        // Create the path group
+        const pathGroup = {
+            __type__: "Group",
+            auto_orient: false,
+            group_color: "#00000000",
+            locked: false,
+            name: "Path",
+            opacity: {
+                value: 1
+            },
+            shapes: [
+                {
+                    __type__: "Fill",
+                    color: {
+                        value: "#ffd8ff00"
+                    },
+                    fill_rule: "NonZero",
+                    group_color: "#00000000",
+                    locked: false,
+                    name: "Fill",
+                    opacity: {
+                        value: 1
+                    },
+                    use: null,
+                    uuid: generateUUID(),
+                    visible: false
+                }
+            ],
+            transform: {
+                __type__: "Transform",
+                anchor_point: {
+                    value: {
+                        x: chwidth,
+                        y: chheight
+                    }
+                },
+                position: {
+                    value: {
+                        x: chwidth,
+                        y: chheight
+                    }
+                },
+                rotation: {
+                    value: 0
+                },
+                scale: {
+                    value: {
+                        x: 1,
+                        y: 1
+                    }
+                }
+            },
+            uuid: generateUUID(),
+            visible: true
+        };
+        
+        // Add Trim Path element for animation
+        if (isAnimated) {
+            const trimPath = {
+                __type__: "Trim",
+                end: {
+                    keyframes: []
+                },
+                group_color: "#00000000",
+                locked: false,
+                multiple: "Individually",
+                name: "Trim Path",
+                offset: {
+                    value: 0
+                },
+                start: {
+                    value: 0
+                },
+                uuid: generateUUID(),
+                visible: true
+            };
+            
+            // Create keyframes for the trim end
+            // First, create keyframes for the drawing animation (0 to 100%)
+            for (let frame = 0; frame < baseFrames; frame++) {
+                const progress = frame / (baseFrames - 1);
+                trimPath.end.keyframes.push({
+                    after: {
+                        x: 1,
+                        y: 1
+                    },
+                    before: {
+                        x: 0,
+                        y: 0
+                    },
+                    time: frame,
+                    value: progress
+                });
+            }
+            
+            // Then, add keyframes to hold at 100% for the completion time
+            for (let frame = baseFrames; frame < totalFrames; frame++) {
+                trimPath.end.keyframes.push({
+                    after: {
+                        x: 1,
+                        y: 1
+                    },
+                    before: {
+                        x: 0,
+                        y: 0
+                    },
+                    time: frame,
+                    value: 1.0  // Hold at 100%
+                });
+            }
+            
+            // Add the trim path to the group
+            pathGroup.shapes.push(trimPath);
+        }
+        
+        // Add Stroke element
+        const stroke = {
+            __type__: "Stroke",
+            cap: "RoundCap",
+            color: {
+                value: oc
+            },
+            group_color: "#00000000",
+            join: "BevelJoin",
+            locked: false,
+            miter_limit: 4,
+            name: "Stroke",
+            opacity: {
+                value: 1
+            },
+            use: null,
+            uuid: generateUUID(),
+            visible: true,
+            width: {
+                value: lw / 10
+            }
+        };
+        
+        // Add the stroke to the group
+        pathGroup.shapes.push(stroke);
+        
+        // Add Path element with all points
+        const path = {
+            __type__: "Path",
+            closed: false,
+            group_color: "#00000000",
+            locked: false,
+            name: "Path",
+            reversed: false,
+            shape: {
+                value: {
+                    closed: false,
+                    points: allPoints
+                }
+            },
+            uuid: generateUUID(),
+            visible: true
+        };
+        
+        // Add the path to the group
+        pathGroup.shapes.push(path);
+        
+        // Add the path group to the composition
+        composition.shapes.push(pathGroup);
+        
+        // Convert to JSON string
+        const rawrJson = JSON.stringify(rawrData, null, 2);
+        
+        // Create a blob and download
+        const blob = new Blob([rawrJson], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'loopy-looper.rawr';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        URL.revokeObjectURL(url);
+        
+        showNotification(`Glaxnimate RAWR ${isAnimated ? 'animation' : 'image'} exported successfully`);
+    } catch (error) {
+        console.error('RAWR export failed:', error);
+        showNotification('Export failed. Please try again.');
+    }
+}
+
+// Helper function to generate UUIDs
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+function deg2rad(deg) {
+    return (deg * Math.PI) / 180.0;
+}
+function hex2rgb(hex) {
+    if (hex.substring(0, 1) != "#") return { red: 0, green: 0, blue: 0 };
+    var r = parseInt(hex.substring(1, 3), 16);
+    var g = parseInt(hex.substring(3, 5), 16);
+    var b = parseInt(hex.substring(5, 7), 16);
+    return { red: r, green: g, blue: b };
+}
+function rgb2hex(red, green, blue) {
+    var black = "#000000";
+    if (red < 0 || red > 255) return black;
+    if (green < 0 || green > 255) return black;
+    if (blue < 0 || blue > 255) return black;
+    var color = blue | (green << 8) | (red << 16);
+    return "#" + color.toString(16).padStart(6, '0');
+}
+function getColorStep(spos, epos, scol, ecol) {
+    var pdif = parseInt(epos) - parseInt(spos);
+    pdif = Math.abs(pdif);
+    var cdif = parseInt(ecol) - parseInt(scol);
+    return cdif / pdif;
+}
+function render() {
+    let canvas = GLOBAL.canvas;
+    let context = GLOBAL.context;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.save();
+    var cwidth = canvas.width;
+    var chwidth = cwidth / 2;
+    var cheight = canvas.height;
+    var chheight = cheight / 2;
+    var angle = -90.0;
+    var position = chwidth;
+    context.strokeStyle = oc;
+    context.lineWidth = lw / 10;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.miterLimit = 700;
+    var or = maxr / 100;
+    var ir = or * (minr / 100);
+    var rad = deg2rad(angle),
+        dstep = detail / 10;
+    var iposition = chwidth * or;
+    var fposition = chwidth * ir;
+    if (delay == 0) {
+        GLOBAL.iteration = 0;
+        GLOBAL.itercap = iposition;
+    }
+    var x = chwidth + Math.cos(rad) * iposition,
+        px = 0;
+    var y = chheight + Math.sin(rad) * iposition,
+        py = 0;
+    var icolor = hex2rgb(oc);
+    var fcolor = hex2rgb(ic);
+    var r = icolor.red;
+    var g = icolor.green;
+    var b = icolor.blue;
+    var rs = getColorStep(iposition, fposition, r, fcolor.red) * (detail / 10);
+    var gs = getColorStep(iposition, fposition, g, fcolor.green) * (detail / 10);
+    var bs = getColorStep(iposition, fposition, b, fcolor.blue) * (detail / 10);
+    for (position = iposition; position > fposition; position -= dstep) {
+        rad = deg2rad(angle);
+        px = x;
+        py = y;
+        x = chwidth + Math.cos(rad) * position;
+        y = chheight + Math.sin(rad) * position;
+        context.beginPath();
+        context.moveTo(px, py);
+        context.lineTo(x, y);
+        context.strokeStyle = rgb2hex(r, g, b);
+        r += rs;
+        r = r > 255 ? 255 : r;
+        r = r < 0 ? 0 : r;
+        g += gs;
+        g = g > 255 ? 255 : g;
+        g = g < 0 ? 0 : g;
+        b += bs;
+        b = b > 255 ? 255 : b;
+        b = b < 0 ? 0 : b;
+        context.stroke();
+        context.moveTo(x, y);
+        angle += step;
+        angle -= angle > 360 ? 360 : 0;
+        GLOBAL.iteration += 1;
+        if (GLOBAL.iteration > GLOBAL.itercap) {
+             break;
+        }
+    }
+    context.restore();
+
+    if(GLOBAL.timer) {
+        clearTimeout(GLOBAL.timer);
+    }
+    if (position > fposition) {
+        GLOBAL.itercap += 1;
+        GLOBAL.timer = setTimeout(render, parseInt(GLOBAL.delay / 100));
+    }
+    GLOBAL.iteration = 0;
+}
+function animate(canvas, context) {
+    GLOBAL.canvas = canvas;
+    GLOBAL.context = context;
+    GLOBAL.iteration = 0;
+    GLOBAL.itercap = 1;
+    let del = 0;
+    if (typeof delay !== 'undefined') { del = delay * 10; }
+    GLOBAL.delay = del;
+    render();
+}
+function rerender() {
+    if(context == null) {
+         redraw();
+    }
+    animate(canvas, context);
+}
+function redraw() {
+    canvas = document.getElementById("canvas");
+    context = canvas.getContext("2d");
+    animate(canvas, context);
+}
+function addControls() {
+    var i = 0;
+    document.write('<form name=controls onchange="javascript:updateValues()" onkeypress="javascript:updateValues()">');
+    document.write("<div>");
+    document.write("Step:");
+    document.write('<select name=step size=1 tabindex=1  onMouseOver="javascript:updateDescription(1)" onMouseOut="javascript:updateDescription(0)">');
+    for (i = 1; i <= 359; i++) {
+        document.write('<option value="' + i + '">' + i + "");
+    }
+    document.write("</select>");
+    document.write(",Detail:");
+    document.write('<select name=detail size=1 tabindex=2  onMouseOver="javascript:updateDescription(2)" onMouseOut="javascript:updateDescription(0)">');
+    for (i = 5; i <= 100; i++) {
+        document.write('<option value="' + i + '">' + (i / 10).toFixed(1) + "");
+    }
+    document.write("</select>,Maximum Radius:");
+    document.write('<select name=maxr  size=1  tabindex=3  onMouseOver="javascript:updateDescription(3)" onMouseOut="javascript:updateDescription(0)">');
+    for (i = 10; i <= 300; i += 10) {
+        document.write('<option value="' + i + '">' + i + "");
+    }
+    document.write("</select>%,Minimum Radius:");
+    document.write('<select name=minr  size=1  tabindex=4  onMouseOver="javascript:updateDescription(4)" onMouseOut="javascript:updateDescription(0)">');
+    for (i = 0; i <= 95; i += 5) {
+        document.write('<option value="' + i + '">' + i + "");
+    }
+    document.write("</select>%,Line Width:");
+    document.write('<select name=lw  size=1  tabindex=5  onMouseOver="javascript:updateDescription(5)" onMouseOut="javascript:updateDescription(0)">');
+    for (i = 1; i.toFixed(1) <= 100; i += 1) {
+        document.write('<option value="' + i + '">' + (i / 10).toFixed(1) + "");
+    }
+    document.write("</select>");
+    document.write("</div><br/>");
+    document.write("<div>");
+    document.write('Inner Color:<input type=color  tabindex=6  name=ic  onMouseOver="javascript:updateDescription(6)" onMouseOut="javascript:updateDescription(0)"/>');
+    document.write(',Outter Color:<input type=color  tabindex=7  name=oc  onMouseOver="javascript:updateDescription(7)" onMouseOut="javascript:updateDescription(0)"/>');
+    document.write(',Delay: <input type="range" tabindex=8 name=delay min="0" max="1000" step="0.1" value="0" onMouseOver="javascript:updateDescription(8)" onMouseOut="javascript:updateDescription(0)">');
+    document.write('&nbsp;<input type="button" value="Restart" onclick="javascript:updateValues()" onMouseOver="javascript:updateDescription(9)" onMouseOut="javascript:updateDescription(0)">');
+    document.write("</div><br/>");
+    document.write("<div id=description>");
+    document.write("Hold your mouse over a control to view its description.");
+    document.write("</div>");
+    document.write("</form>");
+    document.controls.step.value = step;
+    document.controls.detail.value = detail;
+    document.controls.maxr.value = maxr;
+    document.controls.minr.value = minr;
+    document.controls.lw.value = lw;
+    document.controls.ic.value = ic;
+    document.controls.oc.value = oc;
+    document.controls.delay.value = delay;
+}
+function updateValues() {
+    step = parseInt(document.controls.step.value, 10);
+    detail = parseInt(document.controls.detail.value, 10);
+    maxr = parseInt(document.controls.maxr.value, 10);
+    minr = parseInt(document.controls.minr.value, 10);
+    lw = parseInt(document.controls.lw.value, 10);
+    ic = document.controls.ic.value;
+    oc = document.controls.oc.value;
+    delay = document.controls.delay.value;
+    redraw();
+}
+function updateDescription(object) {
+    var text = "";
+    if (object == 1) {
+        text = "The angle between vertexes of the loop.(determines the overall shape)";
+    } else if (object == 2) {
+        text = "The decrease in radius per vertex.(the lower the more detailed)";
+    } else if (object == 3) {
+        text = "The radius of the first vertex.";
+    } else if (object == 4) {
+        text = "The radius of the last vertex relative to the first vertex.(can be used to make holes inside the loop)";
+    } else if (object == 5) {
+        text = "Controls how thick the lines are.";
+    } else if (object == 6) {
+        text = "The color of the last vertex.(must be a hex value)";
+    } else if (object == 7) {
+        text = "The color of the first vertex.(must be a hex value)";
+    } else if (object == 8) {
+        text = "The delay of drawing each line. Also affects Glaxnimate RAWR export animation speed.";
+    } else if (object == 9) {
+        text = "Restart Drawing if delay > 0.";
+    } else {
+        text = "Hold your mouse over a control to view its description.";
+    }
+    document.getElementById("description").innerHTML = text;
+}
+  </script>
+</head>
+<body>
+<div id="title"><h1>Loopy Looper 6</h1></div>
+<div class="content">
+    <canvas id="canvas" width="500" height="500">This is a canvas element and, if you're seeing this then, your browser doesn't support it.</canvas>
+    <script>
+        addControls();
+        redraw();
+    </script>
+    <noscript>
+        <br />
+        This website uses Javascript and you need to unblock it if you want to use it.
+    </noscript>
+</div>
+
+<!-- Custom Context Menu -->
+<div id="contextMenu" class="context-menu">
+    <div class="context-menu-item" id="exportPNG">Export to PNG</div>
+    <div class="context-menu-item" id="exportSVG">Export to SVG</div>
+    <div class="context-menu-item" id="exportRAWR">Export to RAWR</div>
+</div>
+
+<!-- Export notification -->
+<div id="exportNotification" class="export-notification">
+    Right-click and "Save image as..." to download
+</div>
+
+<script>
+    // Initialize the context menu when the page loads
+    window.addEventListener('DOMContentLoaded', function() {
+        canvas = document.getElementById("canvas");
+        context = canvas.getContext("2d");
+        initContextMenu();
+    });
+</script>
+</body>
+</html>
