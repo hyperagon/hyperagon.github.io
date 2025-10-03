@@ -27,9 +27,9 @@ params:
     - name: itchio
       url: https://hyperagon.itch.io/
     - name: LinkedIn
-      url: https://www.linkedin.com/in/vím
+      url: https://www.linkedin.com/in/hyperagon
     - name: Twitter
-      url: https://twitter.com/alphachill8
+      url: https://twitter.com/hyperagon
 menu:
   main:
     - name: Projects
