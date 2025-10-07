@@ -181,13 +181,14 @@ var oc = "#ffc832";
 var delay = 0;
 
 // Context menu functionality
-let contextMenu, exportPNG, exportSVG, exportRAWR, exportNotification;
+let contextMenu, exportPNG, exportSVG, exportHTML, exportRAWR, exportNotification;
 
 // Initialize context menu elements and event listeners
 function initContextMenu() {
     contextMenu = document.getElementById('contextMenu');
     exportPNG = document.getElementById('exportPNG');
     exportSVG = document.getElementById('exportSVG');
+    exportHTML = document.getElementById('exportHTML');
     exportRAWR = document.getElementById('exportRAWR');
     exportNotification = document.getElementById('exportNotification');
     
@@ -217,6 +218,14 @@ function initContextMenu() {
     exportSVG.addEventListener('click', (e) => {
         e.stopPropagation();
         exportToSVG();
+        contextMenu.style.display = 'none';
+        return false;
+    });
+
+    // Export to HTML functionality
+    exportHTML.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportToHTML();
         contextMenu.style.display = 'none';
         return false;
     });
@@ -265,91 +274,130 @@ function exportToPNG() {
     }
 }
 
-function exportToSVG() {
-    try {
-        // Get current values
-        const cwidth = canvas.width;
-        const chwidth = cwidth / 2;
-        const cheight = canvas.height;
-        const chheight = cheight / 2;
-        let angle = -90.0;
-        let position = chwidth;
-        const or = maxr / 100;
-        const ir = or * (minr / 100);
-        const dstep = detail / 10;
-        const iposition = chwidth * or;
-        const fposition = chwidth * ir;
+// Function to create the SVG element with animation
+function createAnimatedSVG() {
+    // Get current values
+    const cwidth = canvas.width;
+    const chwidth = cwidth / 2;
+    const cheight = canvas.height;
+    const chheight = cheight / 2;
+    let angle = -90.0;
+    let position = chwidth;
+    const or = maxr / 100;
+    const ir = or * (minr / 100);
+    const dstep = detail / 10;
+    const iposition = chwidth * or;
+    const fposition = chwidth * ir;
+    
+    // Create an SVG element
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', cwidth);
+    svg.setAttribute('height', cheight);
+    svg.setAttribute('viewBox', `0 0 ${cwidth} ${cheight}`);
+    
+    // Check if we need to create an animated SVG
+    const isAnimated = delay > 0;
+    
+    // Calculate color gradient
+    const icolor = hex2rgb(ic);
+    const fcolor = hex2rgb(oc);
+    let r = fcolor.red;
+    let g = fcolor.green;
+    let b = fcolor.blue;
+    const rs = getColorStep(iposition, fposition, r, icolor.red) * (detail / 10);
+    const gs = getColorStep(iposition, fposition, g, icolor.green) * (detail / 10);
+    const bs = getColorStep(iposition, fposition, b, icolor.blue) * (detail / 10);
+    
+    // Calculate the starting point
+    let rad = deg2rad(angle);
+    let x = chwidth + Math.cos(rad) * iposition;
+    let y = chheight + Math.sin(rad) * iposition;
+    let px = x;
+    let py = y;
+    
+    // Create a group for all the path segments
+    const ng = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    
+    // Calculate the animation delay per segment (in seconds)
+    // At max delay (1000), we want each segment to take 1 second
+    // So: segmentDelay = (delay / 1000) * 1 seconds
+    const segmentDelay = (delay / 1000) * 1;
+    
+    // Calculate the path segments
+    let segmentIndex = 0;
+    for (position = iposition; position > fposition; position -= dstep) {
+        // Calculate the next position
+        rad = deg2rad(angle);
+        x = chwidth + Math.cos(rad) * position;
+        y = chheight + Math.sin(rad) * position;
         
-        // Create an SVG element
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', cwidth);
-        svg.setAttribute('height', cheight);
-        svg.setAttribute('viewBox', `0 0 ${cwidth} ${cheight}`);
+        // Create a path for this segment
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         
-        // Calculate color gradient
-        const icolor = hex2rgb(ic);
-        const fcolor = hex2rgb(oc);
-        let r = fcolor.red;
-        let g = fcolor.green;
-        let b = fcolor.blue;
-        const rs = getColorStep(iposition, fposition, r, icolor.red) * (detail / 10);
-        const gs = getColorStep(iposition, fposition, g, icolor.green) * (detail / 10);
-        const bs = getColorStep(iposition, fposition, b, icolor.blue) * (detail / 10);
+        // Set the path data for this segment
+        const pathData = `M ${px} ${py} L ${x} ${y}`;
+        path.setAttribute('d', pathData);
+        path.setAttribute('stroke', rgb2hex(r, g, b));
+        path.setAttribute('stroke-width', lw / 10);
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('stroke-linejoin', 'round');
+        path.setAttribute('fill', 'none');
         
-        // Calculate the starting point
-        let rad = deg2rad(angle);
-        let x = chwidth + Math.cos(rad) * iposition;
-        let y = chheight + Math.sin(rad) * iposition;
-        let px = x;
-        let py = y;
-        
-        // Create a group for all the path segments
-        const ng = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        
-        // Calculate the path segments
-        for (position = iposition; position > fposition; position -= dstep) {
-            // Calculate the next position
-            rad = deg2rad(angle);
-            x = chwidth + Math.cos(rad) * position;
-            y = chheight + Math.sin(rad) * position;
+        // If animated, set initial opacity to 0 and add animation
+        if (isAnimated) {
+            path.setAttribute('opacity', '0');
             
-            // Create a path for this segment
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            // Create SMIL animation for opacity
+            const animateOpacity = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+            animateOpacity.setAttribute('attributeName', 'opacity');
+            animateOpacity.setAttribute('from', '0');
+            animateOpacity.setAttribute('to', '1');
+            animateOpacity.setAttribute('dur', '0.5s');  // Duration of the fade-in for each segment
+            animateOpacity.setAttribute('begin', `${segmentIndex * segmentDelay}s`);
+            animateOpacity.setAttribute('fill', 'freeze');
             
-            // Set the path data for this segment
-            const pathData = `M ${px} ${py} L ${x} ${y}`;
-            path.setAttribute('d', pathData);
-            path.setAttribute('stroke', rgb2hex(r, g, b));
-            path.setAttribute('stroke-width', lw / 10);
-            path.setAttribute('stroke-linecap', 'round');
-            path.setAttribute('stroke-linejoin', 'round');
-            path.setAttribute('fill', 'none');
-            
-            // Add the path to the group
-            ng.appendChild(path);
-            
-            // Update the previous position
-            px = x;
-            py = y;
-            
-            // Update the angle
-            angle += step;
-            angle -= angle > 360 ? 360 : 0;
-            
-            // Update the color
-            r += rs;
-            r = r > 255 ? 255 : r;
-            r = r < 0 ? 0 : r;
-            g += gs;
-            g = g > 255 ? 255 : g;
-            g = g < 0 ? 0 : g;
-            b += bs;
-            b = b > 255 ? 255 : b;
-            b = b < 0 ? 0 : b;
+            // Add the animation to the path
+            path.appendChild(animateOpacity);
         }
         
-        // Add the group to the SVG
-        svg.appendChild(ng);
+        // Add the path to the group
+        ng.appendChild(path);
+        
+        // Update the previous position
+        px = x;
+        py = y;
+        
+        // Update the angle
+        angle += step;
+        angle -= angle > 360 ? 360 : 0;
+        
+        // Update the color
+        r += rs;
+        r = r > 255 ? 255 : r;
+        r = r < 0 ? 0 : r;
+        g += gs;
+        g = g > 255 ? 255 : g;
+        g = g < 0 ? 0 : g;
+        b += bs;
+        b = b > 255 ? 255 : b;
+        b = b < 0 ? 0 : b;
+        
+        // Increment segment index
+        segmentIndex++;
+    }
+    
+    // Add the group to the SVG
+    svg.appendChild(ng);
+    
+    // No need for the script to restart animations
+    
+    return svg;
+}
+
+function exportToSVG() {
+    try {
+        // Create the SVG element
+        const svg = createAnimatedSVG();
         
         // Now use the 5-step method to export the SVG
         // Step 1: Get the SVG element (we already have it)
@@ -381,9 +429,74 @@ function exportToSVG() {
         link.click();
         document.body.removeChild(link);
         
-        showNotification('SVG exported successfully');
+        showNotification(`SVG ${delay > 0 ? 'animation' : 'image'} exported successfully`);
     } catch (error) {
         console.error('SVG export failed:', error);
+        showNotification('Export failed. Please try again.');
+    }
+}
+
+function exportToHTML() {
+    try {
+        // Create the SVG element
+        const svg = createAnimatedSVG();
+        
+        // Get SVG source by XMLSerializer
+        const serializer = new XMLSerializer();
+        let svgSource = serializer.serializeToString(svg);
+        
+        // Add namespaces
+        if (!svgSource.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+            svgSource = svgSource.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+        }
+        if (!svgSource.match(/^<svg[^>]+"http:\/\/www\.w3\.org\/1999\/xlink"/)) {
+            svgSource = svgSource.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+        }
+        
+        // Create simple HTML structure with SVG inside
+        const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Loopy Looper</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+ ${svgSource}
+</body>
+</html>`;
+        
+        // Create a blob and download
+        const blob = new Blob([htmlContent], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'loopy-looper.html';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        URL.revokeObjectURL(url);
+        
+        showNotification(`HTML ${delay > 0 ? 'animation' : 'image'} exported successfully`);
+    } catch (error) {
+        console.error('HTML export failed:', error);
         showNotification('Export failed. Please try again.');
     }
 }
@@ -420,12 +533,12 @@ function exportToRAWR() {
         // Determine if we're creating an animation
         const isAnimated = delay > 0;
         
-        // Calculate FPS based on the actual animation logic in the code
-        // The actual delay between frames is (delay * 10) / 100 = delay / 10 milliseconds
-        // So the FPS should be 1000 / (delay / 10) = 10000 / delay
-        // But cap it at 60 since that's the practical limit for JavaScript animations
-        const calculatedFps = 10000 / delay;
-        const fps = isAnimated ? Math.min(60, Math.max(1, calculatedFps)) : 1;
+        // Calculate FPS based on the new delay calculation
+        // At max delay (1000), we want each segment to take 1 second
+        // So the time per segment is (delay / 1000) * 1 seconds
+        // FPS = 1 / time per segment = 1 / ((delay / 1000) * 1) = 1000 / delay
+        // But cap it at a reasonable minimum FPS
+        const fps = isAnimated ? Math.min(60, Math.max(0.2, 1000 / delay)) : 1;
         
         // Calculate total points
         const totalPoints = Math.floor((iposition - fposition) / dstep);
@@ -863,7 +976,9 @@ function render() {
     }
     if (position > fposition) {
         GLOBAL.itercap += 1;
-        GLOBAL.timer = setTimeout(render, parseInt(GLOBAL.delay / 100));
+        // Calculate delay: at max delay (1000), we want 1 second per line
+        const segmentDelay = (delay / 1000) * 1000; // in milliseconds
+        GLOBAL.timer = setTimeout(render, segmentDelay);
     }
     GLOBAL.iteration = 0;
 }
@@ -872,8 +987,11 @@ function animate(canvas, context) {
     GLOBAL.context = context;
     GLOBAL.iteration = 0;
     GLOBAL.itercap = 1;
+    // Calculate delay: at max delay (1000), we want 1 second per line
     let del = 0;
-    if (typeof delay !== 'undefined') { del = delay * 10; }
+    if (typeof delay !== 'undefined') { 
+        del = (delay / 1000) * 1000; // in milliseconds
+    }
     GLOBAL.delay = del;
     render();
 }
@@ -967,7 +1085,7 @@ function updateDescription(object) {
     } else if (object == 7) {
         text = "The color of the first vertex.(must be a hex value)";
     } else if (object == 8) {
-        text = "The delay of drawing each line. Also affects Glaxnimate RAWR export animation speed.";
+        text = "The delay of drawing each line. At maximum (1000), each line takes 1 second to appear.";
     } else if (object == 9) {
         text = "Restart Drawing if delay > 0.";
     } else {
@@ -995,6 +1113,7 @@ function updateDescription(object) {
 <div id="contextMenu" class="context-menu">
     <div class="context-menu-item" id="exportPNG">Export to PNG</div>
     <div class="context-menu-item" id="exportSVG">Export to SVG</div>
+    <div class="context-menu-item" id="exportHTML">Export to HTML</div>
     <div class="context-menu-item" id="exportRAWR">Export to RAWR</div>
 </div>
 
