@@ -42,9 +42,9 @@ Wizard by Night"""
 #    name = "email"
 #    url = "mailto:hyperagon@outlook.com"
 
-    [[params.socialIcons]]
-    name = "bluesky"
-    url = "https://bsky.app/profile/hyperagon.bsky.social"
+#    [[params.socialIcons]]
+#    name = "bluesky"
+#    url = "https://bsky.app/profile/hyperagon.bsky.social"
 
     [[menu.main]]
     name = "Projects"
