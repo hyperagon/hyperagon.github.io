@@ -3,7 +3,7 @@
 <!--
 MIT No Attribution (https://github.com/aws/mit-0)
 
-Copyright 2025 hyperagon
+Copyright 2025 Hyperagon
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -333,6 +333,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     </div>
                 </div>
             </div>
+            
+            <div class="tool-group">
+                <label>Touch Sensitivity</label>
+                <div class="brush-size">
+                    <input type="range" class="size-slider" id="touchSensitivity" min="0.1" max="2" step="0.1" value="1">
+                    <div class="size-preview">
+                        <span id="sensitivityValue">1.0</span>
+                    </div>
+                </div>
+            </div>
 
             <div class="tool-group">
                 <label>History</label>
@@ -374,6 +384,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         const ctx = canvas.getContext('2d');
         const toolbar = document.getElementById('toolbar');
         const brushSizeSlider = document.getElementById('brushSize');
+        const touchSensitivitySlider = document.getElementById('touchSensitivity');
+        const sensitivityValue = document.getElementById('sensitivityValue');
         const sizePreview = document.getElementById('sizePreview');
         const undoBtn = document.getElementById('undoBtn');
         const redoBtn = document.getElementById('redoBtn');
@@ -382,9 +394,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let hasMoved = false;
         let currentColor = '#000000';
         let currentSize = 5;
+        let touchSensitivity = 1.0;
         let lastX = 0;
         let lastY = 0;
         let touchStartTime = 0;
+        let lastTouchRadius = 0;
+        let lastTouchRotation = 0;
         
         // History management - store drawing commands
         let undoStack = [];
@@ -408,11 +423,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             
             drawStroke() {
-                const { points, color, size } = this.data;
+                const { points, color, sizes, rotations } = this.data;
                 if (points.length < 2) return;
                 
                 ctx.strokeStyle = color;
-                ctx.lineWidth = size;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 
@@ -420,6 +434,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 ctx.moveTo(points[0].x, points[0].y);
                 
                 for (let i = 1; i < points.length; i++) {
+                    // Use dynamic size if available
+                    if (sizes && sizes[i] !== undefined) {
+                        ctx.lineWidth = sizes[i];
+                    } else {
+                        ctx.lineWidth = this.data.size;
+                    }
+                    
                     ctx.lineTo(points[i].x, points[i].y);
                 }
                 
@@ -533,6 +554,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             currentSize = this.value;
             updateSizePreview();
         });
+        
+        // Touch sensitivity
+        touchSensitivitySlider.addEventListener('input', function() {
+            touchSensitivity = parseFloat(this.value);
+            sensitivityValue.textContent = touchSensitivity.toFixed(1);
+        });
 
         function updateSizePreview() {
             sizePreview.style.width = Math.min(currentSize, 30) + 'px';
@@ -542,30 +569,81 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         updateSizePreview();
 
+        // Calculate dynamic brush size based on touch properties
+        function calculateBrushSize(touch) {
+            // Get the touch radius values if available
+            const radiusX = touch.radiusX || 0;
+            const radiusY = touch.radiusY || 0;
+            
+            // Calculate average radius
+            const avgRadius = (radiusX + radiusY) / 2;
+            
+            // Use the rotation angle to influence the brush size
+            const rotation = touch.rotationAngle || 0;
+            const rotationFactor = Math.abs(Math.sin(rotation * Math.PI / 180)) * 0.5 + 0.5;
+            
+            // Calculate dynamic size based on touch properties and sensitivity
+            let dynamicSize = currentSize;
+            
+            if (avgRadius > 0) {
+                // Scale the brush size based on touch radius
+                const radiusFactor = Math.min(avgRadius / 20, 2); // Cap at 2x the base size
+                dynamicSize = currentSize * (0.5 + radiusFactor * 0.5) * rotationFactor * touchSensitivity;
+                
+                // Ensure the size stays within reasonable bounds
+                dynamicSize = Math.max(1, Math.min(dynamicSize, currentSize * 3));
+            }
+            
+            return dynamicSize;
+        }
+
         // Drawing functions
-        function startDrawing(x, y) {
+        function startDrawing(x, y, touch) {
             isDrawing = true;
             hasMoved = false;
             lastX = x;
             lastY = y;
             touchStartTime = Date.now();
             
+            // Calculate initial brush size if touch data is available
+            let initialSize = currentSize;
+            if (touch) {
+                initialSize = calculateBrushSize(touch);
+                lastTouchRadius = (touch.radiusX + touch.radiusY) / 2 || 0;
+                lastTouchRotation = touch.rotationAngle || 0;
+            }
+            
             // Start new stroke
             currentStroke = new DrawingCommand('stroke', {
                 points: [{x, y}],
+                sizes: [initialSize],
+                rotations: [lastTouchRotation],
                 color: currentColor,
                 size: currentSize
             });
         }
 
-        function draw(x, y) {
+        function draw(x, y, touch) {
             if (!isDrawing) return;
             
             hasMoved = true;
             
+            // Calculate dynamic brush size if touch data is available
+            let dynamicSize = currentSize;
+            let touchRotation = lastTouchRotation;
+            
+            if (touch) {
+                dynamicSize = calculateBrushSize(touch);
+                touchRotation = touch.rotationAngle || 0;
+                lastTouchRadius = (touch.radiusX + touch.radiusY) / 2 || 0;
+                lastTouchRotation = touchRotation;
+            }
+            
             // Add point to current stroke
             if (currentStroke && currentStroke.type === 'stroke') {
                 currentStroke.data.points.push({x, y});
+                currentStroke.data.sizes.push(dynamicSize);
+                currentStroke.data.rotations.push(touchRotation);
                 currentStroke.execute();
             }
             
@@ -573,16 +651,21 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             lastY = y;
         }
 
-        function stopDrawing(x, y) {
+        function stopDrawing(x, y, touch) {
             if (!isDrawing) return;
             
             // If it was a tap (no movement and quick), create a dot
             if (!hasMoved && (Date.now() - touchStartTime) < 300) {
+                let dotSize = currentSize;
+                if (touch) {
+                    dotSize = calculateBrushSize(touch);
+                }
+                
                 currentStroke = new DrawingCommand('dot', {
                     x: x || lastX,
                     y: y || lastY,
                     color: currentColor,
-                    size: currentSize
+                    size: dotSize
                 });
                 currentStroke.execute();
             }
@@ -601,7 +684,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             const rect = canvas.getBoundingClientRect();
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-            startDrawing(x, y);
+            startDrawing(x, y, touch);
         });
 
         canvas.addEventListener('touchmove', function(e) {
@@ -610,7 +693,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             const rect = canvas.getBoundingClientRect();
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-            draw(x, y);
+            draw(x, y, touch);
         });
 
         canvas.addEventListener('touchend', function(e) {
@@ -620,7 +703,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 const rect = canvas.getBoundingClientRect();
                 const x = touch.clientX - rect.left;
                 const y = touch.clientY - rect.top;
-                stopDrawing(x, y);
+                stopDrawing(x, y, touch);
             } else {
                 stopDrawing();
             }
