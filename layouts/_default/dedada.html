@@ -21,12 +21,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Dedada</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -59,6 +61,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             display: block;
             touch-action: none;
             background: white;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .toolbar {
@@ -66,7 +71,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             top: 20px;
             left: 20px;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             padding: 1rem;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -76,6 +80,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             min-width: 200px;
             max-height: calc(100% - 40px);
             overflow-y: auto;
+            z-index: 10;
         }
 
         .tool-group {
@@ -191,6 +196,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             display: flex;
             align-items: center;
             justify-content: center;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn:hover {
@@ -300,6 +306,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             justify-content: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            z-index: 10;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .toggle-toolbar:hover {
@@ -363,7 +371,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         
         <div class="toolbar" id="toolbar">
             <div class="tool-group">
-                <label>Tool</label>
+                <label>Tool Mode</label>
                 <div class="tool-mode">
                     <button class="btn btn-brush active" id="brushBtn" onclick="setToolMode('brush')">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -383,7 +391,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             </div>
 
             <div class="tool-group">
-                <label>Color</label>
+                <label>Colors</label>
                 <div class="color-palette">
                     <div class="color-btn active" style="background: #000000" data-color="#000000"></div>
                     <div class="color-btn" style="background: #ff6b6b" data-color="#ff6b6b"></div>
@@ -457,6 +465,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     </div>
 
     <script>
+        // Check if we're on a mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
         const canvas = document.getElementById('paintCanvas');
         const ctx = canvas.getContext('2d');
         const toolbar = document.getElementById('toolbar');
@@ -484,11 +495,15 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let cursorY = -100;
         let cursorVisible = false;
         
+        // Performance optimization for mobile
+        let lastRedrawTime = 0;
+        const redrawThrottle = isMobile ? 50 : 16; // Throttle redraws more on mobile
+        
         // History management - store drawing commands
         let undoStack = [];
         let redoStack = [];
         let currentStroke = null;
-        const maxHistory = 50;
+        const maxHistory = isMobile ? 30 : 50; // Reduce history on mobile for performance
 
         // Drawing command structure
         class DrawingCommand {
@@ -544,6 +559,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 const { points, sizes } = this.data;
                 if (points.length < 2) return;
                 
+                // Use a more compatible erasing method for Android
+                ctx.save();
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
@@ -563,7 +580,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 }
                 
                 ctx.stroke();
-                ctx.globalCompositeOperation = 'source-over'; // Reset composite operation
+                ctx.restore(); // Restore saves us from having to reset composite operation manually
             }
         }
 
@@ -589,6 +606,15 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             redrawAll();
         }
 
+        // Throttled redraw function for better performance
+        function throttledRedraw() {
+            const now = Date.now();
+            if (now - lastRedrawTime > redrawThrottle) {
+                redrawAll();
+                lastRedrawTime = now;
+            }
+        }
+
         // Redraw all commands from history
         function redrawAll() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -599,8 +625,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 currentStroke.execute();
             }
             
-            // Draw custom cursor if visible
-            if (cursorVisible) {
+            // Draw custom cursor if visible (only on non-mobile or high-end devices)
+            if (cursorVisible && !isMobile) {
                 drawCustomCursor(cursorX, cursorY);
             }
         }
@@ -759,17 +785,17 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         updateSizePreview();
 
-        // Calculate dynamic brush size based on touch properties
+        // Calculate dynamic brush size based on touch properties with fallbacks
         function calculateBrushSize(touch) {
-            // Get the touch radius values if available
-            const radiusX = touch.radiusX || 0;
-            const radiusY = touch.radiusY || 0;
+            // Get the touch radius values if available, with fallbacks
+            const radiusX = (touch && touch.radiusX) ? touch.radiusX : 0;
+            const radiusY = (touch && touch.radiusY) ? touch.radiusY : 0;
             
             // Calculate average radius
             const avgRadius = (radiusX + radiusY) / 2;
             
-            // Use the rotation angle to influence the brush size
-            const rotation = touch.rotationAngle || 0;
+            // Use the rotation angle to influence the brush size, with fallback
+            const rotation = (touch && touch.rotationAngle) ? touch.rotationAngle : 0;
             const rotationFactor = Math.abs(Math.sin(rotation * Math.PI / 180)) * 0.5 + 0.5;
             
             // Calculate dynamic size based on touch properties and sensitivity
@@ -799,7 +825,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             let initialSize = currentSize;
             if (touch) {
                 initialSize = calculateBrushSize(touch);
-                lastTouchRadius = (touch.radiusX + touch.radiusY) / 2 || 0;
+                lastTouchRadius = ((touch.radiusX || 0) + (touch.radiusY || 0)) / 2;
                 lastTouchRotation = touch.rotationAngle || 0;
             }
             
@@ -833,7 +859,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             if (touch) {
                 dynamicSize = calculateBrushSize(touch);
                 touchRotation = touch.rotationAngle || 0;
-                lastTouchRadius = (touch.radiusX + touch.radiusY) / 2 || 0;
+                lastTouchRadius = ((touch.radiusX || 0) + (touch.radiusY || 0)) / 2;
                 lastTouchRotation = touchRotation;
             }
             
@@ -887,7 +913,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             saveStroke();
         }
 
-        // Touch events
+        // Touch events with better Android support
         canvas.addEventListener('touchstart', function(e) {
             e.preventDefault();
             const touch = e.touches[0];
@@ -895,7 +921,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
             startDrawing(x, y, touch);
-        });
+        }, { passive: false });
 
         canvas.addEventListener('touchmove', function(e) {
             e.preventDefault();
@@ -904,16 +930,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
             
-            // Update cursor position
+            // Update cursor position (only used for non-mobile devices)
             cursorX = x;
             cursorY = y;
             
             if (!isDrawing) {
-                redrawAll();
+                throttledRedraw();
             } else {
                 draw(x, y, touch);
             }
-        });
+        }, { passive: false });
 
         canvas.addEventListener('touchend', function(e) {
             e.preventDefault();
@@ -926,12 +952,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             } else {
                 stopDrawing();
             }
-        });
+        }, { passive: false });
 
         canvas.addEventListener('touchcancel', function(e) {
             e.preventDefault();
             stopDrawing();
-        });
+        }, { passive: false });
 
         // Mouse events
         canvas.addEventListener('mousedown', function(e) {
@@ -952,7 +978,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             cursorVisible = true;
             
             if (!isDrawing) {
-                redrawAll();
+                throttledRedraw();
             } else {
                 draw(x, y);
             }
