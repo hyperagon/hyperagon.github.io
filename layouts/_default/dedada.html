@@ -55,7 +55,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         #paintCanvas {
             width: 100%;
             height: 100%;
-            cursor: crosshair;
+            cursor: none;
             display: block;
             touch-action: none;
             background: white;
@@ -174,30 +174,27 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         .action-buttons {
             display: flex;
-            flex-direction: column;
             gap: 8px;
         }
 
         .btn {
-            background: #667eea;
-            color: white;
+            background: #e0e0e0;
+            color: #333;
             border: none;
-            padding: 0.75rem;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .btn:active {
@@ -212,6 +209,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         .btn-clear {
             background: #ff6b6b;
+            color: white;
             box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         }
 
@@ -221,6 +219,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         .btn-save {
             background: #4ecdc4;
+            color: white;
             box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
         }
 
@@ -230,6 +229,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         .btn-undo {
             background: #f39c12;
+            color: white;
             box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
         }
 
@@ -239,11 +239,50 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         .btn-redo {
             background: #27ae60;
+            color: white;
             box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
         }
 
         .btn-redo:hover {
             box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-brush {
+            background: #e0e0e0;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-brush:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-brush.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+            border: 2px solid #4a5ed4;
+        }
+
+        .btn-eraser {
+            background: #e0e0e0;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-eraser:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-eraser.active {
+            background: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            border: 2px solid #e55555;
+        }
+
+        .btn-eraser.active:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
         }
 
         .toggle-toolbar {
@@ -283,6 +322,21 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             padding: 0.6rem;
         }
 
+        .tool-mode {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tool-mode .btn {
+            flex: 1;
+            padding: 0.6rem;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            padding: 0.5rem;
+        }
+
         @media (max-width: 768px) {
             .toolbar {
                 top: 10px;
@@ -297,8 +351,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
 
             .btn {
-                padding: 0.6rem;
-                font-size: 0.85rem;
+                padding: 0.5rem;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -309,7 +363,27 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         
         <div class="toolbar" id="toolbar">
             <div class="tool-group">
-                <label>Colors</label>
+                <label>Tool</label>
+                <div class="tool-mode">
+                    <button class="btn btn-brush active" id="brushBtn" onclick="setToolMode('brush')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                        </svg>
+                        Brush
+                    </button>
+                    <button class="btn btn-eraser" id="eraserBtn" onclick="setToolMode('eraser')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 20H7L3 16l8-8 4 4-4 4h8"></path>
+                            <path d="M13 13l6-6"></path>
+                        </svg>
+                        Eraser
+                    </button>
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <label>Color</label>
                 <div class="color-palette">
                     <div class="color-btn active" style="background: #000000" data-color="#000000"></div>
                     <div class="color-btn" style="background: #ff6b6b" data-color="#ff6b6b"></div>
@@ -364,9 +438,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 </div>
             </div>
 
-            <div class="action-buttons">
-                <button class="btn btn-clear" onclick="clearCanvas()">Clear Canvas</button>
-                <button class="btn btn-save" onclick="saveDrawing()">Save Drawing</button>
+            <div class="tool-group">
+                <label>Actions</label>
+                <div class="action-buttons">
+                    <button class="btn btn-clear" onclick="clearCanvas()">Clear</button>
+                    <button class="btn btn-save" onclick="saveDrawing()">Save</button>
+                </div>
             </div>
         </div>
 
@@ -389,17 +466,23 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         const sizePreview = document.getElementById('sizePreview');
         const undoBtn = document.getElementById('undoBtn');
         const redoBtn = document.getElementById('redoBtn');
+        const brushBtn = document.getElementById('brushBtn');
+        const eraserBtn = document.getElementById('eraserBtn');
         
         let isDrawing = false;
         let hasMoved = false;
         let currentColor = '#000000';
         let currentSize = 5;
         let touchSensitivity = 1.0;
+        let toolMode = 'brush'; // 'brush' or 'eraser'
         let lastX = 0;
         let lastY = 0;
         let touchStartTime = 0;
         let lastTouchRadius = 0;
         let lastTouchRotation = 0;
+        let cursorX = -100; // Position of custom cursor (offscreen initially)
+        let cursorY = -100;
+        let cursorVisible = false;
         
         // History management - store drawing commands
         let undoStack = [];
@@ -410,7 +493,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         // Drawing command structure
         class DrawingCommand {
             constructor(type, data) {
-                this.type = type; // 'stroke' or 'dot'
+                this.type = type; // 'stroke', 'dot', or 'erase'
                 this.data = data;
             }
             
@@ -419,6 +502,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     this.drawStroke();
                 } else if (this.type === 'dot') {
                     this.drawDot();
+                } else if (this.type === 'erase') {
+                    this.erase();
                 }
             }
             
@@ -454,6 +539,32 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 ctx.arc(x, y, size / 2, 0, Math.PI * 2);
                 ctx.fill();
             }
+            
+            erase() {
+                const { points, sizes } = this.data;
+                if (points.length < 2) return;
+                
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                
+                for (let i = 1; i < points.length; i++) {
+                    // Use dynamic size if available
+                    if (sizes && sizes[i] !== undefined) {
+                        ctx.lineWidth = sizes[i];
+                    } else {
+                        ctx.lineWidth = this.data.size;
+                    }
+                    
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+                
+                ctx.stroke();
+                ctx.globalCompositeOperation = 'source-over'; // Reset composite operation
+            }
         }
 
         // Set canvas size
@@ -487,6 +598,51 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             if (currentStroke) {
                 currentStroke.execute();
             }
+            
+            // Draw custom cursor if visible
+            if (cursorVisible) {
+                drawCustomCursor(cursorX, cursorY);
+            }
+        }
+
+        // Draw custom cursor
+        function drawCustomCursor(x, y) {
+            ctx.save();
+            
+            if (toolMode === 'brush') {
+                // Draw brush cursor
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.7;
+                ctx.beginPath();
+                ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Draw center dot
+                ctx.fillStyle = currentColor;
+                ctx.globalAlpha = 0.9;
+                ctx.beginPath();
+                ctx.arc(x, y, 1, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                // Draw eraser cursor
+                ctx.strokeStyle = '#ff0000';
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.7;
+                ctx.beginPath();
+                ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Draw X in the center
+                ctx.beginPath();
+                ctx.moveTo(x - currentSize/3, y - currentSize/3);
+                ctx.lineTo(x + currentSize/3, y + currentSize/3);
+                ctx.moveTo(x + currentSize/3, y - currentSize/3);
+                ctx.lineTo(x - currentSize/3, y + currentSize/3);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
         }
 
         // Initialize canvas
@@ -515,6 +671,27 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         function updateHistoryButtons() {
             undoBtn.disabled = undoStack.length === 0;
             redoBtn.disabled = redoStack.length === 0;
+        }
+
+        // Set tool mode (brush or eraser)
+        function setToolMode(mode) {
+            toolMode = mode;
+            
+            // Remove active class from both buttons first
+            brushBtn.classList.remove('active');
+            eraserBtn.classList.remove('active');
+            
+            // Add active class to the selected button
+            if (mode === 'brush') {
+                brushBtn.classList.add('active');
+            } else {
+                eraserBtn.classList.add('active');
+            }
+            
+            updateSizePreview();
+            
+            // Redraw to update cursor appearance
+            redrawAll();
         }
 
         // Undo last action
@@ -546,6 +723,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 this.classList.add('active');
                 currentColor = this.dataset.color;
                 updateSizePreview();
+                
+                // Redraw to update cursor color
+                redrawAll();
             });
         });
 
@@ -553,6 +733,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         brushSizeSlider.addEventListener('input', function() {
             currentSize = this.value;
             updateSizePreview();
+            
+            // Redraw to update cursor size
+            redrawAll();
         });
         
         // Touch sensitivity
@@ -564,7 +747,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         function updateSizePreview() {
             sizePreview.style.width = Math.min(currentSize, 30) + 'px';
             sizePreview.style.height = Math.min(currentSize, 30) + 'px';
-            sizePreview.style.background = currentColor;
+            
+            if (toolMode === 'eraser') {
+                sizePreview.style.background = '#e0e0e0';
+                sizePreview.style.border = '2px dashed #999';
+            } else {
+                sizePreview.style.background = currentColor;
+                sizePreview.style.border = 'none';
+            }
         }
 
         updateSizePreview();
@@ -613,14 +803,22 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 lastTouchRotation = touch.rotationAngle || 0;
             }
             
-            // Start new stroke
-            currentStroke = new DrawingCommand('stroke', {
-                points: [{x, y}],
-                sizes: [initialSize],
-                rotations: [lastTouchRotation],
-                color: currentColor,
-                size: currentSize
-            });
+            // Start new stroke or erase
+            if (toolMode === 'eraser') {
+                currentStroke = new DrawingCommand('erase', {
+                    points: [{x, y}],
+                    sizes: [initialSize],
+                    size: currentSize
+                });
+            } else {
+                currentStroke = new DrawingCommand('stroke', {
+                    points: [{x, y}],
+                    sizes: [initialSize],
+                    rotations: [lastTouchRotation],
+                    color: currentColor,
+                    size: currentSize
+                });
+            }
         }
 
         function draw(x, y, touch) {
@@ -640,10 +838,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
             
             // Add point to current stroke
-            if (currentStroke && currentStroke.type === 'stroke') {
+            if (currentStroke) {
                 currentStroke.data.points.push({x, y});
                 currentStroke.data.sizes.push(dynamicSize);
-                currentStroke.data.rotations.push(touchRotation);
+                
+                if (toolMode === 'brush' && currentStroke.type === 'stroke') {
+                    currentStroke.data.rotations.push(touchRotation);
+                }
+                
                 currentStroke.execute();
             }
             
@@ -661,12 +863,20 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     dotSize = calculateBrushSize(touch);
                 }
                 
-                currentStroke = new DrawingCommand('dot', {
-                    x: x || lastX,
-                    y: y || lastY,
-                    color: currentColor,
-                    size: dotSize
-                });
+                if (toolMode === 'eraser') {
+                    currentStroke = new DrawingCommand('erase', {
+                        points: [{x: x || lastX, y: y || lastY}],
+                        sizes: [dotSize],
+                        size: currentSize
+                    });
+                } else {
+                    currentStroke = new DrawingCommand('dot', {
+                        x: x || lastX,
+                        y: y || lastY,
+                        color: currentColor,
+                        size: dotSize
+                    });
+                }
                 currentStroke.execute();
             }
             
@@ -693,7 +903,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             const rect = canvas.getBoundingClientRect();
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-            draw(x, y, touch);
+            
+            // Update cursor position
+            cursorX = x;
+            cursorY = y;
+            
+            if (!isDrawing) {
+                redrawAll();
+            } else {
+                draw(x, y, touch);
+            }
         });
 
         canvas.addEventListener('touchend', function(e) {
@@ -723,11 +942,20 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         });
 
         canvas.addEventListener('mousemove', function(e) {
-            if (!isDrawing) return;
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            draw(x, y);
+            
+            // Update cursor position
+            cursorX = x;
+            cursorY = y;
+            cursorVisible = true;
+            
+            if (!isDrawing) {
+                redrawAll();
+            } else {
+                draw(x, y);
+            }
         });
 
         canvas.addEventListener('mouseup', function(e) {
@@ -738,7 +966,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         });
 
         canvas.addEventListener('mouseout', function(e) {
+            cursorVisible = false;
             stopDrawing();
+            redrawAll();
+        });
+
+        canvas.addEventListener('mouseenter', function(e) {
+            cursorVisible = true;
+            redrawAll();
         });
 
         // Utility functions
@@ -770,6 +1005,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 } else if ((e.key === 'z' && e.shiftKey) || e.key === 'y') {
                     e.preventDefault();
                     redo();
+                } else if (e.key === 'e') {
+                    e.preventDefault();
+                    setToolMode(toolMode === 'eraser' ? 'brush' : 'eraser');
                 }
             }
         });
