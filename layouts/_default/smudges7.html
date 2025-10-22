@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+MIT License
+
+Copyright (c) 2025 Hyperagon
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Smudges</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            touch-action: none;
+        }
+
+        body {
+            background: white;
+        }
+
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        #paintCanvas {
+            width: 100%;
+            height: 100%;
+            cursor: none;
+            display: block;
+            touch-action: none;
+            background: white;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .toolbar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 200px;
+            max-height: calc(100% - 40px);
+            overflow-y: auto;
+            z-index: 10;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .toolbar.right-side {
+            left: auto;
+            right: 20px;
+        }
+
+        .tool-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .tool-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .color-btn {
+            width: 30px;
+            height: 30px;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            border-color: #333;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-btn.active::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .brush-size {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .size-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .size-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .size-preview {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+
+        .size-dot {
+            background: #333;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-clear {
+            background: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-clear:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-save {
+            background: #4ecdc4;
+            color: white;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-save:hover {
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .btn-undo {
+            background: #f39c12;
+            color: white;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-undo:hover {
+            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-redo {
+            background: #27ae60;
+            color: white;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-redo:hover {
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-brush {
+            background: #e0e0e0;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-brush:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-brush.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+            border: 2px solid #4a5ed4;
+        }
+
+        .btn-eraser {
+            background: #e0e0e0;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-eraser:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-eraser.active {
+            background: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            border: 2px solid #e55555;
+        }
+
+        .btn-eraser.active:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .toggle-toolbar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 10;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+
+        .toggle-toolbar:hover {
+            transform: scale(1.1);
+        }
+
+        .toggle-toolbar.moving {
+            transition: all 0.2s ease;
+        }
+
+        .toggle-toolbar.right-side {
+            left: auto;
+            right: 20px;
+        }
+
+        .toolbar.hidden {
+            transform: translateX(-120%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .toolbar.right-side.hidden {
+            transform: translateX(120%);
+        }
+
+        .history-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .history-controls .btn {
+            flex: 1;
+            padding: 0.6rem;
+        }
+
+        .tool-mode {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tool-mode .btn {
+            flex: 1;
+            padding: 0.6rem;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .toolbar {
+                top: 10px;
+                left: 10px;
+                padding: 0.75rem;
+                min-width: 180px;
+            }
+
+            .toolbar.right-side {
+                left: auto;
+                right: 10px;
+            }
+
+            .color-btn {
+                width: 25px;
+                height: 25px;
+            }
+
+            .btn {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .toggle-toolbar {
+                top: 10px;
+                left: 10px;
+            }
+
+            .toggle-toolbar.right-side {
+                left: auto;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas-container">
+        <canvas id="paintCanvas"></canvas>
+        
+        <button class="toggle-toolbar" id="toggleToolbarBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="9" x2="15" y2="9"></line>
+                <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+        </button>
+        
+        <div class="toolbar hidden" id="toolbar">
+            <div class="tool-group">
+                <label>Tool Mode</label>
+                <div class="tool-mode">
+                    <button class="btn btn-brush active" id="brushBtn" onclick="setToolMode('brush')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                        </svg>
+                        Brush
+                    </button>
+                    <button class="btn btn-eraser" id="eraserBtn" onclick="setToolMode('eraser')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 20H7L3 16l8-8 4 4-4 4h8"></path>
+                            <path d="M13 13l6-6"></path>
+                        </svg>
+                        Eraser
+                    </button>
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <label>Colors</label>
+                <div class="color-palette">
+                    <div class="color-btn active" style="background: #000000" data-color="#000000"></div>
+                    <div class="color-btn" style="background: #ff6b6b" data-color="#ff6b6b"></div>
+                    <div class="color-btn" style="background: #4ecdc4" data-color="#4ecdc4"></div>
+                    <div class="color-btn" style="background: #45b7d1" data-color="#45b7d1"></div>
+                    <div class="color-btn" style="background: #f9ca24" data-color="#f9ca24"></div>
+                    <div class="color-btn" style="background: #6c5ce7" data-color="#6c5ce7"></div>
+                    <div class="color-btn" style="background: #a29bfe" data-color="#a29bfe"></div>
+                    <div class="color-btn" style="background: #fd79a8" data-color="#fd79a8"></div>
+                    <div class="color-btn" style="background: #00b894" data-color="#00b894"></div>
+                    <div class="color-btn" style="background: #fdcb6e" data-color="#fdcb6e"></div>
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <label>Brush Size</label>
+                <div class="brush-size">
+                    <input type="range" class="size-slider" id="brushSize" min="1" max="50" value="5">
+                    <div class="size-preview">
+                        <div class="size-dot" id="sizePreview"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-group">
+                <label>Touch Sensitivity</label>
+                <div class="brush-size">
+                    <input type="range" class="size-slider" id="touchSensitivity" min="0.1" max="2" step="0.1" value="1">
+                    <div class="size-preview">
+                        <span id="sensitivityValue">1.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <label>History</label>
+                <div class="history-controls">
+                    <button class="btn btn-undo" id="undoBtn" onclick="undo()" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7v6h6"></path>
+                            <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"></path>
+                        </svg>
+                        Undo
+                    </button>
+                    <button class="btn btn-redo" id="redoBtn" onclick="redo()" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 7v6h-6"></path>
+                            <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"></path>
+                        </svg>
+                        Redo
+                    </button>
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <label>Actions</label>
+                <div class="action-buttons">
+                    <button class="btn btn-clear" onclick="clearCanvas()">Clear</button>
+                    <button class="btn btn-save" onclick="saveDrawing()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if we're on a mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        const toolbar = document.getElementById('toolbar');
+        const toggleToolbarBtn = document.getElementById('toggleToolbarBtn');
+        const brushSizeSlider = document.getElementById('brushSize');
+        const touchSensitivitySlider = document.getElementById('touchSensitivity');
+        const sensitivityValue = document.getElementById('sensitivityValue');
+        const sizePreview = document.getElementById('sizePreview');
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+        const brushBtn = document.getElementById('brushBtn');
+        const eraserBtn = document.getElementById('eraserBtn');
+        
+        let isDrawing = false;
+        let hasMoved = false;
+        let currentColor = '#000000';
+        let currentSize = 5;
+        let touchSensitivity = 1.0;
+        let toolMode = 'brush'; // 'brush' or 'eraser'
+        let lastX = 0;
+        let lastY = 0;
+        let touchStartTime = 0;
+        let lastTouchRadius = 0;
+        let lastTouchRotation = 0;
+        let cursorX = -100; // Position of custom cursor (offscreen initially)
+        let cursorY = -100;
+        let cursorVisible = false;
+        
+        // Performance optimization for mobile
+        let lastRedrawTime = 0;
+        const redrawThrottle = isMobile ? 50 : 16; // Throttle redraws more on mobile
+        
+        // History management - store drawing commands
+        let undoStack = [];
+        let redoStack = [];
+        let currentStroke = null;
+        const maxHistory = isMobile ? 30 : 50; // Reduce history on mobile for performance
+
+        // Toggle toolbar position
+        let isRightSide = false;
+        let lastMoveTime = 0;
+        const moveCooldown = 1000; // 1 second cooldown between moves
+        const proximityThreshold = 60; // pixels
+
+        // Drawing command structure
+        class DrawingCommand {
+            constructor(type, data) {
+                this.type = type; // 'stroke', 'dot', or 'erase'
+                this.data = data;
+            }
+            
+            execute() {
+                if (this.type === 'stroke') {
+                    this.drawStroke();
+                } else if (this.type === 'dot') {
+                    this.drawDot();
+                } else if (this.type === 'erase') {
+                    this.erase();
+                }
+            }
+            
+            drawStroke() {
+                const { points, color, sizes, rotations } = this.data;
+                if (points.length < 2) return;
+                
+                ctx.strokeStyle = color;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                
+                for (let i = 1; i < points.length; i++) {
+                    // Use dynamic size if available
+                    if (sizes && sizes[i] !== undefined) {
+                        ctx.lineWidth = sizes[i];
+                    } else {
+                        ctx.lineWidth = this.data.size;
+                    }
+                    
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+                
+                ctx.stroke();
+            }
+            
+            drawDot() {
+                const { x, y, color, size } = this.data;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            erase() {
+                const { points, sizes } = this.data;
+                if (points.length < 2) return;
+                
+                // Use a more compatible erasing method for Android
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                
+                for (let i = 1; i < points.length; i++) {
+                    // Use dynamic size if available
+                    if (sizes && sizes[i] !== undefined) {
+                        ctx.lineWidth = sizes[i];
+                    } else {
+                        ctx.lineWidth = this.data.size;
+                    }
+                    
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+                
+                ctx.stroke();
+                ctx.restore(); // Restore saves us from having to reset composite operation manually
+            }
+        }
+
+        // Set canvas size
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Save current drawing
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            tempCtx.drawImage(canvas, 0, 0);
+            
+            // Resize canvas
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // Restore drawing
+            ctx.drawImage(tempCanvas, 0, 0);
+            
+            // Redraw all commands
+            redrawAll();
+        }
+
+        // Throttled redraw function for better performance
+        function throttledRedraw() {
+            const now = Date.now();
+            if (now - lastRedrawTime > redrawThrottle) {
+                redrawAll();
+                lastRedrawTime = now;
+            }
+        }
+
+        // Redraw all commands from history
+        function redrawAll() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (const command of undoStack) {
+                command.execute();
+            }
+            if (currentStroke) {
+                currentStroke.execute();
+            }
+            
+            // Draw custom cursor if visible (only on non-mobile or high-end devices)
+            if (cursorVisible && !isMobile) {
+                drawCustomCursor(cursorX, cursorY);
+            }
+        }
+
+        // Draw custom cursor
+        function drawCustomCursor(x, y) {
+            ctx.save();
+            
+            if (toolMode === 'brush') {
+                // Draw brush cursor
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.7;
+                ctx.beginPath();
+                ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Draw center dot
+                ctx.fillStyle = currentColor;
+                ctx.globalAlpha = 0.9;
+                ctx.beginPath();
+                ctx.arc(x, y, 1, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                // Draw eraser cursor
+                ctx.strokeStyle = '#ff0000';
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.7;
+                ctx.beginPath();
+                ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Draw X in the center
+                ctx.beginPath();
+                ctx.moveTo(x - currentSize/3, y - currentSize/3);
+                ctx.lineTo(x + currentSize/3, y + currentSize/3);
+                ctx.moveTo(x + currentSize/3, y - currentSize/3);
+                ctx.lineTo(x - currentSize/3, y + currentSize/3);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+
+        // Initialize canvas
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Save current stroke to history
+        function saveStroke() {
+            if (currentStroke) {
+                undoStack.push(currentStroke);
+                currentStroke = null;
+                
+                // Clear redo stack when new action is performed
+                redoStack = [];
+                
+                // Limit history size
+                if (undoStack.length > maxHistory) {
+                    undoStack.shift();
+                }
+                
+                updateHistoryButtons();
+            }
+        }
+
+        // Update button states
+        function updateHistoryButtons() {
+            undoBtn.disabled = undoStack.length === 0;
+            redoBtn.disabled = redoStack.length === 0;
+        }
+
+        // Set tool mode (brush or eraser)
+        function setToolMode(mode) {
+            toolMode = mode;
+            
+            // Remove active class from both buttons first
+            brushBtn.classList.remove('active');
+            eraserBtn.classList.remove('active');
+            
+            // Add active class to the selected button
+            if (mode === 'brush') {
+                brushBtn.classList.add('active');
+            } else {
+                eraserBtn.classList.add('active');
+            }
+            
+            updateSizePreview();
+            
+            // Redraw to update cursor appearance
+            redrawAll();
+        }
+
+        // Undo last action
+        function undo() {
+            if (undoStack.length === 0) return;
+            
+            const lastCommand = undoStack.pop();
+            redoStack.push(lastCommand);
+            
+            redrawAll();
+            updateHistoryButtons();
+        }
+
+        // Redo last undone action
+        function redo() {
+            if (redoStack.length === 0) return;
+            
+            const command = redoStack.pop();
+            undoStack.push(command);
+            
+            redrawAll();
+            updateHistoryButtons();
+        }
+
+        // Color selection
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelector('.color-btn.active').classList.remove('active');
+                this.classList.add('active');
+                currentColor = this.dataset.color;
+                updateSizePreview();
+                
+                // Redraw to update cursor color
+                redrawAll();
+            });
+        });
+
+        // Brush size
+        brushSizeSlider.addEventListener('input', function() {
+            currentSize = this.value;
+            updateSizePreview();
+            
+            // Redraw to update cursor size
+            redrawAll();
+        });
+        
+        // Touch sensitivity
+        touchSensitivitySlider.addEventListener('input', function() {
+            touchSensitivity = parseFloat(this.value);
+            sensitivityValue.textContent = touchSensitivity.toFixed(1);
+        });
+
+        function updateSizePreview() {
+            sizePreview.style.width = Math.min(currentSize, 30) + 'px';
+            sizePreview.style.height = Math.min(currentSize, 30) + 'px';
+            
+            if (toolMode === 'eraser') {
+                sizePreview.style.background = '#e0e0e0';
+                sizePreview.style.border = '2px dashed #999';
+            } else {
+                sizePreview.style.background = currentColor;
+                sizePreview.style.border = 'none';
+            }
+        }
+
+        updateSizePreview();
+
+        // Calculate dynamic brush size based on touch properties with fallbacks
+        function calculateBrushSize(touch) {
+            // Get the touch radius values if available, with fallbacks
+            const radiusX = (touch && touch.radiusX) ? touch.radiusX : 0;
+            const radiusY = (touch && touch.radiusY) ? touch.radiusY : 0;
+            
+            // Calculate average radius
+            const avgRadius = (radiusX + radiusY) / 2;
+            
+            // Use the rotation angle to influence the brush size, with fallback
+            const rotation = (touch && touch.rotationAngle) ? touch.rotationAngle : 0;
+            const rotationFactor = Math.abs(Math.sin(rotation * Math.PI / 180)) * 0.5 + 0.5;
+            
+            // Calculate dynamic size based on touch properties and sensitivity
+            let dynamicSize = currentSize;
+            
+            if (avgRadius > 0) {
+                // Scale the brush size based on touch radius
+                const radiusFactor = Math.min(avgRadius / 20, 2); // Cap at 2x the base size
+                dynamicSize = currentSize * (0.5 + radiusFactor * 0.5) * rotationFactor * touchSensitivity;
+                
+                // Ensure the size stays within reasonable bounds
+                dynamicSize = Math.max(1, Math.min(dynamicSize, currentSize * 3));
+            }
+            
+            return dynamicSize;
+        }
+
+        // Move toolbar to the other side
+        function moveToolbarToOtherSide() {
+            const now = Date.now();
+            if (now - lastMoveTime < moveCooldown) return;
+            
+            lastMoveTime = now;
+            isRightSide = !isRightSide;
+            
+            toggleToolbarBtn.classList.add('moving');
+            
+            if (isRightSide) {
+                toggleToolbarBtn.classList.add('right-side');
+                toolbar.classList.add('right-side');
+            } else {
+                toggleToolbarBtn.classList.remove('right-side');
+                toolbar.classList.remove('right-side');
+            }
+            
+            setTimeout(() => {
+                toggleToolbarBtn.classList.remove('moving');
+            }, 300);
+        }
+
+        // Check proximity to toggle button
+        function checkProximity(x, y) {
+            const rect = toggleToolbarBtn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+            
+            if (distance < proximityThreshold) {
+                moveToolbarToOtherSide();
+            }
+        }
+
+        // Drawing functions
+        function startDrawing(x, y, touch) {
+            isDrawing = true;
+            hasMoved = false;
+            lastX = x;
+            lastY = y;
+            touchStartTime = Date.now();
+            
+            // Calculate initial brush size if touch data is available
+            let initialSize = currentSize;
+            if (touch) {
+                initialSize = calculateBrushSize(touch);
+                lastTouchRadius = ((touch.radiusX || 0) + (touch.radiusY || 0)) / 2;
+                lastTouchRotation = touch.rotationAngle || 0;
+            }
+            
+            // Start new stroke or erase
+            if (toolMode === 'eraser') {
+                currentStroke = new DrawingCommand('erase', {
+                    points: [{x, y}],
+                    sizes: [initialSize],
+                    size: currentSize
+                });
+            } else {
+                currentStroke = new DrawingCommand('stroke', {
+                    points: [{x, y}],
+                    sizes: [initialSize],
+                    rotations: [lastTouchRotation],
+                    color: currentColor,
+                    size: currentSize
+                });
+            }
+        }
+
+        function draw(x, y, touch) {
+            if (!isDrawing) return;
+            
+            hasMoved = true;
+            
+            // Check proximity to toggle button and move if needed
+            checkProximity(x, y);
+            
+            // Calculate dynamic brush size if touch data is available
+            let dynamicSize = currentSize;
+            let touchRotation = lastTouchRotation;
+            
+            if (touch) {
+                dynamicSize = calculateBrushSize(touch);
+                touchRotation = touch.rotationAngle || 0;
+                lastTouchRadius = ((touch.radiusX || 0) + (touch.radiusY || 0)) / 2;
+                lastTouchRotation = touchRotation;
+            }
+            
+            // Add point to current stroke
+            if (currentStroke) {
+                currentStroke.data.points.push({x, y});
+                currentStroke.data.sizes.push(dynamicSize);
+                
+                if (toolMode === 'brush' && currentStroke.type === 'stroke') {
+                    currentStroke.data.rotations.push(touchRotation);
+                }
+                
+                currentStroke.execute();
+            }
+            
+            lastX = x;
+            lastY = y;
+        }
+
+        function stopDrawing(x, y, touch) {
+            if (!isDrawing) return;
+            
+            // If it was a tap (no movement and quick), create a dot
+            if (!hasMoved && (Date.now() - touchStartTime) < 300) {
+                let dotSize = currentSize;
+                if (touch) {
+                    dotSize = calculateBrushSize(touch);
+                }
+                
+                if (toolMode === 'eraser') {
+                    currentStroke = new DrawingCommand('erase', {
+                        points: [{x: x || lastX, y: y || lastY}],
+                        sizes: [dotSize],
+                        size: currentSize
+                    });
+                } else {
+                    currentStroke = new DrawingCommand('dot', {
+                        x: x || lastX,
+                        y: y || lastY,
+                        color: currentColor,
+                        size: dotSize
+                    });
+                }
+                currentStroke.execute();
+            }
+            
+            isDrawing = false;
+            hasMoved = false;
+            
+            // Save the completed stroke
+            saveStroke();
+        }
+
+        // Touch events with better Android support
+        canvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            startDrawing(x, y, touch);
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            // Update cursor position (only used for non-mobile devices)
+            cursorX = x;
+            cursorY = y;
+            
+            if (!isDrawing) {
+                throttledRedraw();
+            } else {
+                draw(x, y, touch);
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            if (e.changedTouches.length > 0) {
+                const touch = e.changedTouches[0];
+                const rect = canvas.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                stopDrawing(x, y, touch);
+            } else {
+                stopDrawing();
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchcancel', function(e) {
+            e.preventDefault();
+            stopDrawing();
+        }, { passive: false });
+
+        // Mouse events
+        canvas.addEventListener('mousedown', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            startDrawing(x, y);
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Update cursor position
+            cursorX = x;
+            cursorY = y;
+            cursorVisible = true;
+            
+            if (!isDrawing) {
+                throttledRedraw();
+            } else {
+                draw(x, y);
+            }
+        });
+
+        canvas.addEventListener('mouseup', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            stopDrawing(x, y);
+        });
+
+        canvas.addEventListener('mouseout', function(e) {
+            cursorVisible = false;
+            stopDrawing();
+            redrawAll();
+        });
+
+        canvas.addEventListener('mouseenter', function(e) {
+            cursorVisible = true;
+            redrawAll();
+        });
+
+        // Utility functions
+        function clearCanvas() {
+            undoStack = [];
+            redoStack = [];
+            currentStroke = null;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateHistoryButtons();
+        }
+
+        function saveDrawing() {
+            const link = document.createElement('a');
+            link.download = 'painting_' + new Date().getTime() + '.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Toolbar visibility control
+        let hideTimeout;
+
+        function showToolbar() {
+            clearTimeout(hideTimeout);
+            toolbar.classList.remove('hidden');
+        }
+
+        function hideToolbar() {
+            hideTimeout = setTimeout(() => {
+                toolbar.classList.add('hidden');
+            }, 300);
+        }
+
+        // Set up toolbar behavior based on device type
+        if (isMobile) {
+            // Mobile: use click to toggle
+            toggleToolbarBtn.addEventListener('click', function(e) {
+                toolbar.classList.toggle('hidden');
+            });
+        } else {
+            // Desktop: use hover to show/hide
+            toggleToolbarBtn.addEventListener('mouseenter', showToolbar);
+            toggleToolbarBtn.addEventListener('mouseleave', hideToolbar);
+            
+            toolbar.addEventListener('mouseenter', showToolbar);
+            toolbar.addEventListener('mouseleave', hideToolbar);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault();
+                    undo();
+                } else if ((e.key === 'z' && e.shiftKey) || e.key === 'y') {
+                    e.preventDefault();
+                    redo();
+                } else if (e.key === 'e') {
+                    e.preventDefault();
+                    setToolMode(toolMode === 'eraser' ? 'brush' : 'eraser');
+                }
+            }
+        });
+
+        // Prevent scrolling when touching the canvas
+        document.body.addEventListener('touchstart', function(e) {
+            if (e.target === canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.body.addEventListener('touchmove', function(e) {
+            if (e.target === canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
