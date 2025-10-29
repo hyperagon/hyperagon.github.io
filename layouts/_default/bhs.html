@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beehive Construction Simulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 200px;
+        }
+        
+        .control-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .slider {
+            flex-grow: 1;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffc107;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffc107;
+            cursor: pointer;
+        }
+        
+        .value-display {
+            margin-left: 10px;
+            min-width: 40px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        #canvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+            background-color: #000; /* Changed to black background */
+            cursor: grab;
+        }
+        
+        #canvas:active {
+            cursor: grabbing;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+        
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #e8f4f8;
+            color: #0c5460;
+            font-weight: 500;
+        }
+        
+        /* Color picker styling */
+        input[type="color"] {
+            width: 50px;
+            height: 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Zoom controls styling */
+        .zoom-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .zoom-btn {
+            background-color: #ffc107;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        
+        .zoom-btn:hover {
+            background-color: #e0a800;
+            transform: scale(1.05);
+        }
+        
+        .zoom-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .zoom-reset {
+            background-color: #6c757d;
+            color: white;
+            font-size: 14px;
+            border-radius: 20px;
+            width: 60px;
+        }
+        
+        .zoom-reset:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐝 Beehive Construction Simulation</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="colonySize">Colony Size</label>
+                <div class="slider-container">
+                    <input type="range" id="colonySize" class="slider" min="1" max="100" value="5">
+                    <span id="colonySizeValue" class="value-display">5</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="resourceAvailability">Bee Speed</label>
+                <div class="slider-container">
+                    <input type="range" id="resourceAvailability" class="slider" min="1" max="20" value="5">
+                    <span id="resourceAvailabilityValue" class="value-display">5</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="trailLength">Trail Length</label>
+                <div class="slider-container">
+                    <input type="range" id="trailLength" class="slider" min="5" max="50" value="20">
+                    <span id="trailLengthValue" class="value-display">20</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="trailColor">Trail Color</label>
+                <input type="color" id="trailColor" value="#FFFFFF">
+            </div>
+        </div>
+        
+        <canvas id="canvas" width="800" height="600"></canvas>
+        
+        <div class="zoom-controls">
+            <button id="zoomOut" class="zoom-btn">−</button>
+            <button id="zoomReset" class="zoom-btn zoom-reset">Reset</button>
+            <button id="zoomIn" class="zoom-btn">+</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div id="cellsCount" class="stat-value">0</div>
+                <div class="stat-label">Cells Built</div>
+            </div>
+            <div class="stat-item">
+                <div id="honeyStored" class="stat-value">0%</div>
+                <div class="stat-label">Honey Stored</div>
+            </div>
+            <div class="stat-item">
+                <div id="activeBees" class="stat-value">0</div>
+                <div class="stat-label">Active Bees</div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #FFD700;"></div>
+                <span>Empty Bee</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #FFA500;"></div>
+                <span>Bee with Honey</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #FF8C00;"></div>
+                <span>Empty Cell</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #FFD700;"></div>
+                <span>Full Cell</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" id="trailLegendColor" style="background: linear-gradient(to right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));"></div>
+                <span>Bee Trail</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get canvas and context
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Get control elements
+        const colonySizeSlider = document.getElementById('colonySize');
+        const resourceAvailabilitySlider = document.getElementById('resourceAvailability');
+        const trailLengthSlider = document.getElementById('trailLength');
+        const trailColorPicker = document.getElementById('trailColor');
+        const colonySizeValue = document.getElementById('colonySizeValue');
+        const resourceAvailabilityValue = document.getElementById('resourceAvailabilityValue');
+        const trailLengthValue = document.getElementById('trailLengthValue');
+        
+        // Get zoom controls
+        const zoomInBtn = document.getElementById('zoomIn');
+        const zoomOutBtn = document.getElementById('zoomOut');
+        const zoomResetBtn = document.getElementById('zoomReset');
+        
+        // Stats elements
+        const cellsCountElement = document.getElementById('cellsCount');
+        const honeyStoredElement = document.getElementById('honeyStored');
+        const activeBeesElement = document.getElementById('activeBees');
+        
+        // Zoom variables
+        let zoomLevel = 1.0;
+        const minZoom = 0.5;
+        const maxZoom = 3.0;
+        const zoomStep = 0.2;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        
+        // Update slider value displays
+        colonySizeSlider.addEventListener('input', () => {
+            colonySizeValue.textContent = colonySizeSlider.value;
+            updateColonySize();
+        });
+        
+        resourceAvailabilitySlider.addEventListener('input', () => {
+            resourceAvailabilityValue.textContent = resourceAvailabilitySlider.value;
+        });
+        
+        trailLengthSlider.addEventListener('input', () => {
+            trailLengthValue.textContent = trailLengthSlider.value;
+            updateTrailLength();
+        });
+        
+        // Update trail color when color picker changes
+        trailColorPicker.addEventListener('input', () => {
+            updateTrailColor();
+        });
+        
+        // Zoom controls
+        zoomInBtn.addEventListener('click', () => {
+            if (zoomLevel < maxZoom) {
+                zoomLevel = Math.min(zoomLevel + zoomStep, maxZoom);
+            }
+        });
+        
+        zoomOutBtn.addEventListener('click', () => {
+            if (zoomLevel > minZoom) {
+                zoomLevel = Math.max(zoomLevel - zoomStep, minZoom);
+            }
+        });
+        
+        zoomResetBtn.addEventListener('click', () => {
+            zoomLevel = 1.0;
+            panX = 0;
+            panY = 0;
+        });
+        
+        // Mouse wheel zoom
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            const delta = e.deltaY > 0 ? -zoomStep : zoomStep;
+            const newZoom = Math.max(minZoom, Math.min(maxZoom, zoomLevel + delta));
+            
+            // Calculate mouse position relative to canvas
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // Adjust pan to zoom towards mouse position
+            const zoomChange = newZoom / zoomLevel;
+            panX = mouseX - (mouseX - panX) * zoomChange;
+            panY = mouseY - (mouseY - panY) * zoomChange;
+            
+            zoomLevel = newZoom;
+        });
+        
+        // Pan functionality
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dragStartX = e.clientX - panX;
+            dragStartY = e.clientY - panY;
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                panX = e.clientX - dragStartX;
+                panY = e.clientY - dragStartY;
+            }
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+        
+        // Function to convert hex to RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+        
+        // Hexagon cell class
+        class HexCell {
+            constructor(x, y, size) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.fillLevel = 0; // 0 to 100
+                this.isFull = false;
+            }
+            
+            draw() {
+                const hexPoints = this.getHexPoints();
+                
+                // Draw empty cell (dark orange)
+                ctx.beginPath();
+                ctx.moveTo(hexPoints[0].x, hexPoints[0].y);
+                for (let i = 1; i < hexPoints.length; i++) {
+                    ctx.lineTo(hexPoints[i].x, hexPoints[i].y);
+                }
+                ctx.closePath();
+                
+                ctx.fillStyle = '#FF8C00'; // Dark orange for empty cells
+                ctx.fill();
+                
+                // Draw border - use white for better contrast on black background
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 1 / zoomLevel; // Adjust line width based on zoom
+                ctx.stroke();
+                
+                // Draw honey fill if cell has any honey
+                if (this.fillLevel > 0) {
+                    this.drawHoneyFill();
+                }
+                
+                // Draw fill percentage text if cell is not full
+                if (!this.isFull) {
+                    this.drawFillText();
+                }
+            }
+            
+            drawHoneyFill() {
+                const hexPoints = this.getHexPoints();
+                
+                // Calculate the fill height based on fillLevel
+                const fillHeight = (this.fillLevel / 100) * (this.size * 2);
+                
+                // Find the bottom points of the hexagon
+                const bottomY = this.y + this.size;
+                const topY = bottomY - fillHeight;
+                
+                // Create a path for the honey fill
+                ctx.beginPath();
+                
+                // Start from the bottom left point
+                let startIndex = 0;
+                for (let i = 0; i < hexPoints.length; i++) {
+                    if (hexPoints[i].y === bottomY) {
+                        startIndex = i;
+                        break;
+                    }
+                }
+                
+                // Find all points that are at or below the fill line
+                const fillPoints = [];
+                const tempPoints = [];
+                
+                for (let i = 0; i < hexPoints.length; i++) {
+                    const point = hexPoints[(startIndex + i) % hexPoints.length];
+                    tempPoints.push(point);
+                }
+                
+                // Add points that are completely below the fill line
+                for (const point of tempPoints) {
+                    if (point.y >= topY) {
+                        fillPoints.push(point);
+                    }
+                }
+                
+                // Add intersection points with the fill line
+                for (let i = 0; i < tempPoints.length; i++) {
+                    const p1 = tempPoints[i];
+                    const p2 = tempPoints[(i + 1) % tempPoints.length];
+                    
+                    if ((p1.y < topY && p2.y > topY) || (p1.y > topY && p2.y < topY)) {
+                        // Calculate intersection point
+                        const ratio = (topY - p1.y) / (p2.y - p1.y);
+                        const intersectX = p1.x + ratio * (p2.x - p1.x);
+                        fillPoints.push({x: intersectX, y: topY});
+                    }
+                }
+                
+                // Sort points by angle to create a proper polygon
+                fillPoints.sort((a, b) => {
+                    const angleA = Math.atan2(a.y - this.y, a.x - this.x);
+                    const angleB = Math.atan2(b.y - this.y, b.x - this.x);
+                    return angleA - angleB;
+                });
+                
+                // Draw the honey fill
+                if (fillPoints.length > 2) {
+                    ctx.beginPath();
+                    ctx.moveTo(fillPoints[0].x, fillPoints[0].y);
+                    for (let i = 1; i < fillPoints.length; i++) {
+                        ctx.lineTo(fillPoints[i].x, fillPoints[i].y);
+                    }
+                    ctx.closePath();
+                    
+                    // Fill with bright honey color (golden yellow)
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fill();
+                    
+                    // Add a subtle gradient effect for the honey
+                    const gradient = ctx.createRadialGradient(
+                        this.x, this.y + this.size * 0.5, 0,
+                        this.x, this.y + this.size * 0.5, this.size
+                    );
+                    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+                    gradient.addColorStop(1, 'rgba(255, 215, 0, 0.9)');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                }
+            }
+            
+            drawFillText() {
+                // Draw fill level text
+                ctx.fillStyle = '#000';
+                ctx.font = `${12 / zoomLevel}px Arial`; // Adjust font size based on zoom
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${this.fillLevel}%`, this.x, this.y);
+            }
+            
+            getHexPoints() {
+                const points = [];
+                for (let i = 0; i < 6; i++) {
+                    const angle = (Math.PI / 3) * i;
+                    points.push({
+                        x: this.x + this.size * Math.cos(angle),
+                        y: this.y + this.size * Math.sin(angle)
+                    });
+                }
+                return points;
+            }
+            
+            fill() {
+                if (this.fillLevel < 100) {
+                    this.fillLevel += 1; // Always fill by 1%
+                    if (this.fillLevel >= 100) {
+                        this.fillLevel = 100;
+                        this.isFull = true;
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }
+        
+        // Bee class with enhanced graphics
+        class Bee {
+            constructor(hive) {
+                this.hive = hive;
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+                this.baseSpeed = 2;
+                this.size = 8; // Increased size for better detail
+                this.emptyColor = '#FFD700'; // Yellow for empty bees
+                this.loadedColor = '#FFA500'; // Orange for bees with honey
+                this.hasResource = false;
+                this.angle = Math.random() * Math.PI * 2;
+                
+                // Movement properties
+                this.targetX = 0;
+                this.targetY = 0;
+                this.hasTarget = false;
+                this.state = 'wandering'; // wandering, collecting, returning
+                
+                // Timers
+                this.stateTimer = 0;
+                this.maxStateTime = 120; // frames before forcing state change
+                
+                // Trail properties - now time-based with faster fade
+                this.trail = [];
+                this.maxTrailLength = parseInt(trailLengthSlider.value);
+                this.trailUpdateCounter = 0;
+                this.trailUpdateInterval = 2; // Add trail points more frequently
+                
+                // Trail color
+                this.trailColor = trailColorPicker.value;
+                
+                // Off-screen collection properties
+                this.collectionTime = 0;
+                this.minCollectionTime = 30; // Minimum frames to spend off-screen
+                
+                // Wing animation
+                this.wingFlap = 0;
+            }
+            
+            get color() {
+                return this.hasResource ? this.loadedColor : this.emptyColor;
+            }
+            
+            get speed() {
+                return this.baseSpeed + (parseInt(resourceAvailabilitySlider.value) * 0.5);
+            }
+            
+            update() {
+                // Update wing animation
+                this.wingFlap += 0.3;
+                
+                // Update state timer
+                this.stateTimer++;
+                
+                // Force state change if stuck for too long
+                if (this.stateTimer > this.maxStateTime) {
+                    this.forceStateChange();
+                    this.stateTimer = 0;
+                }
+                
+                // State machine
+                switch (this.state) {
+                    case 'wandering':
+                        this.updateWandering();
+                        break;
+                    case 'collecting':
+                        this.updateCollecting();
+                        break;
+                    case 'returning':
+                        this.updateReturning();
+                        break;
+                }
+                
+                // Add current position to trail at intervals
+                this.trailUpdateCounter++;
+                if (this.trailUpdateCounter >= this.trailUpdateInterval) {
+                    this.trail.push({
+                        x: this.x, 
+                        y: this.y, 
+                        timestamp: Date.now()
+                    });
+                    this.trailUpdateCounter = 0;
+                }
+                
+                // Remove old trail points based on time - MUCH FASTER FADE
+                const now = Date.now();
+                const maxAge = this.maxTrailLength * 20; // Reduced from 100 to 20 for much faster fade
+                this.trail = this.trail.filter(point => now - point.timestamp < maxAge);
+                
+                // Keep bee within canvas bounds (except when collecting)
+                if (this.state !== 'collecting') {
+                    this.x = Math.max(10, Math.min(canvas.width - 10, this.x));
+                    this.y = Math.max(10, Math.min(canvas.height - 10, this.y));
+                }
+            }
+            
+            updateWandering() {
+                // If we don't have a target, set a random one
+                if (!this.hasTarget) {
+                    this.setRandomTarget();
+                }
+                
+                // Move towards target
+                this.moveTowardsTarget();
+                
+                // Check if we reached the target
+                if (this.distanceTo(this.targetX, this.targetY) < 20) {
+                    this.hasTarget = false;
+                    this.state = 'collecting';
+                    this.stateTimer = 0;
+                    this.collectionTime = 0;
+                }
+            }
+            
+            updateCollecting() {
+                // If we don't have a target, set one off-screen
+                if (!this.hasTarget) {
+                    this.setOffScreenTarget();
+                }
+                
+                // Move towards target
+                this.moveTowardsTarget();
+                
+                // Check if we're off-screen
+                if (this.isOffScreen()) {
+                    this.collectionTime++;
+                    
+                    // If we've collected enough honey, return
+                    if (this.collectionTime >= this.minCollectionTime) {
+                        this.hasResource = true;
+                        this.state = 'returning';
+                        this.stateTimer = 0;
+                        this.hasTarget = false;
+                        
+                        // Move bee back to screen edge
+                        this.moveBackToScreen();
+                    }
+                }
+            }
+            
+            updateReturning() {
+                // Find a cell to fill
+                const targetCell = this.findTargetCell();
+                
+                if (targetCell) {
+                    // Move towards the cell
+                    this.targetX = targetCell.x;
+                    this.targetY = targetCell.y;
+                    this.moveTowardsTarget();
+                    
+                    // Check if we reached the cell
+                    if (this.distanceTo(targetCell.x, targetCell.y) < 20) {
+                        // Fill the cell
+                        if (this.hasResource) {
+                            targetCell.fill();
+                            this.hasResource = false;
+                        }
+                        
+                        // Reset to wandering
+                        this.state = 'wandering';
+                        this.stateTimer = 0;
+                        this.hasTarget = false;
+                    }
+                } else {
+                    // No cell available, go back to wandering
+                    this.state = 'wandering';
+                    this.stateTimer = 0;
+                    this.hasTarget = false;
+                }
+            }
+            
+            setRandomTarget() {
+                // Set a random target away from the hive center
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 100 + Math.random() * 150;
+                
+                this.targetX = this.hive.centerX + Math.cos(angle) * distance;
+                this.targetY = this.hive.centerY + Math.sin(angle) * distance;
+                
+                // Keep target within canvas bounds
+                this.targetX = Math.max(50, Math.min(canvas.width - 50, this.targetX));
+                this.targetY = Math.max(50, Math.min(canvas.height - 50, this.targetY));
+                
+                this.hasTarget = true;
+            }
+            
+            setOffScreenTarget() {
+                // Choose a random direction to go off-screen
+                const direction = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+                
+                switch (direction) {
+                    case 0: // Top
+                        this.targetX = Math.random() * canvas.width;
+                        this.targetY = -50;
+                        break;
+                    case 1: // Right
+                        this.targetX = canvas.width + 50;
+                        this.targetY = Math.random() * canvas.height;
+                        break;
+                    case 2: // Bottom
+                        this.targetX = Math.random() * canvas.width;
+                        this.targetY = canvas.height + 50;
+                        break;
+                    case 3: // Left
+                        this.targetX = -50;
+                        this.targetY = Math.random() * canvas.height;
+                        break;
+                }
+                
+                this.hasTarget = true;
+            }
+            
+            isOffScreen() {
+                return this.x < -10 || this.x > canvas.width + 10 || 
+                       this.y < -10 || this.y > canvas.height + 10;
+            }
+            
+            moveBackToScreen() {
+                // Move bee back to the nearest edge of the screen
+                if (this.x < -10) {
+                    this.x = 0;
+                } else if (this.x > canvas.width + 10) {
+                    this.x = canvas.width;
+                }
+                
+                if (this.y < -10) {
+                    this.y = 0;
+                } else if (this.y > canvas.height + 10) {
+                    this.y = canvas.height;
+                }
+            }
+            
+            moveTowardsTarget() {
+                const dx = this.targetX - this.x;
+                const dy = this.targetY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance > 0) {
+                    const dirX = dx / distance;
+                    const dirY = dy / distance;
+                    
+                    this.x += dirX * this.speed;
+                    this.y += dirY * this.speed;
+                    
+                    this.angle = Math.atan2(dy, dx);
+                }
+            }
+            
+            findTargetCell() {
+                // Find a cell that needs filling
+                const availableCells = this.hive.cells.filter(cell => !cell.isFull);
+                
+                if (availableCells.length > 0) {
+                    // Return the first available cell
+                    return availableCells[0];
+                }
+                
+                return null;
+            }
+            
+            forceStateChange() {
+                // Force a state change to prevent freezing
+                if (this.state === 'wandering') {
+                    this.state = 'collecting';
+                } else if (this.state === 'collecting') {
+                    this.state = 'returning';
+                } else if (this.state === 'returning') {
+                    this.state = 'wandering';
+                    this.hasTarget = false;
+                }
+            }
+            
+            distanceTo(x, y) {
+                const dx = x - this.x;
+                const dy = y - this.y;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+            
+            draw() {
+                // Draw trail with gradient opacity - MUCH FASTER FADE
+                if (this.trail.length > 1) {
+                    const now = Date.now();
+                    
+                    for (let i = 1; i < this.trail.length; i++) {
+                        const p1 = this.trail[i - 1];
+                        const p2 = this.trail[i];
+                        
+                        // Calculate age of this trail segment (newer = more opaque)
+                        const age = now - p2.timestamp;
+                        const maxAge = this.maxTrailLength * 20; // Same as in update
+                        const ageRatio = age / maxAge;
+                        
+                        // Much more aggressive fade - use exponential fade
+                        const opacity = Math.pow(1 - ageRatio, 3) * 0.6;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        
+                        // Get RGB values from trail color
+                        const rgb = hexToRgb(this.trailColor);
+                        
+                        // Gradient from transparent to opaque based on age
+                        ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
+                        ctx.lineWidth = 1 / zoomLevel; // Adjust line width based on zoom
+                        ctx.stroke();
+                    }
+                }
+                
+                // Draw bee if it's on screen
+                if (!this.isOffScreen()) {
+                    // Save the context to rotate the bee
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.angle);
+                    
+                    // Draw wings (behind body)
+                    const wingFlapAmount = Math.sin(this.wingFlap) * 0.3;
+                    
+                    // Left wing - more visible on black background
+                    ctx.beginPath();
+                    ctx.ellipse(-this.size * 0.3, -this.size * 0.5, this.size * 0.8, this.size * 0.4, -wingFlapAmount, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; // More opaque wings
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(200, 200, 200, 0.9)';
+                    ctx.lineWidth = 1 / zoomLevel; // Adjust line width based on zoom
+                    ctx.stroke();
+                    
+                    // Right wing
+                    ctx.beginPath();
+                    ctx.ellipse(-this.size * 0.3, this.size * 0.5, this.size * 0.8, this.size * 0.4, wingFlapAmount, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(200, 200, 200, 0.9)';
+                    ctx.stroke();
+                    
+                    // Draw bee body (ellipse shape)
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    
+                    // Draw bee stripes
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1.5 / zoomLevel; // Adjust line width based on zoom
+                    
+                    // First stripe
+                    ctx.beginPath();
+                    ctx.moveTo(-this.size * 0.2, -this.size * 0.5);
+                    ctx.lineTo(-this.size * 0.2, this.size * 0.5);
+                    ctx.stroke();
+                    
+                    // Second stripe
+                    ctx.beginPath();
+                    ctx.moveTo(this.size * 0.2, -this.size * 0.5);
+                    ctx.lineTo(this.size * 0.2, this.size * 0.5);
+                    ctx.stroke();
+                    
+                    // Draw head
+                    ctx.beginPath();
+                    ctx.arc(this.size * 0.8, 0, this.size * 0.4, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 0.5 / zoomLevel; // Adjust line width based on zoom
+                    ctx.stroke();
+                    
+                    // Draw antennae
+                    ctx.beginPath();
+                    ctx.moveTo(this.size * 1.1, -this.size * 0.2);
+                    ctx.lineTo(this.size * 1.3, -this.size * 0.5);
+                    ctx.moveTo(this.size * 1.1, this.size * 0.2);
+                    ctx.lineTo(this.size * 1.3, this.size * 0.5);
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 0.8 / zoomLevel; // Adjust line width based on zoom
+                    ctx.stroke();
+                    
+                    // Draw eyes
+                    ctx.beginPath();
+                    ctx.arc(this.size * 0.9, -this.size * 0.1, this.size * 0.08, 0, Math.PI * 2);
+                    ctx.arc(this.size * 0.9, this.size * 0.1, this.size * 0.08, 0, Math.PI * 2);
+                    ctx.fillStyle = '#000';
+                    ctx.fill();
+                    
+                    // Draw stinger
+                    ctx.beginPath();
+                    ctx.moveTo(-this.size, 0);
+                    ctx.lineTo(-this.size * 1.3, 0);
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1 / zoomLevel; // Adjust line width based on zoom
+                    ctx.stroke();
+                    
+                    // Draw resource indicator if carrying
+                    if (this.hasResource) {
+                        ctx.beginPath();
+                        ctx.arc(0, -this.size * 0.8, this.size * 0.3, 0, Math.PI * 2);
+                        ctx.fillStyle = '#FFD700';
+                        ctx.fill();
+                    }
+                    
+                    // Restore the context
+                    ctx.restore();
+                }
+            }
+        }
+        
+        // Hive class
+        class Hive {
+            constructor() {
+                this.cells = [];
+                this.bees = [];
+                this.centerX = canvas.width / 2;
+                this.centerY = canvas.height / 2;
+                this.hexSize = 20;
+                
+                // Initialize with one cell
+                this.createNewCell();
+                
+                // Initialize bees
+                this.updateColonySize();
+            }
+            
+            createNewCell() {
+                // Find a position for the new cell
+                let position = this.findNewCellPosition();
+                
+                if (position) {
+                    const newCell = new HexCell(position.x, position.y, this.hexSize);
+                    this.cells.push(newCell);
+                }
+            }
+            
+            findNewCellPosition() {
+                // If no cells, create at center
+                if (this.cells.length === 0) {
+                    return { x: this.centerX, y: this.centerY };
+                }
+                
+                // Try to attach to an existing cell
+                for (const cell of this.cells) {
+                    const hexPoints = cell.getHexPoints();
+                    
+                    for (let i = 0; i < hexPoints.length; i++) {
+                        const point = hexPoints[i];
+                        const nextPoint = hexPoints[(i + 1) % hexPoints.length];
+                        
+                        // Calculate position for new cell
+                        const midX = (point.x + nextPoint.x) / 2;
+                        const midY = (point.y + nextPoint.y) / 2;
+                        
+                        const dirX = midX - cell.x;
+                        const dirY = midY - cell.y;
+                        const length = Math.sqrt(dirX * dirX + dirY * dirY);
+                        
+                        const normalizedDirX = dirX / length;
+                        const normalizedDirY = dirY / length;
+                        
+                        const newX = cell.x + normalizedDirX * this.hexSize * 1.8;
+                        const newY = cell.y + normalizedDirY * this.hexSize * 1.8;
+                        
+                        // Check if position is valid (not overlapping with existing cells)
+                        if (this.isValidPosition(newX, newY)) {
+                            return { x: newX, y: newY };
+                        }
+                    }
+                }
+                
+                return null; // No valid position found
+            }
+            
+            isValidPosition(x, y) {
+                // Check if position is within canvas
+                if (x - this.hexSize < 0 || x + this.hexSize > canvas.width ||
+                    y - this.hexSize < 0 || y + this.hexSize > canvas.height) {
+                    return false;
+                }
+                
+                // Check if position overlaps with existing cells
+                for (const cell of this.cells) {
+                    const distance = Math.sqrt((x - cell.x) ** 2 + (y - cell.y) ** 2);
+                    if (distance < this.hexSize * 1.5) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            canCreateNewCell() {
+                // Check if all existing cells are full
+                for (const cell of this.cells) {
+                    if (!cell.isFull) {
+                        return false;
+                    }
+                }
+                
+                // Check if we can find a valid position
+                return this.findNewCellPosition() !== null;
+            }
+            
+            updateColonySize() {
+                const newSize = parseInt(colonySizeSlider.value);
+                const currentSize = this.bees.length;
+                
+                if (newSize > currentSize) {
+                    // Add more bees
+                    for (let i = 0; i < newSize - currentSize; i++) {
+                        this.bees.push(new Bee(this));
+                    }
+                } else if (newSize < currentSize) {
+                    // Remove bees
+                    this.bees = this.bees.slice(0, newSize);
+                }
+            }
+            
+            updateTrailLength() {
+                // Update trail length for all bees
+                const newLength = parseInt(trailLengthSlider.value);
+                for (const bee of this.bees) {
+                    bee.maxTrailLength = newLength;
+                }
+            }
+            
+            updateTrailColor() {
+                // Update trail color for all bees
+                const newColor = trailColorPicker.value;
+                for (const bee of this.bees) {
+                    bee.trailColor = newColor;
+                }
+                
+                // Update legend color
+                const legendColor = document.getElementById('trailLegendColor');
+                legendColor.style.background = `linear-gradient(to right, ${newColor}CC, ${newColor}33)`;
+            }
+            
+            update() {
+                // Update all bees
+                for (const bee of this.bees) {
+                    bee.update();
+                }
+                
+                // Check if we need to create a new cell
+                if (this.canCreateNewCell()) {
+                    this.createNewCell();
+                }
+                
+                // Update stats
+                this.updateStats();
+            }
+            
+            updateStats() {
+                cellsCountElement.textContent = this.cells.length;
+                
+                // Calculate average honey level
+                let totalHoney = 0;
+                for (const cell of this.cells) {
+                    totalHoney += cell.fillLevel;
+                }
+                const avgHoney = this.cells.length > 0 ? Math.round(totalHoney / this.cells.length) : 0;
+                honeyStoredElement.textContent = `${avgHoney}%`;
+                
+                activeBeesElement.textContent = this.bees.length;
+            }
+            
+            draw() {
+                // Draw all cells
+                for (const cell of this.cells) {
+                    cell.draw();
+                }
+                
+                // Draw all bees
+                for (const bee of this.bees) {
+                    bee.draw();
+                }
+            }
+        }
+        
+        // Create hive
+        const hive = new Hive();
+        
+        // Update colony size function
+        function updateColonySize() {
+            hive.updateColonySize();
+        }
+        
+        // Update trail length function
+        function updateTrailLength() {
+            hive.updateTrailLength();
+        }
+        
+        // Update trail color function
+        function updateTrailColor() {
+            hive.updateTrailColor();
+        }
+        
+        // Animation loop
+        function animate() {
+            // Clear canvas with black background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Save the context
+            ctx.save();
+            
+            // Apply zoom and pan transformations
+            ctx.translate(panX, panY);
+            ctx.scale(zoomLevel, zoomLevel);
+            
+            // Update and draw hive
+            hive.update();
+            hive.draw();
+            
+            // Draw border around original canvas area
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.lineWidth = 2 / zoomLevel; // Adjust line width for zoom
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            
+            // Restore the context
+            ctx.restore();
+            
+            // Continue animation
+            requestAnimationFrame(animate);
+        }
+        
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
