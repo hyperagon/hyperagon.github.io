@@ -176,15 +176,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             font-weight: 500;
         }
         
-        /* Color picker styling */
-        input[type="color"] {
-            width: 50px;
-            height: 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
         /* Zoom controls styling */
         .zoom-controls {
             display: flex;
@@ -255,14 +246,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             <div class="control-group">
                 <label for="trailLength">Trail Length</label>
                 <div class="slider-container">
-                    <input type="range" id="trailLength" class="slider" min="5" max="50" value="20">
+                    <input type="range" id="trailLength" class="slider" min="5" max="100" value="20">
                     <span id="trailLengthValue" class="value-display">20</span>
                 </div>
-            </div>
-            
-            <div class="control-group">
-                <label for="trailColor">Trail Color</label>
-                <input type="color" id="trailColor" value="#FFFFFF">
             </div>
         </div>
         
@@ -307,7 +293,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 <span>Full Cell</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" id="trailLegendColor" style="background: linear-gradient(to right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));"></div>
+                <div class="legend-color" id="trailLegendColor" style="background: linear-gradient(to right, rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 0.1));"></div>
                 <span>Bee Trail</span>
             </div>
         </div>
@@ -322,7 +308,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         const colonySizeSlider = document.getElementById('colonySize');
         const resourceAvailabilitySlider = document.getElementById('resourceAvailability');
         const trailLengthSlider = document.getElementById('trailLength');
-        const trailColorPicker = document.getElementById('trailColor');
         const colonySizeValue = document.getElementById('colonySizeValue');
         const resourceAvailabilityValue = document.getElementById('resourceAvailabilityValue');
         const trailLengthValue = document.getElementById('trailLengthValue');
@@ -361,11 +346,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         trailLengthSlider.addEventListener('input', () => {
             trailLengthValue.textContent = trailLengthSlider.value;
             updateTrailLength();
-        });
-        
-        // Update trail color when color picker changes
-        trailColorPicker.addEventListener('input', () => {
-            updateTrailColor();
         });
         
         // Zoom controls
@@ -626,8 +606,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 this.trailUpdateCounter = 0;
                 this.trailUpdateInterval = 2; // Add trail points more frequently
                 
-                // Trail color
-                this.trailColor = trailColorPicker.value;
+                // Default trail colors - yellow for empty, orange for with honey
+                this.defaultTrailColor = '#FFD700'; // Yellow
+                this.honeyTrailColor = '#FFA500'; // Orange
                 
                 // Off-screen collection properties
                 this.collectionTime = 0;
@@ -643,6 +624,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             
             get speed() {
                 return this.baseSpeed + (parseInt(resourceAvailabilitySlider.value) * 0.5);
+            }
+            
+            get trailColor() {
+                // Return yellow trail if empty, orange if has honey
+                return this.hasResource ? this.honeyTrailColor : this.defaultTrailColor;
             }
             
             update() {
@@ -677,7 +663,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     this.trail.push({
                         x: this.x, 
                         y: this.y, 
-                        timestamp: Date.now()
+                        timestamp: Date.now(),
+                        hasResource: this.hasResource // Store whether bee had honey at this point
                     });
                     this.trailUpdateCounter = 0;
                 }
@@ -897,8 +884,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         ctx.moveTo(p1.x, p1.y);
                         ctx.lineTo(p2.x, p2.y);
                         
-                        // Get RGB values from trail color
-                        const rgb = hexToRgb(this.trailColor);
+                        // Use yellow or orange based on whether bee had honey at this point
+                        const trailColor = p2.hasResource ? this.honeyTrailColor : this.defaultTrailColor;
+                        const rgb = hexToRgb(trailColor);
                         
                         // Gradient from transparent to opaque based on age
                         ctx.strokeStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
@@ -1121,18 +1109,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
             }
             
-            updateTrailColor() {
-                // Update trail color for all bees
-                const newColor = trailColorPicker.value;
-                for (const bee of this.bees) {
-                    bee.trailColor = newColor;
-                }
-                
-                // Update legend color
-                const legendColor = document.getElementById('trailLegendColor');
-                legendColor.style.background = `linear-gradient(to right, ${newColor}CC, ${newColor}33)`;
-            }
-            
             update() {
                 // Update all bees
                 for (const bee of this.bees) {
@@ -1186,11 +1162,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         // Update trail length function
         function updateTrailLength() {
             hive.updateTrailLength();
-        }
-        
-        // Update trail color function
-        function updateTrailColor() {
-            hive.updateTrailColor();
         }
         
         // Animation loop
