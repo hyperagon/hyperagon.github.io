@@ -1132,8 +1132,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 for (const cell of this.cells) {
                     totalHoney += cell.fillLevel;
                 }
-                const avgHoney = this.cells.length > 0 ? Math.round(totalHoney / this.cells.length) : 0;
-                honeyStoredElement.textContent = `${avgHoney}%`;
+                
+                let filledCells = 1.00*this.cells.length - 1.00;
+                honeyStoredElement.textContent = `(${totalHoney - 100*filledCells} + 100*${filledCells})%`;
                 
                 activeBeesElement.textContent = this.bees.length;
             }
