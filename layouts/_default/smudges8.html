@@ -302,6 +302,25 @@ SOFTWARE.
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
         }
 
+        .btn-close {
+            background: #666;
+            color: white;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-close:hover {
+            background: #ff4444;
+            transform: scale(1.1);
+        }
+
         .toggle-toolbar {
             position: absolute;
             top: 20px;
@@ -429,7 +448,7 @@ SOFTWARE.
     <div class="canvas-container">
         <canvas id="paintCanvas"></canvas>
         
-        <button class="toggle-toolbar" id="toggleToolbarBtn">
+        <button class="toggle-toolbar" id="toggleToolbarBtn" title="Toggle Toolbar">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="9" y1="9" x2="15" y2="9"></line>
@@ -438,6 +457,8 @@ SOFTWARE.
         </button>
         
         <div class="toolbar hidden" id="toolbar">
+            <button class="btn btn-close" id="closeToolbarBtn" title="Close Toolbar">×</button>
+            
             <div class="tool-group">
                 <label>Tool Mode</label>
                 <div class="tool-mode">
@@ -536,6 +557,7 @@ SOFTWARE.
         const ctx = canvas.getContext('2d');
         const toolbar = document.getElementById('toolbar');
         const toggleToolbarBtn = document.getElementById('toggleToolbarBtn');
+        const closeToolbarBtn = document.getElementById('closeToolbarBtn');
         const brushSizeSlider = document.getElementById('brushSize');
         const touchSensitivitySlider = document.getElementById('touchSensitivity');
         const sensitivityValue = document.getElementById('sensitivityValue');
@@ -781,7 +803,7 @@ SOFTWARE.
             brushBtn.classList.remove('active');
             eraserBtn.classList.remove('active');
             
-            // Add active class to the selected button
+            // Add active class to selected button
             if (mode === 'brush') {
                 brushBtn.classList.add('active');
             } else {
@@ -970,7 +992,7 @@ SOFTWARE.
             // Check proximity to toggle button and move if needed
             checkProximity(x, y);
             
-            // For two-finger drawing, the currentSize is already set in the touchmove handler
+            // For two-finger drawing, currentSize is already set in the touchmove handler
             // For single-finger drawing, calculate dynamic brush size if touch data is available
             let dynamicSize = currentSize;
             let touchRotation = lastTouchRotation;
@@ -1055,8 +1077,9 @@ SOFTWARE.
                 const distance = calculateDistance(x1, y1, x2, y2);
                 lastTwoFingerDistance = distance;
                 
-                // Set the brush size based on distance (with some scaling)
-                currentSize = Math.min(Math.max(distance / 2, 1), 50); // Scale and clamp the size
+                // Set the brush size based on distance and touch sensitivity
+                const baseScale = 0.15; // Base scaling factor
+                currentSize = Math.min(Math.max(distance * baseScale * touchSensitivity, 1), 50);
                 brushSizeSlider.value = currentSize;
                 updateSizePreview();
                 
@@ -1092,8 +1115,9 @@ SOFTWARE.
                 // Calculate distance between fingers
                 const distance = calculateDistance(x1, y1, x2, y2);
                 
-                // Update the brush size based on distance
-                currentSize = Math.min(Math.max(distance / 2, 1), 50); // Scale and clamp the size
+                // Update the brush size based on distance and touch sensitivity
+                const baseScale = 0.15; // Base scaling factor
+                currentSize = Math.min(Math.max(distance * baseScale * touchSensitivity, 1), 50);
                 brushSizeSlider.value = currentSize;
                 updateSizePreview();
                 
@@ -1230,33 +1254,36 @@ SOFTWARE.
         }
 
         // Toolbar visibility control
-        let hideTimeout;
+        function closeToolbar() {
+            toolbar.classList.add('hidden');
+        }
 
-        function showToolbar() {
-            clearTimeout(hideTimeout);
+        function openToolbar() {
             toolbar.classList.remove('hidden');
         }
 
-        function hideToolbar() {
-            hideTimeout = setTimeout(() => {
-                toolbar.classList.add('hidden');
-            }, 300);
+        function toggleToolbar() {
+            toolbar.classList.toggle('hidden');
         }
 
-        // Set up toolbar behavior based on device type
-        if (isMobile) {
-            // Mobile: use click to toggle
-            toggleToolbarBtn.addEventListener('click', function(e) {
-                toolbar.classList.toggle('hidden');
-            });
-        } else {
-            // Desktop: use hover to show/hide
-            toggleToolbarBtn.addEventListener('mouseenter', showToolbar);
-            toggleToolbarBtn.addEventListener('mouseleave', hideToolbar);
-            
-            toolbar.addEventListener('mouseenter', showToolbar);
-            toolbar.addEventListener('mouseleave', hideToolbar);
-        }
+        // Toggle button click
+        toggleToolbarBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleToolbar();
+        });
+
+        // Close button click
+        closeToolbarBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeToolbar();
+        });
+
+        // Close toolbar when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!toolbar.contains(e.target) && e.target !== toggleToolbarBtn) {
+                closeToolbar();
+            }
+        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
