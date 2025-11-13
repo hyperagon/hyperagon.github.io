@@ -25,6 +25,6 @@ Two black-and-white cows drive toy cars against each other on the same lane. The
 - [Ovi](https://huggingface.co/spaces/alexnasa/Ovi-ZEROGPU)
   [(output)](ovi.mp4)
 - [AIVideoGenerator](https://aivideomaker.ai/)
-  [(output)](sivg.mp4)
+  [(output)](aivg.mp4)
 
 One thing that I noticed is that a lot of "free video generators" were just using **LTX** and adding their watermark to the resulting video.
