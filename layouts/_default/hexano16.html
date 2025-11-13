@@ -394,6 +394,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     </style>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
+            var DEBUG = false;
+        
             // --- DOM ELEMENTS ---
             var piano = document.getElementById('piano');
             var recordButton = document.getElementById('record-button');
@@ -543,7 +545,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     mainGainNode = audioContext.createGain();
                     mainGainNode.gain.value = volumeSlider.value;
                     mainGainNode.connect(audioContext.destination);
-                    console.log("Audio context initialized successfully");
+                    if(DEBUG) {
+                        console.log("Audio context initialized successfully");
+                    }
                 } catch (e) {
                     console.error("Error initializing audio context:", e);
                     audioSupported = false;
@@ -621,7 +625,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
                 
                 if (activeOscillators[note]) {
-                    console.log("Note is already playing:", note);
+                    if(DEBUG) {
+                        console.log("Note is already playing:", note);
+                    }
                     return;
                 }
 
@@ -643,7 +649,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     oscillator.start(now);
 
                     activeOscillators[note] = { oscillator: oscillator, gainNode: gainNode };
-                    console.log("Note started:", note, "Frequency:", freq);
+                    
+                    if(DEBUG) {
+                        console.log("Note started:", note, "Frequency:", freq);
+                    }
                 } catch (e) {
                     console.error("Error playing note:", e);
                 }
@@ -653,7 +662,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 if (!audioSupported || !audioContext) return;
                 
                 if (!activeOscillators[note]) {
+                    if(DEBUG) {
                     console.log("Note is not playing:", note);
+                    }
                     return;
                 }
                 
@@ -670,7 +681,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
                     oscillator.stop(now + releaseTime + 0.01);
                     delete activeOscillators[note];
+                    
+                    if(DEBUG) {
                     console.log("Note stopped:", note);
+                    }
                 } catch (e) {
                     console.error("Error stopping note:", e);
                     delete activeOscillators[note];
