@@ -6,7 +6,7 @@ draft = false
 tags = ['ai', 'video generation']
 +++
 I made a [video showing how to use 3 separate free (no login) Image to Video generators](https://www.youtube.com/watch?v=7E8cTR_GsnE).
-Then [another showing 3 more free video generators.](https://www.youtube.com/watch?v=OCZhDTr_Jpk)
+Then [another showing 3 more.](https://www.youtube.com/watch?v=OCZhDTr_Jpk)
 
 ![input](input.png)
 Prompt:
