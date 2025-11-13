@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!--
 Copyright (c) 2025 Hyperagon
@@ -341,69 +342,82 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         // --- NOTE DATA (Wicki-Hayden inspired layout) ---
         const noteLayout = [
             // Octave 3
-            { key: '', note: 'C3', freq: 130.81, type: 'white' },
-            { key: '', note: 'C#3', freq: 138.59, type: 'black' },
-            { key: '', note: 'D3', freq: 146.83, type: 'white' },
-            { key: '', note: 'D#3', freq: 155.56, type: 'black' },
-            { key: '', note: 'E3', freq: 164.81, type: 'white' },
-            { key: '', note: 'F3', freq: 174.61, type: 'white' },
-            { key: '', note: 'F#3', freq: 185.00, type: 'black' },
-            { key: 'z', note: 'G3', freq: 196.00, type: 'white' },
-            { key: 'x', note: 'G#3', freq: 207.65, type: 'black' },
-            { key: 'c', note: 'A3', freq: 220.00, type: 'white' },
-            { key: 'v', note: 'A#3', freq: 233.08, type: 'black' },
-            { key: 'b', note: 'B3', freq: 246.94, type: 'white' },
+            { key: '', note: 'C3', freq: 130.81, type: 'white' }, // 0
+            { key: '', note: 'C#3', freq: 138.59, type: 'black' }, // 1
+            { key: '', note: 'D3', freq: 146.83, type: 'white' }, // 2
+            { key: '', note: 'D#3', freq: 155.56, type: 'black' }, // 3
+            { key: '', note: 'E3', freq: 164.81, type: 'white' }, // 4
+            { key: '', note: 'F3', freq: 174.61, type: 'white' }, // 5
+            { key: '', note: 'F#3', freq: 185.00, type: 'black' }, // 6
+            { key: 'z', note: 'G3', freq: 196.00, type: 'white' }, // 7
+            { key: 'x', note: 'G#3', freq: 207.65, type: 'black' }, // 8
+            { key: 'c', note: 'A3', freq: 220.00, type: 'white' }, // 9
+            { key: 'v', note: 'A#3', freq: 233.08, type: 'black' }, // 10
+            { key: 'b', note: 'B3', freq: 246.94, type: 'white' }, // 11
 
             // Octave 4 (Middle C is C4)
-            { key: 'a', note: 'C4', freq: 261.63, type: 'white' },
-            { key: 'w', note: 'C#4', freq: 277.18, type: 'black' },
-            { key: 's', note: 'D4', freq: 293.66, type: 'white' },
-            { key: 'e', note: 'D#4', freq: 311.13, type: 'black' },
-            { key: 'd', note: 'E4', freq: 329.63, type: 'white' },
-            { key: 'f', note: 'F4', freq: 349.23, type: 'white' },
-            { key: 't', note: 'F#4', freq: 369.99, type: 'black' },
-            { key: 'g', note: 'G4', freq: 392.00, type: 'white' },
-            { key: 'y', note: 'G#4', freq: 415.30, type: 'black' },
-            { key: 'h', note: 'A4', freq: 440.00, type: 'white' },
-            { key: 'u', note: 'A#4', freq: 466.16, type: 'black' },
-            { key: 'j', note: 'B4', freq: 493.88, type: 'white' },
+            { key: 'a', note: 'C4', freq: 261.63, type: 'white' }, // 12
+            { key: 'w', note: 'C#4', freq: 277.18, type: 'black' }, // 13
+            { key: 's', note: 'D4', freq: 293.66, type: 'white' }, // 14
+            { key: 'e', note: 'D#4', freq: 311.13, type: 'black' }, // 15
+            { key: 'd', note: 'E4', freq: 329.63, type: 'white' }, // 16
+            { key: 'f', note: 'F4', freq: 349.23, type: 'white' }, // 17
+            { key: 't', note: 'F#4', freq: 369.99, type: 'black' }, // 18
+            { key: 'g', note: 'G4', freq: 392.00, type: 'white' }, // 19
+            { key: 'y', note: 'G#4', freq: 415.30, type: 'black' }, // 20
+            { key: 'h', note: 'A4', freq: 440.00, type: 'white' }, // 21
+            { key: 'u', note: 'A#4', freq: 466.16, type: 'black' }, // 22
+            { key: 'j', note: 'B4', freq: 493.88, type: 'white' }, // 23
 
-            // Octave 5
-            { key: 'k', note: 'C5', freq: 523.25, type: 'white' },
-            { key: 'o', note: 'C#5', freq: 554.37, type: 'black' },
-            { key: 'l', note: 'D5', freq: 587.33, type: 'white' },
-            { key: 'p', note: 'D#5', freq: 622.25, type: 'black' },
-            { key: '1', note: 'E5', freq: 659.25, type: 'white' },
-            { key: '2', note: 'F5', freq: 698.46, type: 'white' },
-            { key: '3', note: 'F#5', freq: 739.99, type: 'black' },
-            { key: '4', note: 'G5', freq: 783.99, type: 'white' },
-            { key: '5', note: 'G#5', freq: 830.61, type: 'black' },
-            { key: '6', note: 'A5', freq: 880.00, type: 'white' },
-            { key: '7', note: 'A#5', freq: 932.33, type: 'black' },
+            // Octave 4
+            { key: 'k', note: 'C5', freq: 523.25, type: 'white' }, // 24
+            { key: 'o', note: 'C#5', freq: 554.37, type: 'black' }, // 25
+            { key: 'l', note: 'D5', freq: 587.33, type: 'white' }, // 26
+            { key: 'p', note: 'D#5', freq: 622.25, type: 'black' }, // 27
+            { key: '1', note: 'E5', freq: 659.25, type: 'white' }, // 28
+            { key: '2', note: 'F5', freq: 698.46, type: 'white' }, // 29
+            { key: '3', note: 'F#5', freq: 739.99, type: 'black' }, // 30
+            { key: '4', note: 'G5', freq: 783.99, type: 'white' }, // 31
+            { key: '5', note: 'G#5', freq: 830.61, type: 'black' }, // 32
+            { key: '6', note: 'A5', freq: 880.00, type: 'white' }, // 33
+            { key: '7', note: 'A#5', freq: 932.33, type: 'black' }, // 34
+            { key: '8', note: 'B5', freq: 987.77, type: 'black' }, // 35
 
             // Octave 6
-            { key: '8', note: 'C6', freq: 1046.50, type: 'white' },
-            { key: '9', note: 'C#6', freq: 1108.73, type: 'black' },
-            { key: '0', note: 'D6', freq: 1174.66, type: 'white' },
-            { key: '', note: 'D#6', freq: 1244.51, type: 'black' },
-            { key: '', note: 'E6', freq: 1318.51, type: 'white' },
-            { key: '', note: 'F6', freq: 1396.91, type: 'white' },
-            { key: '', note: 'F#6', freq: 1479.98, type: 'black' },
-            { key: '', note: 'G6', freq: 1567.98, type: 'white' },
-            { key: '', note: 'G#6', freq: 1661.22, type: 'black' },
-            { key: '', note: 'A6', freq: 1760.00, type: 'white' },
-            { key: '', note: 'A#6', freq: 1864.66, type: 'black' },
-            { key: '', note: 'B6', freq: 1975.53, type: 'white' },
-            { key: '', note: 'C7', freq: 2093.00, type: 'white' },
+            { key: '9', note: 'C6', freq: 1046.50, type: 'white' }, // 35
+            { key: '0', note: 'C#6', freq: 1108.73, type: 'black' }, // 36
+            { key: '', note: 'D6', freq: 1174.66, type: 'white' }, // 37
+            { key: '', note: 'D#6', freq: 1244.51, type: 'black' }, // 38
+            { key: '', note: 'E6', freq: 1318.51, type: 'white' }, // 39
+            { key: '', note: 'F6', freq: 1396.91, type: 'white' }, // 40
+            { key: '', note: 'F#6', freq: 1479.98, type: 'black' }, // 41
+            { key: '', note: 'G6', freq: 1567.98, type: 'white' }, // 42
+            { key: '', note: 'G#6', freq: 1661.22, type: 'black' }, // 43
+            { key: '', note: 'A6', freq: 1760.00, type: 'white' }, // 44
+            { key: '', note: 'A#6', freq: 1864.66, type: 'black' }, // 45
+            { key: '', note: 'B6', freq: 1975.53, type: 'white' }, // 46
+
+            // Octave 7
+            { key: '', note: 'C7', freq: 2093.00, type: 'white' }, // 47
+            { key: '', note: 'C#7', freq: 2217.46, type: 'black' }, // 48
+            { key: '', note: 'D7', freq: 2349.32, type: 'white' },  // 49
+            { key: '', note: 'D#7', freq: 2489.02, type: 'black' }, // 50
+            { key: '', note: 'E7', freq: 2637.02, type: 'white' },  // 52
+            { key: '', note: 'F7', freq: 2793.83, type: 'white' },  // 53
+            { key: '', note: 'F#7', freq: 2959.96, type: 'black' }, // 54
+            { key: '', note: 'G7', freq: 3135.96, type: 'white' },  // 55
+            { key: '', note: 'G#7', freq: 3322.44, type: 'black' }, // 56
+            { key: '', note: 'A7', freq: 3520.00, type: 'white' },  // 57
+            { key: '', note: 'A#7', freq: 3729.31, type: 'black' }, // 58
+            { key: '', note: 'B7', freq: 3951.07, type: 'white' }   // 50
         ];
                 
         const noteRows = [
-            noteLayout.slice(0, 7),   // C3 to F#3
-            noteLayout.slice(7, 16),  // G3 to D#4
-            noteLayout.slice(16, 23), // E4 to A#4
-            noteLayout.slice(23, 32), // B4 to G5
-            noteLayout.slice(32, 39), // G#5 to C6
-            noteLayout.slice(39, 50)  // C#6 to B6
+            noteLayout.slice(0, 12),   // C3 to B3
+            noteLayout.slice(12, 24),  // C4 to B4
+            noteLayout.slice(24, 36), // C5 to B5
+            noteLayout.slice(36, 48), // C6 to B6
+            noteLayout.slice(48, 60), // C7 to B7
         ];
 
         const notesByKey = {};
