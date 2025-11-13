@@ -8,7 +8,6 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +16,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <style>
         /* --- Basic Setup & Theme --- */
         :root {
-            --bg-color: #1a1a1a;
+            --bg-color: #1a1a1a;sx
             --bar-color: #2a2a2a;
             --text-color: #e0e0e0;
             --accent-color: #007bff;
@@ -299,7 +298,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
         // --- DOM ELEMENTS ---
         const piano = document.getElementById('piano');
         const recordButton = document.getElementById('record-button');
@@ -322,7 +321,20 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         let isRecording = false;
         let isPlaying = false;
         let recordingStartTime;
-        let recordedMelody = [];
+        let recordedMelody = [
+            { note: 'C4', freq: 261.63, time: 0, duration: 300 },
+            { note: 'E4', freq: 329.63, time: 400, duration: 300 },
+            { note: 'G4', freq: 392.00, time: 800, duration: 300 },
+            { note: 'E4', freq: 329.63, time: 1200, duration: 300 },
+            { note: 'C4', freq: 261.63, time: 1600, duration: 300 },
+            { note: 'E4', freq: 329.63, time: 2000, duration: 300 },
+            { note: 'G4', freq: 392.00, time: 2400, duration: 300 },
+            { note: 'E4', freq: 329.63, time: 2800, duration: 300 },
+            
+            { note: 'C4', freq: 261.63, time: 3200, duration: 300 },
+            { note: 'E4', freq: 329.63, time: 3200, duration: 300 },
+            { note: 'G4', freq: 392.00, time: 3200, duration: 300 },
+        ];
         let playbackTimeouts = [];
         let recordingActiveNotes = {}; // For tracking prolonged notes during recording
         const notesByPointerId = new Map(); // For robust touch/pointer tracking
@@ -746,9 +758,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         
         function startPlayback() {
             if (isRecording) toggleRecording(); // Stop recording if it's active
+    
+            lazyInitAudioContext();
+            ensureAudioContextResumed();
+    
             isPlaying = true;
             playIcon.style.display = 'none';
             stopIcon.style.display = 'block';
+            
+            console.log(recordedMelody); // Print Melody
 
             recordedMelody.forEach(noteEvent => {
                 const noteData = { note: noteEvent.note, freq: noteEvent.freq };
