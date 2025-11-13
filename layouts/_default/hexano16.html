@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html lang="en">
 <!--
 Copyright (c) 2025 Hyperagon
 
@@ -411,6 +411,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var audioContext;
             var mainGainNode;
             var activeOscillators = {};
+            var audioSupported = true;
 
             // --- STATE MANAGEMENT ---
             var isRecording = false;
@@ -525,18 +526,33 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             function init() {
                 createPiano();
                 addEventListeners();
+                
+                // Initialize audio context immediately to avoid errors
+                initAudioContext();
             }
 
-            function lazyInitAudioContext() {
-                if (audioContext) return;
+            function initAudioContext() {
+                if (!AudioContext) {
+                    console.error("Web Audio API is not supported in this browser");
+                    audioSupported = false;
+                    return;
+                }
+                
                 try {
                     audioContext = new AudioContext();
                     mainGainNode = audioContext.createGain();
                     mainGainNode.gain.value = volumeSlider.value;
                     mainGainNode.connect(audioContext.destination);
+                    console.log("Audio context initialized successfully");
                 } catch (e) {
-                    alert('Web Audio API is not supported in this browser.');
+                    console.error("Error initializing audio context:", e);
+                    audioSupported = false;
                 }
+            }
+
+            function lazyInitAudioContext() {
+                if (audioContext) return;
+                initAudioContext();
             }
             
             function ensureAudioContextResumed() {
@@ -594,42 +610,71 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             
             // --- AUDIO PLAYBACK ---
             function playNote(note, freq) {
-                if (!audioContext || activeOscillators[note]) return;
-
-                var now = audioContext.currentTime;
-                var gainValue = 0.7;
-
-                var oscillator = audioContext.createOscillator();
-                var gainNode = audioContext.createGain();
-
-                oscillator.type = waveTypeSelect.value;
-                oscillator.frequency.setValueAtTime(freq, now);
+                if (!audioSupported) {
+                    console.warn("Audio is not supported in this browser");
+                    return;
+                }
                 
-                gainNode.gain.setValueAtTime(0, now);
-                gainNode.gain.linearRampToValueAtTime(gainValue, now + 0.02);
+                if (!audioContext) {
+                    console.error("Audio context is not initialized");
+                    return;
+                }
                 
-                oscillator.connect(gainNode);
-                gainNode.connect(mainGainNode);
-                oscillator.start(now);
+                if (activeOscillators[note]) {
+                    console.log("Note is already playing:", note);
+                    return;
+                }
 
-                activeOscillators[note] = { oscillator: oscillator, gainNode: gainNode };
+                try {
+                    var now = audioContext.currentTime;
+                    var gainValue = 0.7;
+
+                    var oscillator = audioContext.createOscillator();
+                    var gainNode = audioContext.createGain();
+
+                    oscillator.type = waveTypeSelect.value;
+                    oscillator.frequency.setValueAtTime(freq, now);
+                    
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(gainValue, now + 0.02);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(mainGainNode);
+                    oscillator.start(now);
+
+                    activeOscillators[note] = { oscillator: oscillator, gainNode: gainNode };
+                    console.log("Note started:", note, "Frequency:", freq);
+                } catch (e) {
+                    console.error("Error playing note:", e);
+                }
             }
             
             function stopNote(note) {
-                if (!activeOscillators[note] || !audioContext) return;
+                if (!audioSupported || !audioContext) return;
                 
-                var oscillatorData = activeOscillators[note];
-                var oscillator = oscillatorData.oscillator;
-                var gainNode = oscillatorData.gainNode;
-                var now = audioContext.currentTime;
-                var releaseTime = 0.2;
+                if (!activeOscillators[note]) {
+                    console.log("Note is not playing:", note);
+                    return;
+                }
                 
-                gainNode.gain.cancelScheduledValues(now);
-                gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+                try {
+                    var oscillatorData = activeOscillators[note];
+                    var oscillator = oscillatorData.oscillator;
+                    var gainNode = oscillatorData.gainNode;
+                    var now = audioContext.currentTime;
+                    var releaseTime = 0.2;
+                    
+                    gainNode.gain.cancelScheduledValues(now);
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+                    gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
 
-                oscillator.stop(now + releaseTime + 0.01);
-                delete activeOscillators[note];
+                    oscillator.stop(now + releaseTime + 0.01);
+                    delete activeOscillators[note];
+                    console.log("Note stopped:", note);
+                } catch (e) {
+                    console.error("Error stopping note:", e);
+                    delete activeOscillators[note];
+                }
             }
 
             // --- VISUAL FEEDBACK ---
@@ -858,6 +903,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
             // --- CONTROL BAR LOGIC ---
             function toggleRecording() {
+                if (!audioSupported) {
+                    alert("Audio recording is not supported in this browser");
+                    return;
+                }
+                
                 isRecording = !isRecording;
                 if (isRecording) {
                     if (isPlaying) stopPlayback();
@@ -890,6 +940,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
             
             function togglePlayback() {
+                if (!audioSupported) {
+                    alert("Audio playback is not supported in this browser");
+                    return;
+                }
+                
                 if (isPlaying) stopPlayback();
                 else if (recordedMelody.length > 0) startPlayback();
             }
@@ -997,49 +1052,55 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             
             // --- WAV EXPORT ---
             function generateWav() {
-                if (recordedMelody.length === 0 || !AudioContext) return;
+                if (recordedMelody.length === 0 || !audioSupported) return;
 
                 var totalMs = Math.max.apply(Math, recordedMelody.map(function(note) { 
                     return note.time + note.duration; 
                 }));
                 var durationSec = (totalMs / 1000) + 0.5;
-                var offlineContext = new OfflineAudioContext(1, Math.ceil(44100 * durationSec), 44100);
-                var offlineGainNode = offlineContext.createGain();
-                offlineGainNode.gain.value = volumeSlider.value;
-                offlineGainNode.connect(offlineContext.destination);
+                
+                try {
+                    var offlineContext = new OfflineAudioContext(1, Math.ceil(44100 * durationSec), 44100);
+                    var offlineGainNode = offlineContext.createGain();
+                    offlineGainNode.gain.value = volumeSlider.value;
+                    offlineGainNode.connect(offlineContext.destination);
 
-                for (var i = 0; i < recordedMelody.length; i++) {
-                    var note = recordedMelody[i];
-                    var startTime = note.time / 1000;
-                    var noteDuration = note.duration / 1000;
-                    if (noteDuration <= 0.01) continue;
+                    for (var i = 0; i < recordedMelody.length; i++) {
+                        var note = recordedMelody[i];
+                        var startTime = note.time / 1000;
+                        var noteDuration = note.duration / 1000;
+                        if (noteDuration <= 0.01) continue;
 
-                    var attackTime = 0.02;
-                    var releaseTime = Math.min(noteDuration * 0.5, 0.2);
+                        var attackTime = 0.02;
+                        var releaseTime = Math.min(noteDuration * 0.5, 0.2);
 
-                    var oscillator = offlineContext.createOscillator();
-                    var gainNode = offlineContext.createGain();
-                    
-                    oscillator.type = waveTypeSelect.value;
-                    oscillator.frequency.value = note.freq;
+                        var oscillator = offlineContext.createOscillator();
+                        var gainNode = offlineContext.createGain();
+                        
+                        oscillator.type = waveTypeSelect.value;
+                        oscillator.frequency.value = note.freq;
 
-                    gainNode.gain.setValueAtTime(0, startTime);
-                    gainNode.gain.linearRampToValueAtTime(0.7, startTime + attackTime);
-                    gainNode.gain.linearRampToValueAtTime(0, startTime + noteDuration);
+                        gainNode.gain.setValueAtTime(0, startTime);
+                        gainNode.gain.linearRampToValueAtTime(0.7, startTime + attackTime);
+                        gainNode.gain.linearRampToValueAtTime(0, startTime + noteDuration);
 
-                    oscillator.connect(gainNode);
-                    gainNode.connect(offlineGainNode);
-                    oscillator.start(startTime);
-                    oscillator.stop(startTime + noteDuration + 0.05);
-                }
+                        oscillator.connect(gainNode);
+                        gainNode.connect(offlineGainNode);
+                        oscillator.start(startTime);
+                        oscillator.stop(startTime + noteDuration + 0.05);
+                    }
 
-                offlineContext.startRendering().then(function(renderedBuffer) {
-                    var wavBlob = bufferToWave(renderedBuffer);
-                    downloadBlob(wavBlob, 'hexagon-melody.wav');
-                }).catch(function(e) {
-                    console.error("Failed to render WAV:", e);
+                    offlineContext.startRendering().then(function(renderedBuffer) {
+                        var wavBlob = bufferToWave(renderedBuffer);
+                        downloadBlob(wavBlob, 'hexagon-melody.wav');
+                    }).catch(function(e) {
+                        console.error("Failed to render WAV:", e);
+                        alert("Sorry, there was an error creating the audio file.");
+                    });
+                } catch (e) {
+                    console.error("Error generating WAV:", e);
                     alert("Sorry, there was an error creating the audio file.");
-                });
+                }
             }
 
             function downloadBlob(blob, filename) {
