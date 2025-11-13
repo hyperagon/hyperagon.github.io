@@ -394,7 +394,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     </style>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            var DEBUG = false;
+            var DEBUG = true;
         
             // --- DOM ELEMENTS ---
             var piano = document.getElementById('piano');
@@ -414,6 +414,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var mainGainNode;
             var activeOscillators = {};
             var audioSupported = true;
+            var audioInitialized = false;
+            var firstUserInteraction = false;
 
             // --- STATE MANAGEMENT ---
             var isRecording = false;
@@ -529,8 +531,52 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 createPiano();
                 addEventListeners();
                 
-                // Initialize audio context immediately to avoid errors
-                initAudioContext();
+                // Try to initialize audio context on page load
+                tryInitAudioContext();
+                
+                // Add a one-time event listener for any user interaction
+                function handleFirstInteraction() {
+                    if (!firstUserInteraction) {
+                        firstUserInteraction = true;
+                        if (!audioInitialized) {
+                            initAudioContext();
+                        }
+                        // Remove this listener after first interaction
+                        document.removeEventListener('click', handleFirstInteraction);
+                        document.removeEventListener('keydown', handleFirstInteraction);
+                        document.removeEventListener('touchstart', handleFirstInteraction);
+                    }
+                }
+                
+                document.addEventListener('click', handleFirstInteraction);
+                document.addEventListener('keydown', handleFirstInteraction);
+                document.addEventListener('touchstart', handleFirstInteraction);
+            }
+
+            function tryInitAudioContext() {
+                if (!AudioContext) {
+                    console.error("Web Audio API is not supported in this browser");
+                    audioSupported = false;
+                    return;
+                }
+                
+                try {
+                    // Try to create audio context
+                    audioContext = new AudioContext();
+                    
+                    // If it's not suspended, we can fully initialize
+                    if (audioContext.state !== 'suspended') {
+                        completeAudioContextInit();
+                    } else {
+                        // If suspended, we'll wait for user interaction
+                        if(DEBUG) {
+                            console.log("Audio context created but suspended, waiting for user interaction");
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error creating audio context:", e);
+                    audioSupported = false;
+                }
             }
 
             function initAudioContext() {
@@ -540,29 +586,86 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return;
                 }
                 
-                try {
-                    audioContext = new AudioContext();
-                    mainGainNode = audioContext.createGain();
-                    mainGainNode.gain.value = volumeSlider.value;
-                    mainGainNode.connect(audioContext.destination);
+                if (audioInitialized) {
                     if(DEBUG) {
-                        console.log("Audio context initialized successfully");
+                        console.log("Audio context already initialized");
+                    }
+                    return;
+                }
+                
+                try {
+                    // Create or get existing audio context
+                    if (!audioContext) {
+                        audioContext = new AudioContext();
+                    }
+                    
+                    completeAudioContextInit();
+                    
+                    // Resume the context if it's suspended
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume().then(function() {
+                            if(DEBUG) {
+                                console.log("Audio context resumed successfully");
+                                console.log("Audio context state after resume:", audioContext.state);
+                            }
+                        }).catch(function(e) {
+                            console.error("Error resuming audio context:", e);
+                        });
                     }
                 } catch (e) {
                     console.error("Error initializing audio context:", e);
                     audioSupported = false;
                 }
             }
-
-            function lazyInitAudioContext() {
-                if (audioContext) return;
-                initAudioContext();
+            
+            function completeAudioContextInit() {
+                mainGainNode = audioContext.createGain();
+                mainGainNode.gain.value = volumeSlider.value;
+                mainGainNode.connect(audioContext.destination);
+                audioInitialized = true;
+                
+                if(DEBUG) {
+                    console.log("Audio context initialized successfully");
+                    console.log("Audio context state:", audioContext.state);
+                }
+                
+                // Handle state changes
+                audioContext.addEventListener('statechange', function() {
+                    if(DEBUG) {
+                        console.log("Audio context state changed to:", audioContext.state);
+                    }
+                    
+                    // If the context is suspended, try to resume it
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume().then(function() {
+                            if(DEBUG) {
+                                console.log("Audio context resumed after state change");
+                            }
+                        }).catch(function(e) {
+                            console.error("Error resuming audio context after state change:", e);
+                        });
+                    }
+                });
             }
             
             function ensureAudioContextResumed() {
-                if (audioContext && audioContext.state === 'suspended') {
-                    audioContext.resume();
+                if (!audioContext || !audioInitialized) {
+                    console.error("Audio context is not initialized");
+                    return false;
                 }
+                
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume().then(function() {
+                        if(DEBUG) {
+                            console.log("Audio context resumed successfully");
+                        }
+                    }).catch(function(e) {
+                        console.error("Error resuming audio context:", e);
+                    });
+                    return false;
+                }
+                
+                return true;
             }
 
             function createPiano() {
@@ -619,21 +722,34 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return;
                 }
                 
-                if (!audioContext) {
+                // Initialize audio context if not already done
+                if (!audioInitialized) {
+                    initAudioContext();
+                }
+                
+                if (!audioContext || !audioInitialized) {
                     console.error("Audio context is not initialized");
                     return;
                 }
                 
-                if (activeOscillators[note]) {
-                    if(DEBUG) {
-                        console.log("Note is already playing:", note);
-                    }
+                if (!ensureAudioContextResumed()) {
+                    console.error("Audio context could not be resumed");
                     return;
+                }
+                
+                // If note is already playing, stop it first
+                if (activeOscillators[note]) {
+                    stopNote(note);
                 }
 
                 try {
                     var now = audioContext.currentTime;
                     var gainValue = 0.7;
+
+                    // Check if createOscillator is available
+                    if (typeof audioContext.createOscillator !== 'function') {
+                        throw new Error("createOscillator is not a function on the audio context");
+                    }
 
                     var oscillator = audioContext.createOscillator();
                     var gainNode = audioContext.createGain();
@@ -648,7 +764,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     gainNode.connect(mainGainNode);
                     oscillator.start(now);
 
-                    activeOscillators[note] = { oscillator: oscillator, gainNode: gainNode };
+                    activeOscillators[note] = { 
+                        oscillator: oscillator, 
+                        gainNode: gainNode
+                    };
                     
                     if(DEBUG) {
                         console.log("Note started:", note, "Frequency:", freq);
@@ -659,34 +778,38 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
             
             function stopNote(note) {
-                if (!audioSupported || !audioContext) return;
+                if (!audioSupported || !audioContext || !audioInitialized) return;
                 
                 if (!activeOscillators[note]) {
                     if(DEBUG) {
-                    console.log("Note is not playing:", note);
+                        console.log("Note is not playing:", note);
                     }
                     return;
                 }
                 
+                var oscillatorData = activeOscillators[note];
+                
                 try {
-                    var oscillatorData = activeOscillators[note];
                     var oscillator = oscillatorData.oscillator;
                     var gainNode = oscillatorData.gainNode;
                     var now = audioContext.currentTime;
-                    var releaseTime = 0.2;
+                    var releaseTime = 0.1; // Shorter release time for immediate stop
                     
                     gainNode.gain.cancelScheduledValues(now);
                     gainNode.gain.setValueAtTime(gainNode.gain.value, now);
                     gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
 
                     oscillator.stop(now + releaseTime + 0.01);
+                    
+                    // Immediately remove from active oscillators
                     delete activeOscillators[note];
                     
                     if(DEBUG) {
-                    console.log("Note stopped:", note);
+                        console.log("Note stopped:", note);
                     }
                 } catch (e) {
                     console.error("Error stopping note:", e);
+                    // Still remove from active oscillators even if stopping failed
                     delete activeOscillators[note];
                 }
             }
@@ -716,23 +839,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 var note = noteData.note;
                 var freq = noteData.freq;
                 
-                if (!activeOscillators[note]) {
-                    playNote(note, freq);
-                    showKeyPress(note);
-                    if (pointerId !== undefined) notesByPointerId[pointerId] = noteData;
+                playNote(note, freq);
+                showKeyPress(note);
+                if (pointerId !== undefined) notesByPointerId[pointerId] = noteData;
 
-                    if (isRecording) {
-                        var currentTime = performance.now();
-                        
-                        if (firstNoteTime === null) {
-                            firstNoteTime = currentTime;
-                        }
-                        
-                        recordingActiveNotes[note] = {
-                            freq: freq,
-                            startTime: currentTime
-                        };
+                if (isRecording) {
+                    var currentTime = performance.now();
+                    
+                    if (firstNoteTime === null) {
+                        firstNoteTime = currentTime;
                     }
+                    
+                    recordingActiveNotes[note] = {
+                        freq: freq,
+                        startTime: currentTime
+                    };
                 }
             }
 
@@ -771,8 +892,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     
                     if (hex) {
                         e.preventDefault();
-                        lazyInitAudioContext();
-                        ensureAudioContextResumed();
                         isDragging = true;
                         var noteData = { 
                             note: hex.getAttribute('data-note'), 
@@ -816,6 +935,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         currentMouseNote = null;
                     }
                     
+                    // Stop ALL notes when mouse is released
                     for (var note in activeOscillators) {
                         stopNote(note);
                         hideKeyPress(note);
@@ -831,8 +951,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     
                     if (hex) {
                         e.preventDefault();
-                        lazyInitAudioContext();
-                        ensureAudioContextResumed();
                         isDragging = true;
                         var touch = e.touches[0];
                         var noteData = { 
@@ -880,6 +998,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     }
                     
+                    // Stop ALL notes when touch ends
                     for (var note in activeOscillators) {
                         stopNote(note);
                         hideKeyPress(note);
@@ -892,8 +1011,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var noteData = notesByKey[key];
                     if (noteData) {
                         e.preventDefault();
-                        lazyInitAudioContext();
-                        ensureAudioContextResumed();
                         handleNoteOn(noteData);
                     }
                 });
@@ -966,14 +1083,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             function startPlayback() {
                 if (isRecording) toggleRecording();
         
-                lazyInitAudioContext();
-                ensureAudioContextResumed();
-        
                 isPlaying = true;
                 playIcon.style.display = 'none';
                 stopIcon.style.display = 'block';
                 
                 console.log(recordedMelody);
+
+                // Ensure audio context is resumed before starting playback
+                if (!ensureAudioContextResumed()) {
+                    console.error("Cannot start playback: audio context could not be resumed");
+                    stopPlayback();
+                    return;
+                }
 
                 for (var i = 0; i < recordedMelody.length; i++) {
                     var noteEvent = recordedMelody[i];
@@ -981,7 +1102,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     
                     (function(note, time, duration) {
                         var playTimeout = setTimeout(function() { 
-                            handleNoteOn(note); 
+                            // Double-check audio context before playing each note
+                            if (ensureAudioContextResumed()) {
+                                handleNoteOn(note); 
+                            } else {
+                                console.error("Cannot play note: audio context could not be resumed");
+                            }
                         }, time);
                         var stopTimeout = setTimeout(function() { 
                             handleNoteOff(note); 
@@ -1006,13 +1132,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
                 playbackTimeouts = [];
                 
+                // Stop all notes when playback stops
                 for (var note in activeOscillators) {
                     stopNote(note);
-                }
-                
-                var activeHexes = document.querySelectorAll('.hexagon.active');
-                for (var i = 0; i < activeHexes.length; i++) {
-                    activeHexes[i].classList.remove('active');
+                    hideKeyPress(note);
                 }
             }
             
