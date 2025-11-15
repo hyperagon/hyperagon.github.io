@@ -4,7 +4,7 @@ Hello, I am **Hyperag⬡n** and here are some facts about me:
 - I occasionally sketch on my smartphone.
 - I love and prefer to use open source ([Linux](https://www.linux.org/)).
 - I speak English rather well but it is [very American, not Bri-ish](https://www.speakmoreclearly.com/english-pronunciation-tips/the-difference-between-a-british-and-american-accent/).
-- I make videos of [Fam playing games](https://www.youtube.com/@famfandango) weekly.
+- I make [educational videos](https://www.youtube.com/@hyperag-on) and [Fam playing games](https://www.youtube.com/@famfandango) weekly.
 - I was previously known as [Vimino](https://vimino.gitlab.io/) but don't confuse it with the [product](https://www.amazon.in/Shrimps-Vitamin-Complex-Billion-Bacteria/dp/B0963691WP).
 
 View my website at [hyperagon.github.io](https://hyperagon.github.io/).
