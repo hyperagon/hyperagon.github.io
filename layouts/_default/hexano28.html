@@ -254,6 +254,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         .panel-buttons {
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .panel-button {
@@ -264,6 +266,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             padding: 8px 15px;
             cursor: pointer;
             transition: background-color 0.2s;
+            flex: 1;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .panel-button:hover {
@@ -337,10 +344,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             stroke-width: 1px;
             text-anchor: middle;
             font-size: 120%;
-            font-weight: bold;
+            font-weight: normal;
             pointer-events: none;
         }
-
+        
         /* Note specific colors - SOLID OPAQUE COLORS */
         .hexagon[data-note-name^="C"]:not([data-note-name*="#"]) { 
             fill: rgba(231, 76, 60, 1);
@@ -492,6 +499,55 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 width: 90%;
                 height: 40%;
             }
+            
+            .panel-buttons {
+                flex-direction: column;
+            }
+            
+            .panel-button {
+                width: 100%;
+            }
+        }
+
+        /* Progress bar for audio conversion */
+        .progress-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 15px;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #222;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-bottom: 5px;
         }
     </style>
     <script type="text/javascript">
@@ -514,7 +570,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var panelContent = document.getElementById('panel-content');
             var exportButton = document.getElementById('export-button');
             var importButton = document.getElementById('import-button');
+            var importAudioButton = document.getElementById('import-audio-button');
             var fileInput = document.getElementById('file-input');
+            var audioFileInput = document.getElementById('audio-file-input');
+            var progressContainer = document.getElementById('progress-container');
+            var progressFill = document.getElementById('progress-fill');
+            var progressText = document.getElementById('progress-text');
 
             // --- AUDIO SETUP ---
             var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1298,6 +1359,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 });
                 
                 fileInput.addEventListener('change', importMelody);
+                
+                // Audio conversion button listener
+                importAudioButton.addEventListener('click', function() {
+                    audioFileInput.click();
+                });
+                
+                audioFileInput.addEventListener('change', convertAudioFile);
             }
 
             // --- PANEL FUNCTIONS ---
@@ -1467,6 +1535,243 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 // Reset the file input value to allow importing the same file again
                 event.target.value = '';
+            }
+
+            // --- AUDIO CONVERSION FUNCTIONS ---
+            function convertAudioFile(event) {
+                var file = event.target.files[0];
+                if (!file) return;
+                
+                // Initialize audio context if not already done
+                if (!audioInitialized) {
+                    initAudioContext();
+                }
+                
+                // Show progress indicator
+                progressContainer.classList.add('active');
+                progressText.textContent = 'Loading audio file...';
+                progressFill.style.width = '10%';
+                
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    audioContext.decodeAudioData(e.target.result)
+                        .then(function(buffer) {
+                            progressText.textContent = 'Analyzing frequencies...';
+                            progressFill.style.width = '30%';
+                            
+                            // Analyze the audio buffer
+                            analyzeAudioBuffer(buffer)
+                                .then(function(melody) {
+                                    progressText.textContent = 'Processing melody...';
+                                    progressFill.style.width = '70%';
+                                    
+                                    // Update the recorded melody with the new one
+                                    recordedMelody = melody;
+                                    
+                                    // Update the panel content
+                                    updatePanelContent();
+                                    
+                                    progressText.textContent = 'Complete!';
+                                    progressFill.style.width = '100%';
+                                    
+                                    // Hide the progress indicator after a short delay
+                                    setTimeout(function() {
+                                        progressContainer.classList.remove('active');
+                                        progressFill.style.width = '0%';
+                                    }, 1000);
+                                })
+                                .catch(function(error) {
+                                    console.error('Error analyzing audio:', error);
+                                    progressText.textContent = 'Error: ' + error.message;
+                                    
+                                    // Hide the progress indicator after a delay
+                                    setTimeout(function() {
+                                        progressContainer.classList.remove('active');
+                                        progressFill.style.width = '0%';
+                                    }, 3000);
+                                });
+                        })
+                        .catch(function(error) {
+                            console.error('Error decoding audio data:', error);
+                            progressText.textContent = 'Error decoding audio: ' + error.message;
+                            
+                            // Hide the progress indicator after a delay
+                            setTimeout(function() {
+                                progressContainer.classList.remove('active');
+                                progressFill.style.width = '0%';
+                            }, 3000);
+                        });
+                };
+                
+                reader.readAsArrayBuffer(file);
+                
+                // Reset the file input value to allow selecting the same file again
+                event.target.value = '';
+            }
+            
+            function analyzeAudioBuffer(buffer) {
+                return new Promise(function(resolve, reject) {
+                    try {
+                        var sampleRate = buffer.sampleRate;
+                        var channelData = buffer.getChannelData(0); // Use first channel
+                        
+                        // Create a new audio context for analysis
+                        var analysisContext = new AudioContext();
+                        
+                        // Create a buffer source
+                        var source = analysisContext.createBufferSource();
+                        source.buffer = buffer;
+                        
+                        // Create an analyzer node
+                        var analyzer = analysisContext.createAnalyser();
+                        analyzer.fftSize = 2048; // FFT size
+                        analyzer.smoothingTimeConstant = 0.7; // Some smoothing
+                        
+                        // Connect nodes
+                        source.connect(analyzer);
+                        
+                        // Create a script processor for real-time analysis
+                        var bufferSize = 4096;
+                        var scriptProcessor = analysisContext.createScriptProcessor(bufferSize, 1, 1);
+                        
+                        // Variables for tracking notes
+                        var melody = [];
+                        var currentNote = null;
+                        var noteStartTime = 0;
+                        var lastNoteTime = 0;
+                        
+                        // Analysis parameters
+                        var minNoteDuration = 100; // Minimum duration for a note in ms
+                        var noteThreshold = 40; // Threshold for detecting a new note
+                        var frequencyResolution = sampleRate / analyzer.fftSize;
+                        
+                        // Get frequency data
+                        var bufferLength = analyzer.frequencyBinCount;
+                        var dataArray = new Uint8Array(bufferLength);
+                        
+                        scriptProcessor.onaudioprocess = function(e) {
+                            // Get frequency data
+                            analyzer.getByteFrequencyData(dataArray);
+                            
+                            // Find the dominant frequency
+                            var maxValue = 0;
+                            var maxIndex = 0;
+                            
+                            for (var i = 0; i < bufferLength; i++) {
+                                if (dataArray[i] > maxValue) {
+                                    maxValue = dataArray[i];
+                                    maxIndex = i;
+                                }
+                            }
+                            
+                            // Calculate the frequency
+                            var frequency = maxIndex * frequencyResolution;
+                            
+                            // Map the frequency to the nearest note
+                            var nearestNote = findNearestNote(frequency);
+                            
+                            // Get current time in milliseconds
+                            var currentTime = lastNoteTime + bufferSize / sampleRate * 1000;
+                            
+                            // Check if this is a new note or continuation
+                            if (nearestNote && maxValue > noteThreshold) {
+                                if (!currentNote || currentNote.note !== nearestNote.note) {
+                                    // Save the previous note if it exists
+                                    if (currentNote) {
+                                        var duration = currentTime - noteStartTime;
+                                        if (duration >= minNoteDuration) {
+                                            melody.push({
+                                                note: currentNote.note,
+                                                freq: currentNote.freq,
+                                                time: noteStartTime,
+                                                duration: duration
+                                            });
+                                        }
+                                    }
+                                    
+                                    // Start a new note
+                                    currentNote = nearestNote;
+                                    noteStartTime = currentTime;
+                                }
+                            } else if (currentNote) {
+                                // End the current note
+                                var duration = currentTime - noteStartTime;
+                                if (duration >= minNoteDuration) {
+                                    melody.push({
+                                        note: currentNote.note,
+                                        freq: currentNote.freq,
+                                        time: noteStartTime,
+                                        duration: duration
+                                    });
+                                }
+                                currentNote = null;
+                            }
+                            
+                            lastNoteTime = currentTime;
+                            
+                            // Update progress
+                            var progress = Math.min((lastNoteTime / buffer.duration) * 40 + 30, 90);
+                            progressFill.style.width = progress + '%';
+                        };
+                        
+                        // Connect the script processor
+                        source.connect(scriptProcessor);
+                        scriptProcessor.connect(analysisContext.destination);
+                        
+                        // Start the source
+                        source.start();
+                        
+                        // Set a timeout to stop the analysis after the buffer is processed
+                        setTimeout(function() {
+                            // Save the last note if it exists
+                            if (currentNote) {
+                                var duration = lastNoteTime - noteStartTime;
+                                if (duration >= minNoteDuration) {
+                                    melody.push({
+                                        note: currentNote.note,
+                                        freq: currentNote.freq,
+                                        time: noteStartTime,
+                                        duration: duration
+                                    });
+                                }
+                            }
+                            
+                            // Resolve with the melody
+                            resolve(melody);
+                        }, buffer.duration * 1000 + 1000); // Add a small buffer
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            }
+            
+            function findNearestNote(frequency) {
+                // If frequency is too low or too high, return null
+                if (frequency < 80 || frequency > 4000) {
+                    return null;
+                }
+                
+                // Find the note with the closest frequency
+                var closestNote = null;
+                var minDifference = Infinity;
+                
+                for (var i = 0; i < noteLayout.length; i++) {
+                    var note = noteLayout[i];
+                    var difference = Math.abs(frequency - note.freq);
+                    
+                    if (difference < minDifference) {
+                        minDifference = difference;
+                        closestNote = note;
+                    }
+                }
+                
+                // Only return the note if the difference is within a reasonable range
+                // This helps avoid mapping noise to notes
+                if (minDifference < closestNote.freq * 0.08) { // Within 8% of the note frequency
+                    return closestNote;
+                }
+                
+                return null;
             }
 
             // --- CONTROL BAR LOGIC ---
@@ -1790,7 +2095,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             </div>
 
             <input type="range" id="volume-slider" min="0" max="1" value="0.5" step="0.01" title="Volume">
-
+            
             <div style="display: inline-block; width: 50px;"></div> <!-- Spacer -->
 
             <button id="fullscreen-button" title="Toggle Fullscreen">
@@ -1817,8 +2122,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             </div>
             <div class="panel-buttons">
                 <button id="export-button" class="panel-button">Export JSON</button>
+                <button id="import-audio-button" class="panel-button">Import Audio</button>
                 <button id="import-button" class="panel-button">Import JSON</button>
                 <input type="file" id="file-input" accept=".json" style="display: none;">
+                <input type="file" id="audio-file-input" accept="audio/*" style="display: none;">
+            </div>
+        </div>
+        
+        <!-- Progress Bar for Audio Conversion -->
+        <div id="progress-container" class="progress-container">
+            <div id="progress-text" class="progress-text">Processing...</div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
             </div>
         </div>
     </div>
