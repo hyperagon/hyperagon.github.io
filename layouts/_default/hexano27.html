@@ -326,18 +326,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             stroke: black;
             stroke-width: 1px;
             text-anchor: middle;
-            font-size: 180%;
+            font-size: 200%;
             font-weight: bold;
             pointer-events: none;
         }
         
         .note-key {
-            fill: #e0e0e0;
+            fill: black;
             stroke: black;
             stroke-width: 1px;
             text-anchor: middle;
             font-size: 120%;
-            font-weight: normal;
+            font-weight: bold;
             pointer-events: none;
         }
 
@@ -897,14 +897,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         var noteText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         noteText.setAttribute('class', 'note-text');
                         noteText.setAttribute('x', cx);
-                        noteText.setAttribute('y', cy - 12); // Moved up from center
+                        noteText.setAttribute('y', cy); // Moved up from center
                         noteText.textContent = noteData.note;
                         
                         // Create key label text - positioned lower in the hexagon
                         var keyText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         keyText.setAttribute('class', 'note-key');
                         keyText.setAttribute('x', cx);
-                        keyText.setAttribute('y', cy + 18); // Moved further down from center
+                        keyText.setAttribute('y', cy + 20); // Moved further down from center
                         keyText.textContent = noteData.key === 'Shift' ? '⇧' : noteData.key.toUpperCase();
                         
                         // Add elements to group
