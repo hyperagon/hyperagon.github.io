@@ -11,8 +11,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 -->
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hexano</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hexano - Modular Synth</title>
     <style type="text/css">
         /* --- Basic Setup & Theme --- */
         html, body {
@@ -118,7 +118,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             transform: scale(1);
         }
 
-        #play-button, #fullscreen-button {
+        #play-button, #fullscreen-button, #instrument-button {
             width: 32px;
             height: 32px;
             padding: 0;
@@ -131,6 +131,51 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             width: 100%;
             height: 100%;
             fill: currentColor;
+        }
+
+        /* --- Instrument Selector --- */
+        .instrument-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .instrument-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 5px 0;
+            margin-top: 5px;
+            min-width: 150px;
+            display: none;
+            z-index: 100;
+        }
+
+        .instrument-dropdown.active {
+            display: block;
+        }
+
+        .instrument-option {
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .instrument-option:hover {
+            background-color: #444;
+        }
+
+        .instrument-option.selected {
+            background-color: #4a4a4a;
+        }
+
+        .instrument-option .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
         }
 
         /* --- Melody Panel --- */
@@ -318,7 +363,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         /* --- SVG Piano Styling --- */
         .piano-svg {
             display: block;
-            transform: rotate(0deg);
         }
         
         .hexagon {
@@ -378,7 +422,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         }
 
         /* 
-          Sharp Note Colors: A much darker mix of the surrounding natural notes.
+          Sharp Note Colors: A much darker mix of surrounding natural notes.
           The active state uses a slightly lighter, but still dark, shade.
         */
         .hexagon[data-note-name*="C#"] { 
@@ -454,7 +498,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         }
         
         /* --- SVG Piano Styling --- */
-        .piano-svg {
+        .hexboard {
             display: block;
             transform: rotate(0deg);
             transition: transform 0.3s ease;
@@ -464,19 +508,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
         /* Rotate the hexboard in portrait mode */
         @media screen and (orientation: portrait) {
-            .piano-svg {
+            .hexboard {
+                width: auto;
+                height: auto;
                 transform: rotate(90deg);
-                max-width: 100vh;
-                max-height: 100vw;
-            }
-        }
-
-        /* Alternative approach using aspect ratio instead of orientation */
-        @media screen and (max-aspect-ratio: 1/1) {
-            .piano-svg {
-                transform: rotate(90deg);
-                max-width: 100vh;
-                max-height: 100vw;
+                transform-origin: center center;
             }
         }
 
@@ -490,22 +526,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
             100% {
                 box-shadow: 0 0 0 0 rgba(255, 65, 54, 0);
-            }
-        }
-
-        /* Mobile responsiveness for panel */
-        @media screen and (max-width: 480px) {
-            .overlay-panel {
-                width: 90%;
-                height: 40%;
-            }
-            
-            .panel-buttons {
-                flex-direction: column;
-            }
-            
-            .panel-button {
-                width: 100%;
             }
         }
 
@@ -549,6 +569,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             text-align: center;
             margin-bottom: 5px;
         }
+
+        /* Game Boy instrument specific styles - ONLY BACKGROUND */
+        .gameboy-theme {
+            background-color: #9bbc0f !important;
+        }
     </style>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
@@ -560,6 +585,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var playButton = document.getElementById('play-button');
             var playIcon = document.getElementById('play-icon');
             var stopIcon = document.getElementById('stop-icon');
+            var instrumentButton = document.getElementById('instrument-button');
+            var instrumentDropdown = document.getElementById('instrument-dropdown');
             var waveTypeSelect = document.getElementById('wave-type');
             var volumeSlider = document.getElementById('volume-slider');
             var fullscreenButton = document.getElementById('fullscreen-button');
@@ -616,6 +643,49 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var longPressTimer = null;
             var longPressDelay = 500; // milliseconds
             var panelOpen = false;
+
+            // --- INSTRUMENT SYSTEM ---
+            var currentInstrument = 'none';
+            var instruments = {
+                'ddefault': {
+                    name: 'Default',
+                    playNote: function(note, freq) {
+                        // Default implementation
+                        return playDefaultNote(note, freq);
+                    },
+                    stopNote: function(note) {
+                        // Default implementation
+                        return stopDefaultNote(note);
+                    },
+                    init: function() {
+                        // Default implementation
+                        return;
+                    }
+                },
+                '8bit': {
+                    name: '8-bit',
+                    playNote: function(note, freq) {
+                        return play8BitNote(note, freq);
+                    },
+                    stopNote: function(note) {
+                        return stop8BitNote(note);
+                    },
+                    init: function() {
+                        // Apply Game Boy theme - ONLY BACKGROUND
+                        document.body.classList.add('gameboy-theme');
+                        
+                        // Create Game Boy specific controls if needed
+                        createGameBoyControls();
+                    },
+                    cleanup: function() {
+                        // Remove Game Boy theme - ONLY BACKGROUND
+                        document.body.classList.remove('gameboy-theme');
+                        
+                        // Remove Game Boy specific controls if they exist
+                        removeGameBoyControls();
+                    }
+                }
+            };
 
             // --- NOTE DATA (Wicki-Hayden inspired layout) ---
             var noteLayout = [
@@ -756,6 +826,202 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 document.addEventListener('click', handleFirstInteraction);
                 document.addEventListener('keydown', handleFirstInteraction);
                 document.addEventListener('touchstart', handleFirstInteraction);
+                
+                // Initialize instrument selector
+                initInstrumentSelector();
+            }
+
+            function initInstrumentSelector() {
+                // Populate instrument dropdown
+                for (var instrumentId in instruments) {
+                    var instrument = instruments[instrumentId];
+                    var option = document.createElement('div');
+                    option.className = 'instrument-option';
+                    option.dataset.instrument = instrumentId;
+                    option.innerHTML = instrument.name;
+                    
+                    if (instrumentId === currentInstrument) {
+                        option.classList.add('selected');
+                    }
+                    
+                    option.addEventListener('click', function() {
+                        selectInstrument(this.dataset.instrument);
+                    });
+                    
+                    instrumentDropdown.appendChild(option);
+                }
+            }
+
+            function selectInstrument(instrumentId) {
+                if (!instruments[instrumentId]) {
+                    console.error('Instrument not found:', instrumentId);
+                    return;
+                }
+                
+                // Cleanup previous instrument
+                if (instruments[currentInstrument] && instruments[currentInstrument].cleanup) {
+                    instruments[currentInstrument].cleanup();
+                }
+                
+                // Update current instrument
+                currentInstrument = instrumentId;
+                
+                // Update UI
+                var options = instrumentDropdown.querySelectorAll('.instrument-option');
+                options.forEach(function(option) {
+                    option.classList.remove('selected');
+                    if (option.dataset.instrument === instrumentId) {
+                        option.classList.add('selected');
+                    }
+                });
+                
+                // Initialize new instrument
+                if (instruments[instrumentId].init) {
+                    instruments[instrumentId].init();
+                }
+                
+                // Close dropdown
+                instrumentDropdown.classList.remove('active');
+            }
+
+            function createGameBoyControls() {
+                // Create Game Boy specific controls if needed
+                document.querySelector('.wave-selector').style.display = 'none';
+                var controlBar = document.querySelector('.control-bar');
+                
+                // Add Game Boy specific controls
+                var gameboyControls = document.createElement('div');
+                gameboyControls.id = 'gameboy-controls';
+                gameboyControls.style.display = 'inline-flex';
+                gameboyControls.style.marginLeft = '10px';
+                
+                // Wave Channel control
+                var waveGroup = document.createElement('div');
+                waveGroup.className = 'control-group';
+                waveGroup.style.marginRight = '10px';
+                
+                var waveLabel = document.createElement('label');
+                waveLabel.textContent = 'Wave';
+                waveLabel.style.marginBottom = '5px';
+                waveLabel.style.fontSize = '0.8em';
+                
+                var waveSelect = document.createElement('select');
+                waveSelect.id = 'gameboy-wave';
+                waveSelect.style.width = '120px';
+                
+                var squareOption = document.createElement('option');
+                squareOption.value = 'square';
+                squareOption.textContent = 'Pulse (50%)';
+                waveSelect.appendChild(squareOption);
+                
+                var sawtoothOption = document.createElement('option');
+                sawtoothOption.value = 'sawtooth';
+                sawtoothOption.textContent = 'Pulse (25%)';
+                waveSelect.appendChild(sawtoothOption);
+                
+                var triangleOption = document.createElement('option');
+                triangleOption.value = 'triangle';
+                triangleOption.textContent = 'Triangle';
+                waveSelect.appendChild(triangleOption);
+                
+                waveGroup.appendChild(waveLabel);
+                waveGroup.appendChild(waveSelect);
+                
+                // Noise Channel control
+                var noiseGroup = document.createElement('div');
+                noiseGroup.className = 'control-group';
+                noiseGroup.style.marginRight = '10px';
+                
+                var noiseLabel = document.createElement('label');
+                noiseLabel.textContent = 'Noise';
+                noiseLabel.style.marginBottom = '5px';
+                noiseLabel.style.fontSize = '0.8em';
+                
+                var noiseSelect = document.createElement('select');
+                noiseSelect.id = 'gameboy-noise';
+                noiseSelect.style.width = '120px';
+                
+                var whiteOption = document.createElement('option');
+                whiteOption.value = 'white';
+                whiteOption.textContent = 'White Noise';
+                noiseSelect.appendChild(whiteOption);
+                
+                var pinkOption = document.createElement('option');
+                pinkOption.value = 'pink';
+                pinkOption.textContent = 'Pink Noise';
+                noiseSelect.appendChild(pinkOption);
+                
+                noiseGroup.appendChild(noiseLabel);
+                noiseGroup.appendChild(noiseSelect);
+                
+                // Attack control
+                var attackGroup = document.createElement('div');
+                attackGroup.className = 'control-group';
+                attackGroup.style.marginRight = '10px';
+                
+                var attackLabel = document.createElement('label');
+                attackLabel.textContent = 'Attack';
+                attackLabel.id = 'gameboy-attack-label';
+                attackLabel.style.marginBottom = '5px';
+                attackLabel.style.fontSize = '0.8em';
+                
+                var attackSlider = document.createElement('input');
+                attackSlider.type = 'range';
+                attackSlider.id = 'gameboy-attack';
+                attackSlider.min = '0';
+                attackSlider.max = '0.5';
+                attackSlider.step = '0.01';
+                attackSlider.value = '0';
+                attackSlider.style.width = '100px';
+                
+                attackSlider.addEventListener('input', function() {
+                    document.getElementById('gameboy-attack-label').textContent = 'Attack';
+                });
+1                
+                attackGroup.appendChild(attackLabel);
+                attackGroup.appendChild(attackSlider);
+                
+                // Release control
+                var releaseGroup = document.createElement('div');
+                releaseGroup.className = 'control-group';
+                
+                var releaseLabel = document.createElement('label');
+                releaseLabel.textContent = 'Release';
+                releaseLabel.id = 'gameboy-release-label';
+                releaseLabel.style.marginBottom = '5px';
+                releaseLabel.style.fontSize = '0.8em';
+                
+                var releaseSlider = document.createElement('input');
+                releaseSlider.type = 'range';
+                releaseSlider.id = 'gameboy-release';
+                releaseSlider.min = '0';
+                releaseSlider.max = '1';
+                releaseSlider.step = '0.01';
+                releaseSlider.value = '0.3';
+                releaseSlider.style.width = '100px';
+                
+                releaseSlider.addEventListener('input', function() {
+                    document.getElementById('gameboy-release-label').textContent = 'Release';
+                });
+                
+                releaseGroup.appendChild(releaseLabel);
+                releaseGroup.appendChild(releaseSlider);
+                
+                gameboyControls.appendChild(waveGroup);
+                gameboyControls.appendChild(noiseGroup);
+                gameboyControls.appendChild(attackGroup);
+                gameboyControls.appendChild(releaseGroup);
+                
+                controlBar.appendChild(gameboyControls);
+            }
+
+            function removeGameBoyControls() {
+                var gameboyControls = document.getElementById('gameboy-controls');
+                if (gameboyControls) {
+                    gameboyControls.parentNode.removeChild(gameboyControls);
+                }
+                
+                document.querySelector('.wave-selector').style.display = 'inline-flex';
             }
 
             function tryInitAudioContext() {
@@ -979,7 +1245,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         // Store references for event handling
                         notesByKey[noteData.key] = noteData; // Store the exact key, not lowercase
                         notesByNoteName[noteData.note] = notesByNoteName[noteData.note] || [];
-notesByNoteName[noteData.note].push(polygon);
+                        notesByNoteName[noteData.note].push(polygon);
                     }
                 }
                 
@@ -1014,6 +1280,16 @@ notesByNoteName[noteData.note].push(polygon);
                     stopNote(note);
                 }
 
+                // Use current instrument's playNote method
+                if (instruments[currentInstrument] && instruments[currentInstrument].playNote) {
+                    return instruments[currentInstrument].playNote(note, freq);
+                }
+                
+                // Fallback to default implementation
+                return playDefaultNote(note, freq);
+            }
+            
+            function playDefaultNote(note, freq) {
                 try {
                     var now = audioContext.currentTime;
                     var gainValue = 0.7;
@@ -1059,6 +1335,83 @@ notesByNoteName[noteData.note].push(polygon);
                 }
             }
             
+            function play8BitNote(note, freq) {
+                try {
+                    var now = audioContext.currentTime;
+                    var gainValue = 0.7;
+
+                    // Get Game Boy specific parameters
+                    var waveformSelect = document.getElementById('gameboy-wave');
+                    var noiseSelect = document.getElementById('gameboy-noise');
+                    var attackSlider = document.getElementById('gameboy-attack');
+                    var releaseSlider = document.getElementById('gameboy-release');
+                    
+                    var waveformType = waveformSelect ? waveformSelect.value : 'square';
+                    var noiseType = noiseSelect ? noiseSelect.value : 'white';
+                    var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.0;
+                    var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.3;
+
+                    // Create main oscillator for the note
+                    var oscillator = audioContext.createOscillator();
+                    var gainNode = audioContext.createGain();
+                    
+                    // Create noise buffer for Game Boy style
+                    var noiseBuffer = audioContext.createBufferSource();
+                    var noiseGain = audioContext.createGain();
+                    
+                    // Create noise buffer
+                    var bufferSize = audioContext.sampleRate * 2; // 2 seconds of noise
+                    var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                    var output = buffer.getChannelData(0);
+                    
+                    for (var i = 0; i < bufferSize; i++) {
+                        if (noiseType === 'white') {
+                            output[i] = Math.random() * 2 - 1;
+                        } else { // Pink noise is more complex, we'll fake it with a simple filter
+                            output[i] = (Math.random() * 2 - 1) * (i / bufferSize); // A simple lo-fi sweep
+                        }
+                    }
+                    noiseBuffer.buffer = buffer;
+                    noiseBuffer.loop = true;
+                    
+                    // Configure oscillator
+                    oscillator.type = waveformType;
+                    var roundedFreq = Math.round(freq * 1000) / 1000;
+                    oscillator.frequency.setValueAtTime(roundedFreq, now);
+                    
+                    // Lower the noise volume significantly
+                    noiseGain.gain.value = 0.05;
+                    
+                    // Connect the audio graph
+                    oscillator.connect(gainNode);
+                    noiseBuffer.connect(noiseGain);
+                    gainNode.connect(mainGainNode);
+                    noiseGain.connect(mainGainNode);
+                    
+                    // --- ADSR Envelope ---
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(gainValue, now + attackTime);
+                    
+                    // Start the sound
+                    oscillator.start(now);
+                    noiseBuffer.start(now);
+                    
+                    activeOscillators[note] = { 
+                        oscillator: oscillator, 
+                        gainNode: gainNode,
+                        noiseBuffer: noiseBuffer,
+                        noiseGain: noiseGain,
+                        releaseTime: releaseTime
+                    };
+                    
+                    if(DEBUG) {
+                        console.log("8-bit Note started:", note, "Frequency:", roundedFreq);
+                    }
+                } catch (e) {
+                    console.error("Error playing 8-bit note:", e);
+                }
+            }
+            
             function stopNote(note) {
                 if (!audioSupported || !audioContext || !audioInitialized) return;
                 
@@ -1069,6 +1422,16 @@ notesByNoteName[noteData.note].push(polygon);
                     return;
                 }
                 
+                // Use current instrument's stopNote method
+                if (instruments[currentInstrument] && instruments[currentInstrument].stopNote) {
+                    return instruments[currentInstrument].stopNote(note);
+                }
+                
+                // Fallback to default implementation
+                return stopDefaultNote(note);
+            }
+            
+            function stopDefaultNote(note) {
                 var oscillatorData = activeOscillators[note];
                 
                 try {
@@ -1091,6 +1454,41 @@ notesByNoteName[noteData.note].push(polygon);
                     }
                 } catch (e) {
                     console.error("Error stopping note:", e);
+                    // Still remove from active oscillators even if stopping failed
+                    delete activeOscillators[note];
+                }
+            }
+            
+            function stop8BitNote(note) {
+                var oscillatorData = activeOscillators[note];
+                
+                try {
+                    var oscillator = oscillatorData.oscillator;
+                    var gainNode = oscillatorData.gainNode;
+                    var noiseBuffer = oscillatorData.noiseBuffer;
+                    var noiseGain = oscillatorData.noiseGain;
+                    var releaseTime = oscillatorData.releaseTime || 0.3;
+                    var now = audioContext.currentTime;
+                    
+                    // --- Release part of the envelope ---
+                    gainNode.gain.cancelScheduledValues(now);
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+                    gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    
+                    // Stop the noise immediately
+                    noiseGain.gain.linearRampToValueAtTime(0, now + 0.05);
+                    
+                    oscillator.stop(now + releaseTime);
+                    noiseBuffer.stop(now + 0.05);
+                    
+                    // Immediately remove from active oscillators
+                    delete activeOscillators[note];
+                    
+                    if(DEBUG) {
+                        console.log("8-bit Note stopped:", note);
+                    }
+                } catch (e) {
+                    console.error("Error stopping 8-bit note:", e);
                     // Still remove from active oscillators even if stopping failed
                     delete activeOscillators[note];
                 }
@@ -1306,6 +1704,17 @@ notesByNoteName[noteData.note].push(polygon);
                 playButton.addEventListener('touchstart', startLongPress);
                 playButton.addEventListener('touchend', endLongPress);
                 playButton.addEventListener('touchcancel', cancelLongPress);
+                
+                // Instrument button event listener
+                instrumentButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    instrumentDropdown.classList.toggle('active');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function() {
+                    instrumentDropdown.classList.remove('active');
+                });
                 
                 // Wave type selection
                 var waveOptions = document.querySelectorAll('.wave-option');
@@ -1962,9 +2371,15 @@ notesByNoteName[noteData.note].push(polygon);
                     offlineGainNode.gain.value = volumeSlider.value;
                     offlineGainNode.connect(offlineContext.destination);
 
-                    // Get wave type from the selected wave option
-                    var selectedWave = document.querySelector('.wave-option.selected');
-                    var waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
+                    // Get wave type based on current instrument
+                    var waveType;
+                    if (currentInstrument === '8bit') {
+                        var waveformSelect = document.getElementById('gameboy-wave');
+                        waveType = waveformSelect ? waveformSelect.value : 'square';
+                    } else {
+                        var selectedWave = document.querySelector('.wave-option.selected');
+                        waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
+                    }
 
                     for (var i = 0; i < recordedMelody.length; i++) {
                         var note = recordedMelody[i];
@@ -2089,6 +2504,17 @@ notesByNoteName[noteData.note].push(polygon);
                 </svg>
             </button>
 
+            <div class="instrument-selector">
+                <button id="instrument-button" title="Select Instrument">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                </button>
+                <div id="instrument-dropdown" class="instrument-dropdown">
+                    <!-- Instrument options will be populated by JavaScript -->
+                </div>
+            </div>
+
             <div class="wave-selector">
                 <div class="wave-option" data-wave-type="sine" title="Sine Wave">
                     <svg viewBox="0 0 60 30">
@@ -2123,7 +2549,7 @@ notesByNoteName[noteData.note].push(polygon);
                 </svg>
             </button>
         </div>
-        <div class="hexboard">
+        <div id="hexboard" class="hexboard">
             <!-- SVG piano will be generated here -->
         </div>
         
@@ -2134,7 +2560,7 @@ notesByNoteName[noteData.note].push(polygon);
                 <h2>Recorded Melody</h2>
             </div>
             <div id="panel-content" class="panel-content">
-                <!-- Notes will be displayed here -->e
+                <!-- Notes will be displayed here -->
             </div>
             <div class="panel-buttons">
                 <button id="export-button" class="panel-button">Export JSON</button>
