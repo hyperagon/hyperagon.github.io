@@ -2746,210 +2746,235 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 event.target.value = '';
             }
             
+            // Add this function alongside other functions like init(), playNote(), etc.
             function analyzeAudioBuffer(buffer) {
-                return new Promise(function(resolve, reject) {
-                    try {
-                        var sampleRate = buffer.sampleRate;
-                        var channelData = buffer.getChannelData(0); // Use first channel
+    return new Promise(function(resolve, reject) {
+        try {
+            var sampleRate = buffer.sampleRate;
+            var channelData = buffer.getChannelData(0);
+            
+            // Create a new audio context for analysis
+            var analysisContext = new AudioContext();
+            
+            // Create a buffer source
+            var source = analysisContext.createBufferSource();
+            source.buffer = buffer;
+            
+            // Create an analyzer node
+            var analyzer = analysisContext.createAnalyser();
+            analyzer.fftSize = 4096;
+            analyzer.smoothingTimeConstant = 0.7; // Increased smoothing
+            analyzer.minDecibels = -70; // Raised minimum to filter more noise
+            analyzer.maxDecibels = -20;
+            
+            // Connect nodes
+            source.connect(analyzer);
+            
+            // Variables for tracking notes
+            var melody = [];
+            var currentNotes = {};
+            var noteStartTime = {};
+            var noteConfirmCount = {}; // Track how many frames a note has been detected
+            var analysisComplete = false;
+            
+            // Analysis parameters - more restrictive
+            var minNoteDuration = 100; // Increased minimum duration
+            var noteThreshold = 25; // Raised threshold
+            var frequencyResolution = sampleRate / analyzer.fftSize;
+            var confirmThreshold = 3; // Number of frames to confirm a note
+            
+            // Get frequency data
+            var bufferLength = analyzer.frequencyBinCount;
+            var dataArray = new Uint8Array(bufferLength);
+            
+            // Improved peak detection
+            function findPeaks(dataArray, threshold) {
+                var peaks = [];
+                
+                for (var i = 2; i < dataArray.length - 2; i++) {
+                    if (dataArray[i] < threshold) continue;
+                    
+                    // More strict local maximum check
+                    if (dataArray[i] > dataArray[i-1] && dataArray[i] > dataArray[i+1] &&
+                        dataArray[i] > dataArray[i-2] && dataArray[i] > dataArray[i+2] &&
+                        dataArray[i] > dataArray[i-3] && dataArray[i] > dataArray[i+3]) {
                         
-                        // Create a new audio context for analysis
-                        var analysisContext = new AudioContext();
+                        var frequency = i * frequencyResolution;
                         
-                        // Create a buffer source
-                        var source = analysisContext.createBufferSource();
-                        source.buffer = buffer;
-                        
-                        // Create an analyzer node
-                        var analyzer = analysisContext.createAnalyser();
-                        analyzer.fftSize = 4096; // Increased FFT size for better frequency resolution
-                        analyzer.smoothingTimeConstant = 0.7; // Some smoothing
-                        
-                        // Connect nodes
-                        source.connect(analyzer);
-                        
-                        // Create a script processor for real-time analysis
-                        var bufferSize = 4096;
-                        var scriptProcessor = analysisContext.createScriptProcessor(bufferSize, 1, 1);
-                        
-                        // Variables for tracking notes
-                        var melody = [];
-                        var currentNotes = {}; // Changed from single note to multiple notes
-                        var noteStartTime = {};
-                        var lastNoteTime = 0;
-                        
-                        // Analysis parameters
-                        var minNoteDuration = 100; // Minimum duration for a note in ms
-                        var noteThreshold = 35; // Threshold for detecting a new note (lowered slightly)
-                        var frequencyResolution = sampleRate / analyzer.fftSize;
-                        
-                        // Get frequency data
-                        var bufferLength = analyzer.frequencyBinCount;
-                        var dataArray = new Uint8Array(bufferLength);
-                        
-                        // Function to find multiple peaks in the frequency spectrum
-                        function findMultiplePeaks(dataArray, threshold) {
-                            var peaks = [];
-                            var windowSize = 5; // Size of the window for local maximum detection
-                            
-                            for (var i = windowSize; i < dataArray.length - windowSize; i++) {
-                                // Check if current point is a local maximum
-                                var isLocalMax = true;
-                                for (var j = 1; j <= windowSize; j++) {
-                                    if (dataArray[i] < dataArray[i-j] || dataArray[i] < dataArray[i+j]) {
-                                        isLocalMax = false;
-                                        break;
-                                    }
-                                }
-                                
-                                // If it's a local maximum and above threshold, add to peaks
-                                if (isLocalMax && dataArray[i] > threshold) {
-                                    // Calculate the frequency
-                                    var frequency = i * frequencyResolution;
-                                    
-                                    // Only consider frequencies in the musical range
-                                    if (frequency >= 80 && frequency <= 4000) {
-                                        peaks.push({
-                                            index: i,
-                                            frequency: frequency,
-                                            amplitude: dataArray[i]
-                                        });
-                                    }
-                                }
-                            }
-                            
-                            // Sort peaks by amplitude (descending)
-                            peaks.sort(function(a, b) {
-                                return b.amplitude - a.amplitude;
+                        if (frequency >= 50 && frequency <= 5000) {
+                            peaks.push({
+                                index: i,
+                                frequency: frequency,
+                                amplitude: dataArray[i]
                             });
-                            
-                            // Return top peaks (limit to reasonable number)
-                            return peaks.slice(0, 6); // Limit to 6 simultaneous notes
                         }
-                        
-                        scriptProcessor.onaudioprocess = function(e) {
-                            // Get frequency data
-                            analyzer.getByteFrequencyData(dataArray);
-                            
-                            // Find multiple peaks in the frequency spectrum
-                            var peaks = findMultiplePeaks(dataArray, noteThreshold);
-                            
-                            // Get current time in milliseconds
-                            var currentTime = lastNoteTime + bufferSize / sampleRate * 1000;
-                            
-                            // Create a set of detected notes
-                            var detectedNotes = {};
-                            
-                            // Process each peak to find the nearest note
-                            for (var i = 0; i < peaks.length; i++) {
-                                var nearestNote = findNearestNote(peaks[i].frequency);
-                                
-                                if (nearestNote) {
-                                    detectedNotes[nearestNote.note] = nearestNote;
-                                }
-                            }
-                            
-                            // Check for new notes that started
-                            for (var noteName in detectedNotes) {
-                                if (!currentNotes[noteName]) {
-                                    // This is a new note
-                                    currentNotes[noteName] = detectedNotes[noteName];
-                                    noteStartTime[noteName] = currentTime;
-                                }
-                            }
-                            
-                            // Check for notes that ended
-                            for (var noteName in currentNotes) {
-                                if (!detectedNotes[noteName]) {
-                                    // This note ended
-                                    var duration = currentTime - noteStartTime[noteName];
-                                    
-                                    if (duration >= minNoteDuration) {
-                                        melody.push({
-                                            note: noteName,
-                                            freq: currentNotes[noteName].freq,
-                                            time: noteStartTime[noteName],
-                                            duration: duration
-                                        });
-                                    }
-                                    
-                                    // Remove from current notes
-                                    delete currentNotes[noteName];
-                                    delete noteStartTime[noteName];
-                                }
-                            }
-                            
-                            lastNoteTime = currentTime;
-                            
-                            // Update progress
-                            var progress = Math.min((lastNoteTime / buffer.duration) * 40 + 30, 90);
-                            progressFill.style.width = progress + '%';
-                        };
-                        
-                        // Connect the script processor
-                        source.connect(scriptProcessor);
-                        scriptProcessor.connect(analysisContext.destination);
-                        
-                        // Start the source
-                        source.start();
-                        
-                        // Set a timeout to stop the analysis after the buffer is processed
-                        setTimeout(function() {
-                            // Save any remaining notes
-                            for (var noteName in currentNotes) {
-                                var duration = lastNoteTime - noteStartTime[noteName];
-                                
-                                if (duration >= minNoteDuration) {
-                                    melody.push({
-                                        note: noteName,
-                                        freq: currentNotes[noteName].freq,
-                                        time: noteStartTime[noteName],
-                                        duration: duration
-                                    });
-                                }
-                            }
-                            
-                            // Sort melody by time
-                            melody.sort(function(a, b) {
-                                return a.time - b.time;
-                            });
-                            
-                            // Resolve with the melody
-                            resolve(melody);
-                        }, buffer.duration * 1000 + 1000); // Add a small buffer
-                    } catch (error) {
-                        reject(error);
                     }
+                }
+                
+                // Sort by amplitude and take top peaks
+                peaks.sort(function(a, b) {
+                    return b.amplitude - a.amplitude;
                 });
+                
+                return peaks.slice(0, 6);
             }
             
-            function findNearestNote(frequency) {
-                // If frequency is too low or too high, return null
-                if (frequency < 80 || frequency > 4000) {
-                    return null;
-                }
+            // Analysis function
+            function analyze() {
+                if (analysisComplete) return;
                 
-                // Find the note with the closest frequency
-                var closestNote = null;
-                var minDifference = Infinity;
+                analyzer.getByteFrequencyData(dataArray);
                 
-                for (var i = 0; i < noteLayout.length; i++) {
-                    var note = noteLayout[i];
-                    var difference = Math.abs(frequency - note.freq);
+                // Find peaks
+                var peaks = findPeaks(dataArray, noteThreshold);
+                
+                // Get current time
+                var currentTime = source.context.currentTime * 1000;
+                
+                // Create detected notes
+                var detectedNotes = {};
+                
+                for (var i = 0; i < peaks.length; i++) {
+                    var nearestNote = findNearestNote(peaks[i].frequency);
                     
-                    if (difference < minDifference) {
-                        minDifference = difference;
-                        closestNote = note;
+                    if (nearestNote) {
+                        detectedNotes[nearestNote.note] = nearestNote;
                     }
                 }
                 
-                // Only return the note if the difference is within a reasonable range
-                // This helps avoid mapping noise to notes
-                if (minDifference < closestNote.freq * 0.08) { // Within 8% of the note frequency
-                    return closestNote;
+                // Check for new notes
+                for (var noteName in detectedNotes) {
+                    if (!currentNotes[noteName]) {
+                        // First detection - increment confirm count
+                        noteConfirmCount[noteName] = (noteConfirmCount[noteName] || 0) + 1;
+                        
+                        // Only start the note after it's been confirmed multiple times
+                        if (noteConfirmCount[noteName] >= confirmThreshold) {
+                            currentNotes[noteName] = detectedNotes[noteName];
+                            noteStartTime[noteName] = currentTime;
+                        }
+                    } else {
+                        // Note already detected - reset confirm count
+                        noteConfirmCount[noteName] = confirmThreshold;
+                    }
                 }
                 
-                return null;
+                // Check for notes that ended
+                for (var noteName in currentNotes) {
+                    if (!detectedNotes[noteName]) {
+                        // Decrement confirm count
+                        noteConfirmCount[noteName] = (noteConfirmCount[noteName] || confirmThreshold) - 1;
+                        
+                        // Only end the note after it's been missed multiple times
+                        if (noteConfirmCount[noteName] <= 0) {
+                            var duration = currentTime - noteStartTime[noteName];
+                            
+                            if (duration >= minNoteDuration) {
+                                melody.push({
+                                    note: noteName,
+                                    freq: currentNotes[noteName].freq,
+                                    time: noteStartTime[noteName],
+                                    duration: duration
+                                });
+                            }
+                            
+                            delete currentNotes[noteName];
+                            delete noteStartTime[noteName];
+                            delete noteConfirmCount[noteName];
+                        }
+                    }
+                }
+                
+                // Update progress
+                var progress = (currentTime / (buffer.duration * 1000)) * 100;
+                progressFill.style.width = Math.min(progress, 100) + '%';
+                
+                // Continue analysis
+                if (currentTime < buffer.duration * 1000) {
+                    requestAnimationFrame(analyze);
+                } else {
+                    finishAnalysis();
+                }
             }
+            
+            function finishAnalysis() {
+                if (analysisComplete) return;
+                analysisComplete = true;
+                
+                // Save any remaining notes
+                for (var noteName in currentNotes) {
+                    var duration = (buffer.duration * 1000) - noteStartTime[noteName];
+                    
+                    if (duration >= minNoteDuration) {
+                        melody.push({
+                            note: noteName,
+                            freq: currentNotes[noteName].freq,
+                            time: noteStartTime[noteName],
+                            duration: duration
+                        });
+                    }
+                }
+                
+                // Sort melody by time
+                melody.sort(function(a, b) {
+                    return a.time - b.time;
+                });
+                
+                // Clean up
+                source.stop();
+                analysisContext.close();
+                
+                // Update progress to 100%
+                progressFill.style.width = '100%';
+                
+                // Always resolve, even with empty melody
+                resolve(melody);
+            }
+            
+            // Start the source and analysis
+            source.start();
+            requestAnimationFrame(analyze);
+            
+            // Fallback timeout
+            setTimeout(function() {
+                if (!analysisComplete) {
+                    finishAnalysis();
+                }
+            }, buffer.duration * 1000 + 1000);
+            
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function findNearestNote(frequency) {
+    if (frequency < 30 || frequency > 6000) {
+        return null;
+    }
+    
+    var closestNote = null;
+    var minDifference = Infinity;
+    
+    for (var i = 0; i < noteLayout.length; i++) {
+        var note = noteLayout[i];
+        var difference = Math.abs(frequency - note.freq);
+        
+        if (difference < minDifference) {
+            minDifference = difference;
+            closestNote = note;
+        }
+    }
+    
+    // More strict matching - within 50 cents (quarter semitone)
+    var centsDifference = 1200 * Math.log2(frequency / closestNote.freq);
+    
+    if (Math.abs(centsDifference) < 50) {
+        return closestNote;
+    }
+    
+    return null;
+}
 
             // --- CONTROL BAR LOGIC ---
             function toggleRecording() {
