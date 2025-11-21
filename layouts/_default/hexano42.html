@@ -655,7 +655,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             /* --- INSTRUMENT SYSTEM --- */
             var currentInstrument = 'none';
             var instruments = {
-                'ddefault': {
+                'default': {
                     name: 'Default',
                     playNote: function(note, freq) {
                         /* Default implementation */
@@ -1931,7 +1931,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     /* Much lower noise volume */
                     noiseGain.gain.value = 0.005; /* Further reduced */
                     
-                    /* Connect the audio graph
+                    /* Connect the audio graph */
                     oscillator.connect(gainNode);
                     noiseBuffer.connect(noiseGain);
                     gainNode.connect(mainGainNode);
@@ -2157,7 +2157,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         vibratoGain.gain.value = vibratoAmount * 0.3; /* Very reduced vibrato */
                         
                         vibratoLFO.connect(vibratoGain);
-                        vibratoGain.connect(oscillator.frequency);
+                        // Only connect vibrato if oscillator.frequency is available
+                        if (oscillator.frequency) {
+                            vibratoGain.connect(oscillator.frequency);
+                        } else {
+                            console.warn("oscillator.frequency not available, skipping vibrato");
+                        }
                         
                         /* Create gain for this voice */
                         var voiceGain = audioContext.createGain();
