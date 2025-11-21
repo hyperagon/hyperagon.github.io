@@ -1,0 +1,3906 @@
+<!--
+Give me the correct scaleHexboard that doesn't shrink from reducing the width in Portait mode.
+
+wait a minute, if height decreases it should still scale
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hexano 4</title>
+    <style type="text/css">
+        /* --- Basic Setup & Theme --- */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: Courier, CourierNew, sans-serif;
+            font-weight: bold;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        /* --- Main Layout --- */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hexboard-container {
+            flex-grow: 1; /* This makes it fill the remaining vertical space */
+            
+            /* Keep these existing styles */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hexboard {
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        /* --- Control Bar --- */
+        .control-bar {
+            /* Add these two properties */
+            flex-shrink: 0; /* Prevents the bar from shrinking */
+            z-index: 10;    /* Keeps it on top */
+
+            /* Keep the rest of the existing .control-bar styles */
+            display: block;
+            position: relative; /* Can stay relative */
+            padding: 10px 20px;
+            background-color: #2a2a2a;
+            border-bottom: 1px solid #000;
+            text-align: center;
+        }
+        
+        .control-bar button, .control-bar select {
+            background: none;
+            border: none;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+
+        .control-bar select {
+            background-color: #333;
+            border: 1px solid #555;
+            padding: 5px;
+        }
+
+        .control-bar input[type="range"] {
+            width: 100px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        
+        #record-button {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            transition: border-color 0.2s, box-shadow 0.3s;
+        }
+
+        #record-button.recording {
+            border-color: #ff4136;
+            animation: pulse 1.5s infinite;
+        }
+
+        #record-indicator {
+            width: 18px;
+            height: 18px;
+            background-color: #ff4136;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -9px;
+            margin-left: -9px;
+            transform: scale(0);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #record-button.recording #record-indicator {
+            transform: scale(1);
+        }
+
+        #play-button, #fullscreen-button, #instrument-button {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .icon {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        /* --- Instrument Selector --- */
+        .instrument-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .instrument-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 5px 0;
+            margin-top: 5px;
+            min-width: 150px;
+            display: none;
+            z-index: 100;
+        }
+
+        .instrument-dropdown.active {
+            display: block;
+        }
+
+        .instrument-option {
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .instrument-option:hover {
+            background-color: #444;
+        }
+
+        .instrument-option.selected {
+            background-color: #4a4a4a;
+        }
+
+        .instrument-option .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        /* --- Melody Panel --- */
+        .overlay-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 400px;
+            background-color: #333;
+            border: 2px solid #555;
+            border-radius: 10px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .overlay-panel.active {
+            display: flex;
+        }
+
+        .overlay-panel .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #555;
+            border: none;
+            border-radius: 50%;
+            color: #e0e0e0;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay-panel .close-btn:hover {
+            background-color: #666;
+        }
+
+        .panel-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            padding: 0;
+        }
+
+        .panel-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            background-color: #222;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .note-list-header {
+            display: flex;
+            padding: 5px 10px;
+            border-bottom: 2px solid #555;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+
+        .note-item {
+            display: flex;
+            padding: 5px 10px;
+            border-bottom: 1px solid #444;
+            align-items: center;
+        }
+
+        .note-item:last-child {
+            border-bottom: none;
+        }
+
+        .note-name {
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .note-freq {
+            color: #aaa;
+            flex: 1;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .note-time {
+            color: #aaa;
+            flex: 1;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .note-duration {
+            color: #aaa;
+            flex: 1;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .panel-buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .panel-button {
+            background-color: #444;
+            border: 1px solid #666;
+            border-radius: 5px;
+            color: #e0e0e0;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .panel-button:hover {
+            background-color: #555;
+        }
+
+        /* --- Wave Type Selector --- */
+        .wave-selector {
+            display: inline-flex;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+
+        .wave-option {
+            width: 60px;
+            height: 30px;
+            background-color: #333;
+            border: 1px solid #555;
+            margin: 0 2px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .wave-option:hover {
+            background-color: #444;
+        }
+
+        .wave-option.selected {
+            background-color: #555;
+            border-color: #777;
+        }
+
+        .wave-option svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wave-option path {
+            stroke: #e0e0e0;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        /* --- SVG Piano Styling --- */
+        .piano-svg {
+            display: block;
+        }
+        
+        .hexagon {
+            cursor: pointer;
+            stroke: black;
+            stroke-width: 1px;
+            transition: fill 0.05s ease-in-out;
+        }
+
+        .note-text {
+            fill: white;
+            stroke: black;
+            stroke-width: 1px;
+            text-anchor: middle;
+            font-size: 200%;
+            font-weight: bold;
+            pointer-events: none;
+        }
+        
+        .note-key {
+            fill: black;
+            stroke: black;
+            stroke-width: 1px;
+            text-anchor: middle;
+            font-size: 120%;
+            font-weight: normal;
+            pointer-events: none;
+        }
+        
+        /* Note specific colors - SOLID OPAQUE COLORS */
+        .hexagon[data-note-name^="C"]:not([data-note-name*="#"]) { 
+            fill: rgba(231, 76, 60, 1);
+        }
+
+        .hexagon[data-note-name^="D"]:not([data-note-name*="#"]) { 
+            fill: rgba(241, 196, 15, 1); 
+        }
+
+        .hexagon[data-note-name^="E"] { 
+            fill: rgba(46, 204, 113, 1); 
+        }
+
+        .hexagon[data-note-name^="F"]:not([data-note-name*="#"]) { 
+            fill: rgba(52, 152, 219, 1); 
+        }
+
+        .hexagon[data-note-name^="G"]:not([data-note-name*="#"]) { 
+            fill: rgba(155, 89, 182, 1); 
+        }
+
+        .hexagon[data-note-name^="A"]:not([data-note-name*="#"]) { 
+            fill: rgba(230, 126, 34, 1); 
+        }
+
+        .hexagon[data-note-name^="B"] { 
+            fill: rgba(26, 188, 156, 1); 
+        }
+
+        /* 
+          Sharp Note Colors: A much darker mix of surrounding natural notes.
+          The active state uses a slightly lighter, but still dark, shade.
+        */
+        .hexagon[data-note-name*="C#"] { 
+            /* Dark mix of C and D */
+            fill: rgba(100, 65, 30, 1); 
+        }
+        .hexagon[data-note-name*="D#"] { 
+            /* Dark mix of D and E */
+            fill: rgba(80, 95, 45, 1); 
+        }
+        .hexagon[data-note-name*="F#"] { 
+            /* Dark mix of F and G */
+            fill: rgba(65, 60, 95, 1); 
+        }
+        .hexagon[data-note-name*="G#"] { 
+            /* Dark mix of G and A */
+            fill: rgba(95, 65, 75, 1); 
+        }
+        .hexagon[data-note-name*="A#"] { 
+            /* Dark mix of A and B */
+            fill: rgba(65, 85, 75, 1); 
+        }
+
+        /* Simple active state - just a brighter color */
+        .hexagon[data-note-name^="C"]:not([data-note-name*="#"]).active { 
+            fill: rgba(255, 120, 120, 1); 
+        }
+
+        .hexagon[data-note-name^="D"]:not([data-note-name*="#"]).active { 
+            fill: rgba(250, 220, 120, 1); 
+        }
+
+        .hexagon[data-note-name^="E"].active { 
+            fill: rgba(80, 230, 110, 1); 
+        }
+
+        .hexagon[data-note-name^="F"]:not([data-note-name*="#"]).active { 
+            fill: rgba(100, 210, 250, 1); 
+        }
+
+        .hexagon[data-note-name^="G"]:not([data-note-name*="#"]).active { 
+            fill: rgba(185, 130, 210, 1); 
+        }
+
+        .hexagon[data-note-name^="A"]:not([data-note-name*="#"]).active { 
+            fill: rgba(250, 160, 50, 1); 
+        }
+
+        .hexagon[data-note-name^="B"].active { 
+            fill: rgba(80, 210, 190, 1); 
+        }
+
+        /* Active states for sharp notes */
+        .hexagon[data-note-name*="C#"].active { 
+            /* Lighter, but still dark, mix of C and D */
+            fill: rgba(140, 95, 50, 1); 
+        }
+        .hexagon[data-note-name*="D#"].active { 
+            /* Lighter, but still dark, mix of D and E */
+            fill: rgba(110, 125, 65, 1); 
+        }
+        .hexagon[data-note-name*="F#"].active { 
+            /* Lighter, but still dark, mix of F and G */
+            fill: rgba(85, 80, 115, 1); 
+        }
+        .hexagon[data-note-name*="G#"].active { 
+            /* Lighter, but still dark, mix of G and A */
+            fill: rgba(115, 85, 95, 1); 
+        }
+        .hexagon[data-note-name*="A#"].active { 
+            /* Lighter, but still dark, mix of A and B */
+            fill: rgba(85, 105, 95, 1); 
+        }
+        
+        /* --- SVG Piano Styling --- */
+        .hexboard {
+            display: block;
+            transform-origin: center center;
+        }
+
+        /* Pulse animation for recording button */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 65, 54, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 65, 54, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 65, 54, 0);
+            }
+        }
+
+        /* Progress bar for audio conversion */
+        .progress-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 15px;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #222;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        /* Game Boy instrument specific styles - ONLY BACKGROUND */
+        .gameboy-theme {
+            background-color: #9bbc0f !important;
+        }
+
+        /* Guitar instrument specific styles */
+        .guitar-theme {
+            background-color: #8B4513 !important;
+        }
+
+        /* Choir instrument specific styles */
+        .choir-theme {
+            background-color: #4a148c !important;
+        }
+
+        /* SNES instrument specific styles */
+        .snes-theme {
+            background-color: #5D4E37 !important;
+        }
+    </style>
+    <script type="text/javascript">
+        var DEBUG = false;
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- DOM ELEMENTS ---
+            var hexboardContainer = document.querySelector('.hexboard-container');
+            var hexboard = document.querySelector('.hexboard');
+            var recordButton = document.getElementById('record-button');
+            var playButton = document.getElementById('play-button');
+            var playIcon = document.getElementById('play-icon');
+            var stopIcon = document.getElementById('stop-icon');
+            var instrumentButton = document.getElementById('instrument-button');
+            var instrumentDropdown = document.getElementById('instrument-dropdown');
+            var waveTypeSelect = document.getElementById('wave-type');
+            var volumeSlider = document.getElementById('volume-slider');
+            var fullscreenButton = document.getElementById('fullscreen-button');
+            var fullscreenEnterIcon = document.getElementById('fullscreen-enter-icon');
+            var fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
+            var overlayPanel = document.getElementById('overlay-panel');
+            var panelCloseBtn = document.getElementById('panel-close-btn');
+            var panelContent = document.getElementById('panel-content');
+            var exportButton = document.getElementById('export-button');
+            var importButton = document.getElementById('import-button');
+            var importAudioButton = document.getElementById('import-audio-button');
+            var fileInput = document.getElementById('file-input');
+            var audioFileInput = document.getElementById('audio-file-input');
+            var progressContainer = document.getElementById('progress-container');
+            var progressFill = document.getElementById('progress-fill');
+            var progressText = document.getElementById('progress-text');
+
+            // --- AUDIO SETUP ---
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            var audioContext;
+            var mainGainNode;
+            var activeOscillators = {};
+            var audioSupported = true;
+            var audioInitialized = false;
+
+            // --- STATE MANAGEMENT ---
+            var isRecording = false;
+            var isPlaying = false;
+            var recordingStartTime;
+            var recordedMelody = [
+                { note: 'C5', freq: 523.251, time: 0, duration: 300 },
+                { note: 'D5', freq: 587.330, time: 400, duration: 300 },
+                { note: 'E5', freq: 659.255, time: 800, duration: 300 },
+                { note: 'F5', freq: 698.456, time: 1200, duration: 300 },
+                { note: 'A5', freq: 880.000, time: 1600, duration: 600 },
+                { note: 'G5', freq: 783.991, time: 2200, duration: 600 },
+                
+                { note: 'A5', freq: 880.000, time: 3200, duration: 600 },
+                { note: 'G5', freq: 783.991, time: 3800, duration: 300 },
+                { note: 'F5', freq: 698.456, time: 4100, duration: 300 },
+                { note: 'E5', freq: 659.255, time: 4400, duration: 600 },
+                { note: 'G5', freq: 783.991, time: 5000, duration: 600 },
+                { note: 'D5', freq: 587.330, time: 5600, duration: 600 },
+            ];
+            var playbackTimeouts = [];
+            var recordingActiveNotes = {};
+            var notesByPointerId = {};
+            var firstNoteTime = null;
+            var isDragging = false;
+            var currentMouseNote = null;
+
+            // Panel state
+            var longPressTimer = null;
+            var longPressDelay = 500; // milliseconds
+            var panelOpen = false;
+
+            // --- INSTRUMENT SYSTEM ---
+            var currentInstrument = 'none';
+            var instruments = {
+                'ddefault': {
+                    name: 'Default',
+                    playNote: function(note, freq) {
+                        // Default implementation
+                        return playDefaultNote(note, freq);
+                    },
+                    stopNote: function(note) {
+                        // Default implementation
+                        return stopDefaultNote(note);
+                    },
+                    init: function() {
+                        // Default implementation
+                        return;
+                    }
+                },
+                '8bit': {
+                    name: '8-bit',
+                    playNote: function(note, freq) {
+                        return play8BitNote(note, freq);
+                    },
+                    stopNote: function(note) {
+                        return stop8BitNote(note);
+                    },
+                    init: function() {
+                        // Apply Game Boy theme - ONLY BACKGROUND
+                        document.body.classList.add('gameboy-theme');
+                        
+                        // Create Game Boy specific controls if needed
+                        createGameBoyControls();
+                    },
+                    cleanup: function() {
+                        // Remove Game Boy theme - ONLY BACKGROUND
+                        document.body.classList.remove('gameboy-theme');
+                        
+                        // Remove Game Boy specific controls if they exist
+                        removeGameBoyControls();
+                    }
+                },
+                'guitar': {
+                    name: 'Guitar',
+                    playNote: function(note, freq) {
+                        return playGuitarNote(note, freq);
+                    },
+                    stopNote: function(note) {
+                        return stopGuitarNote(note);
+                    },
+                    init: function() {
+                        // Apply Guitar theme - ONLY BACKGROUND
+                        document.body.classList.add('guitar-theme');
+                        
+                        // Create Guitar specific controls if needed
+                        createGuitarControls();
+                    },
+                    cleanup: function() {
+                        // Remove Guitar theme - ONLY BACKGROUND
+                        document.body.classList.remove('guitar-theme');
+                        
+                        // Remove Guitar specific controls if they exist
+                        removeGuitarControls();
+                    }
+                },
+                'choir': {
+                    name: 'Choir',
+                    playNote: function(note, freq) {
+                        return playChoirNote(note, freq);
+                    },
+                    stopNote: function(note) {
+                        return stopChoirNote(note);
+                    },
+                    init: function() {
+                        // Apply Choir theme - ONLY BACKGROUND
+                        document.body.classList.add('choir-theme');
+                        
+                        // Create Choir specific controls if needed
+                        createChoirControls();
+                    },
+                    cleanup: function() {
+                        // Remove Choir theme - ONLY BACKGROUND
+                        document.body.classList.remove('choir-theme');
+                        
+                        // Remove Choir specific controls if they exist
+                        removeChoirControls();
+                    }
+                },
+                '16bit': {
+                    name: '16-bit',
+                    playNote: function(note, freq) {
+                        return playSNESNote(note, freq);
+                    },
+                    stopNote: function(note) {
+                        return stopSNESNote(note);
+                    },
+                    init: function() {
+                        // Apply SNES theme - ONLY BACKGROUND
+                        document.body.classList.add('snes-theme');
+                        
+                        // Create SNES specific controls if needed
+                        createSNESControls();
+                    },
+                    cleanup: function() {
+                        // Remove SNES theme - ONLY BACKGROUND
+                        document.body.classList.remove('snes-theme');
+                        
+                        // Remove SNES specific controls if they exist
+                        removeSNESControls();
+                    }
+                }
+            };
+
+            // --- NOTE DATA (Wicki-Hayden inspired layout) ---
+            var noteLayout = [
+                // Octave 1
+                { key: '', note: 'C1', freq: 32.703, type: 'white' },
+                { key: '', note: 'C#1', freq: 34.648, type: 'black' },
+                { key: '', note: 'D1', freq: 36.708, type: 'white' },
+                { key: '', note: 'D#1', freq: 38.891, type: 'black' },
+                { key: '', note: 'E1', freq: 41.203, type: 'white' },
+                { key: '', note: 'F1', freq: 43.654, type: 'white' },
+                { key: '', note: 'F#1', freq: 46.249, type: 'black' },
+                { key: '', note: 'G1', freq: 49.000, type: 'white' },
+                { key: '', note: 'G#1', freq: 51.913, type: 'black' },
+                { key: '', note: 'A1', freq: 55.000, type: 'white' },
+                { key: '', note: 'A#1', freq: 58.270, type: 'black' },
+                { key: '', note: 'B1', freq: 61.735, type: 'white' },
+
+                // Octave 2
+                { key: '', note: 'C2', freq: 65.406, type: 'white' },
+                { key: '', note: 'C#2', freq: 69.296, type: 'black' },
+                { key: '', note: 'D2', freq: 73.416, type: 'white' },
+                { key: '', note: 'D#2', freq: 77.782, type: 'black' },
+                { key: '', note: 'E2', freq: 82.407, type: 'white' },
+                { key: '', note: 'F2', freq: 87.307, type: 'white' },
+                { key: '', note: 'F#2', freq: 92.499, type: 'black' },
+                { key: '', note: 'G2', freq: 98.000, type: 'white' },
+                { key: '', note: 'G#2', freq: 103.826, type: 'black' },
+                { key: '', note: 'A2', freq: 110.000, type: 'white' },
+                { key: '', note: 'A#2', freq: 116.541, type: 'black' },
+                { key: '', note: 'B2', freq: 123.471, type: 'white' },
+                
+                // Octave 3
+                { key: 'z', note: 'C3', freq: 130.813, type: 'white' },
+                { key: 'Z', note: 'C#3', freq: 138.591, type: 'black' },
+                { key: 'x', note: 'D3', freq: 146.832, type: 'white' },
+                { key: 'X', note: 'D#3', freq: 155.563, type: 'black' },
+                { key: 'c', note: 'E3', freq: 164.814, type: 'white' },
+                { key: 'v', note: 'F3', freq: 174.614, type: 'white' },
+                { key: 'V', note: 'F#3', freq: 184.997, type: 'black' },
+                { key: 'b', note: 'G3', freq: 196.000, type: 'white' },
+                { key: 'B', note: 'G#3', freq: 207.652, type: 'black' },
+                { key: 'n', note: 'A3', freq: 220.000, type: 'white' },
+                { key: 'N', note: 'A#3', freq: 233.082, type: 'black' },
+                { key: 'm', note: 'B3', freq: 246.942, type: 'white' },
+
+                // Octave 4 (Middle C is C4)
+                { key: 'a', note: 'C4', freq: 261.626, type: 'white' },
+                { key: 'A', note: 'C#4', freq: 277.183, type: 'black' },
+                { key: 's', note: 'D4', freq: 293.665, type: 'white' },
+                { key: 'S', note: 'D#4', freq: 311.127, type: 'black' },
+                { key: 'd', note: 'E4', freq: 329.628, type: 'white' },
+                { key: 'f', note: 'F4', freq: 349.228, type: 'white' },
+                { key: 'F', note: 'F#4', freq: 369.994, type: 'black' },
+                { key: 'g', note: 'G4', freq: 392.000, type: 'white' },
+                { key: 'G', note: 'G#4', freq: 415.305, type: 'black' },
+                { key: 'h', note: 'A4', freq: 440.000, type: 'white' },
+                { key: 'H', note: 'A#4', freq: 466.164, type: 'black' },
+                { key: 'j', note: 'B4', freq: 493.883, type: 'white' },
+
+                // Octave 5
+                { key: 'q', note: 'C5', freq: 523.251, type: 'white' },
+                { key: 'Q', note: 'C#5', freq: 554.365, type: 'black' },
+                { key: 'w', note: 'D5', freq: 587.330, type: 'white' },
+                { key: 'W', note: 'D#5', freq: 622.254, type: 'black' },
+                { key: 'e', note: 'E5', freq: 659.255, type: 'white' },
+                { key: 'r', note: 'F5', freq: 698.456, type: 'white' },
+                { key: 'R', note: 'F#5', freq: 739.989, type: 'black' },
+                { key: 't', note: 'G5', freq: 783.991, type: 'white' },
+                { key: 'T', note: 'G#5', freq: 830.609, type: 'black' },
+                { key: 'y', note: 'A5', freq: 880.000, type: 'white' },
+                { key: 'Y', note: 'A#5', freq: 932.328, type: 'black' },
+                { key: 'u', note: 'B5', freq: 987.767, type: 'black' },
+
+                // Octave 6
+                { key: '1', note: 'C6', freq: 1046.502, type: 'white' },
+                { key: '', note: 'C#6', freq: 1108.731, type: 'black' },
+                { key: '2', note: 'D6', freq: 1174.659, type: 'white' },
+                { key: '', note: 'D#6', freq: 1244.508, type: 'black' },
+                { key: '3', note: 'E6', freq: 1318.510, type: 'white' },
+                { key: '4', note: 'F6', freq: 1396.913, type: 'white' },
+                { key: '', note: 'F#6', freq: 1479.978, type: 'black' },
+                { key: '5', note: 'G6', freq: 1567.982, type: 'white' },
+                { key: '', note: 'G#6', freq: 1661.219, type: 'black' },
+                { key: '6', note: 'A6', freq: 1760.000, type: 'white' },
+                { key: '', note: 'A#6', freq: 1864.655, type: 'black' },
+                { key: '7', note: 'B6', freq: 1975.533, type: 'white' },
+
+                // Octave 7
+                { key: '', note: 'C7', freq: 2093.005, type: 'white' },
+                { key: '', note: 'C#7', freq: 2217.461, type: 'black' },
+                { key: '', note: 'D7', freq: 2349.318, type: 'white' },
+                { key: '', note: 'D#7', freq: 2489.016, type: 'black' },
+                { key: '', note: 'E7', freq: 2637.020, type: 'white' },
+                { key: '', note: 'F7', freq: 2793.826, type: 'white' },
+                { key: '', note: 'F#7', freq: 2959.955, type: 'black' },
+                { key: '', note: 'G7', freq: 3135.964, type: 'white' },
+                { key: '', note: 'G#7', freq: 3322.438, type: 'black' },
+                { key: '', note: 'A7', freq: 3520.000, type: 'white' },
+                { key: '', note: 'A#7', freq: 3729.310, type: 'black' },
+                { key: '', note: 'B7', freq: 3951.066, type: 'white' }
+            ];
+                    
+            var noteRows = [
+                noteLayout.slice(0, 12),   // C1 to B1
+                noteLayout.slice(12, 24),  // C2 to B2
+                noteLayout.slice(24, 36),  // C3 to B3
+                noteLayout.slice(36, 48),  // C4 to B4
+                noteLayout.slice(48, 60),  // C5 to B5
+                noteLayout.slice(60, 72),  // C6 to B6
+                noteLayout.slice(72, 84),  // C7 to B7
+            ];
+
+            var notesByKey = {};
+            var notesByNoteName = {};
+
+            // --- INITIALIZATION ---
+            function init() {
+                createPiano();
+                addEventListeners();
+                
+                // Initialize instrument selector
+                initInstrumentSelector();
+                
+                // Initialize hexboard scaling
+                scaleHexboard();
+                window.addEventListener('resize', scaleHexboard);
+                window.addEventListener('orientationchange', scaleHexboard);
+            }
+
+            // --- HEXBOARD SCALING ---
+            function scaleHexboard() {
+                if (!hexboard || !hexboardContainer) return;
+
+                var svg = hexboard.querySelector('.piano-svg');
+                if (!svg) return;
+
+                // --- STEP 1: RESET ---
+                // We must clear previous overrides so the container can shrink 
+                // to its natural size before we measure it.
+                hexboard.style.width = '';
+                hexboard.style.height = '';
+                hexboard.style.minWidth = '';
+                hexboard.style.minHeight = '';
+                svg.style.width = '';
+                svg.style.height = '';
+
+                // --- STEP 2: MEASURE ---
+                var containerWidth = hexboardContainer.clientWidth;
+                var containerHeight = hexboardContainer.clientHeight;
+
+                if (containerWidth === 0 || containerHeight === 0) return;
+
+                var viewBox = svg.getAttribute('viewBox').split(' ');
+                var originalWidth = parseFloat(viewBox[2]);
+                var originalHeight = parseFloat(viewBox[3]);
+
+                var isPortrait = window.innerHeight > window.innerWidth;
+
+                let scale;
+
+                if (isPortrait) {
+                // PORTRAIT:
+                // 1. Fit the board's LENGTH (originalWidth) to the screen HEIGHT.
+                // 2. Ignore the screen width (don't shrink just because it's narrow).
+                scale = containerHeight / originalWidth;
+
+                hexboard.style.transform = 'rotate(90deg)';
+                } else {
+                // LANDSCAPE:
+                // Standard fit (respect both dimensions so it doesn't get cut off).
+                scale = Math.min(containerWidth / originalWidth, containerHeight / originalHeight);
+
+                hexboard.style.transform = 'rotate(0deg)';
+                }
+
+                var finalWidth = originalWidth * scale;
+                var finalHeight = originalHeight * scale;
+
+                // --- STEP 3: APPLY ---
+
+                // Force specific pixel sizes on the wrapper
+                hexboard.style.width = finalWidth + 'px';
+                hexboard.style.height = finalHeight + 'px';
+
+                // Lock min-size to prevent Flexbox from squashing it 
+                // (This fixes the "width shrinks it" issue)
+                hexboard.style.minWidth = finalWidth + 'px';
+                hexboard.style.minHeight = finalHeight + 'px';
+
+                // Force SVG to fill that exact space
+                svg.style.width = finalWidth + 'px';
+                svg.style.height = finalHeight + 'px';
+
+                // Cleanup constraints
+                hexboard.style.maxWidth = 'none';
+                hexboard.style.maxHeight = 'none';
+                svg.style.maxWidth = 'none';
+                svg.style.maxHeight = 'none';
+
+                hexboard.style.flexShrink = '0';
+                hexboard.style.transformOrigin = 'center center';
+                hexboard.style.margin = 'auto';
+            }
+
+            function initInstrumentSelector() {
+                // Populate instrument dropdown
+                for (var instrumentId in instruments) {
+                    var instrument = instruments[instrumentId];
+                    var option = document.createElement('div');
+                    option.className = 'instrument-option';
+                    option.setAttribute('data-instrument', instrumentId);
+                    option.innerHTML = instrument.name;
+                    
+                    if (instrumentId === currentInstrument) {
+                        option.classList.add('selected');
+                    }
+                    
+                    option.addEventListener('click', function() {
+                        selectInstrument(this.getAttribute('data-instrument'));
+                    });
+                    
+                    instrumentDropdown.appendChild(option);
+                }
+            }
+
+            function selectInstrument(instrumentId) {
+                if (!instruments[instrumentId]) {
+                    console.error('Instrument not found:', instrumentId);
+                    return;
+                }
+                
+                // Cleanup previous instrument
+                if (instruments[currentInstrument] && instruments[currentInstrument].cleanup) {
+                    instruments[currentInstrument].cleanup();
+                }
+                
+                // Update current instrument
+                currentInstrument = instrumentId;
+                
+                // Update UI
+                var options = instrumentDropdown.querySelectorAll('.instrument-option');
+                for (var i = 0; i < options.length; i++) {
+                    options[i].classList.remove('selected');
+                    if (options[i].getAttribute('data-instrument') === instrumentId) {
+                        options[i].classList.add('selected');
+                    }
+                }
+                
+                // Initialize new instrument
+                if (instruments[instrumentId].init) {
+                    instruments[instrumentId].init();
+                }
+                
+                // Close dropdown
+                instrumentDropdown.classList.remove('active');
+            }
+
+            function createGameBoyControls() {
+                // Create Game Boy specific controls if needed
+                document.querySelector('.wave-selector').style.display = 'none';
+                var controlBar = document.querySelector('.control-bar');
+                
+                // Add Game Boy specific controls
+                var gameboyControls = document.createElement('div');
+                gameboyControls.id = 'gameboy-controls';
+                gameboyControls.style.display = 'inline-flex';
+                gameboyControls.style.marginLeft = '10px';
+                
+                // Wave Channel control
+                var waveGroup = document.createElement('div');
+                waveGroup.className = 'control-group';
+                waveGroup.style.marginRight = '10px';
+                
+                var waveLabel = document.createElement('label');
+                waveLabel.textContent = 'Wave';
+                waveLabel.style.marginBottom = '5px';
+                waveLabel.style.fontSize = '0.8em';
+                
+                var waveSelect = document.createElement('select');
+                waveSelect.id = 'gameboy-wave';
+                waveSelect.style.width = '120px';
+                
+                var squareOption = document.createElement('option');
+                squareOption.value = 'square';
+                squareOption.textContent = 'Pulse (50%)';
+                waveSelect.appendChild(squareOption);
+                
+                var sawtoothOption = document.createElement('option');
+                sawtoothOption.value = 'sawtooth';
+                sawtoothOption.textContent = 'Pulse (25%)';
+                waveSelect.appendChild(sawtoothOption);
+                
+                var triangleOption = document.createElement('option');
+                triangleOption.value = 'triangle';
+                triangleOption.textContent = 'Triangle';
+                waveSelect.appendChild(triangleOption);
+                
+                waveGroup.appendChild(waveLabel);
+                waveGroup.appendChild(waveSelect);
+                
+                // Noise Channel control
+                var noiseGroup = document.createElement('div');
+                noiseGroup.className = 'control-group';
+                noiseGroup.style.marginRight = '10px';
+                
+                var noiseLabel = document.createElement('label');
+                noiseLabel.textContent = 'Noise';
+                noiseLabel.style.marginBottom = '5px';
+                noiseLabel.style.fontSize = '0.8em';
+                
+                var noiseSelect = document.createElement('select');
+                noiseSelect.id = 'gameboy-noise';
+                noiseSelect.style.width = '120px';
+                
+                var whiteOption = document.createElement('option');
+                whiteOption.value = 'white';
+                whiteOption.textContent = 'White Noise';
+                noiseSelect.appendChild(whiteOption);
+                
+                var pinkOption = document.createElement('option');
+                pinkOption.value = 'pink';
+                pinkOption.textContent = 'Pink Noise';
+                noiseSelect.appendChild(pinkOption);
+                
+                noiseGroup.appendChild(noiseLabel);
+                noiseGroup.appendChild(noiseSelect);
+                
+                // Attack control
+                var attackGroup = document.createElement('div');
+                attackGroup.className = 'control-group';
+                attackGroup.style.marginRight = '10px';
+                
+                var attackLabel = document.createElement('label');
+                attackLabel.textContent = 'Attack';
+                attackLabel.id = 'gameboy-attack-label';
+                attackLabel.style.marginBottom = '5px';
+                attackLabel.style.fontSize = '0.8em';
+                
+                var attackSlider = document.createElement('input');
+                attackSlider.type = 'range';
+                attackSlider.id = 'gameboy-attack';
+                attackSlider.min = '0';
+                attackSlider.max = '0.5';
+                attackSlider.step = '0.01';
+                attackSlider.value = '0';
+                attackSlider.style.width = '100px';
+                
+                attackSlider.addEventListener('input', function() {
+                    document.getElementById('gameboy-attack-label').textContent = 'Attack';
+                });
+                
+                attackGroup.appendChild(attackLabel);
+                attackGroup.appendChild(attackSlider);
+                
+                // Release control
+                var releaseGroup = document.createElement('div');
+                releaseGroup.className = 'control-group';
+                
+                var releaseLabel = document.createElement('label');
+                releaseLabel.textContent = 'Release';
+                releaseLabel.id = 'gameboy-release-label';
+                releaseLabel.style.marginBottom = '5px';
+                releaseLabel.style.fontSize = '0.8em';
+                
+                var releaseSlider = document.createElement('input');
+                releaseSlider.type = 'range';
+                releaseSlider.id = 'gameboy-release';
+                releaseSlider.min = '0';
+                releaseSlider.max = '1';
+                releaseSlider.step = '0.01';
+                releaseSlider.value = '0.3';
+                releaseSlider.style.width = '100px';
+                
+                releaseSlider.addEventListener('input', function() {
+                    document.getElementById('gameboy-release-label').textContent = 'Release';
+                });
+                
+                releaseGroup.appendChild(releaseLabel);
+                releaseGroup.appendChild(releaseSlider);
+                
+                gameboyControls.appendChild(waveGroup);
+                gameboyControls.appendChild(noiseGroup);
+                gameboyControls.appendChild(attackGroup);
+                gameboyControls.appendChild(releaseGroup);
+                
+                controlBar.appendChild(gameboyControls);
+            }
+
+            function removeGameBoyControls() {
+                var gameboyControls = document.getElementById('gameboy-controls');
+                if (gameboyControls) {
+                    gameboyControls.parentNode.removeChild(gameboyControls);
+                }
+                
+                document.querySelector('.wave-selector').style.display = 'inline-flex';
+            }
+
+            function createGuitarControls() {
+                // Create Guitar specific controls
+                document.querySelector('.wave-selector').style.display = 'none';
+                var controlBar = document.querySelector('.control-bar');
+                
+                // Add Guitar specific controls
+                var guitarControls = document.createElement('div');
+                guitarControls.id = 'guitar-controls';
+                guitarControls.style.display = 'inline-flex';
+                guitarControls.style.marginLeft = '10px';
+                
+                // Guitar Type control
+                var typeGroup = document.createElement('div');
+                typeGroup.className = 'control-group';
+                typeGroup.style.marginRight = '10px';
+                
+                var typeLabel = document.createElement('label');
+                typeLabel.textContent = 'Type';
+                typeLabel.style.marginBottom = '5px';
+                typeLabel.style.fontSize = '0.8em';
+                
+                var typeSelect = document.createElement('select');
+                typeSelect.id = 'guitar-type';
+                typeSelect.style.width = '120px';
+                
+                var acousticOption = document.createElement('option');
+                acousticOption.value = 'acoustic';
+                acousticOption.textContent = 'Acoustic';
+                typeSelect.appendChild(acousticOption);
+                
+                var electricOption = document.createElement('option');
+                electricOption.value = 'electric';
+                electricOption.textContent = 'Electric';
+                typeSelect.appendChild(electricOption);
+                
+                var bassOption = document.createElement('option');
+                bassOption.value = 'bass';
+                bassOption.textContent = 'Bass';
+                typeSelect.appendChild(bassOption);
+                
+                typeGroup.appendChild(typeLabel);
+                typeGroup.appendChild(typeSelect);
+                
+                // Damping control
+                var dampingGroup = document.createElement('div');
+                dampingGroup.className = 'control-group';
+                dampingGroup.style.marginRight = '10px';
+                
+                var dampingLabel = document.createElement('label');
+                dampingLabel.textContent = 'Damping';
+                dampingLabel.id = 'guitar-damping-label';
+                dampingLabel.style.marginBottom = '5px';
+                dampingLabel.style.fontSize = '0.8em';
+                
+                var dampingSlider = document.createElement('input');
+                dampingSlider.type = 'range';
+                dampingSlider.id = 'guitar-damping';
+                dampingSlider.min = '0.9';
+                dampingSlider.max = '0.999';
+                dampingSlider.step = '0.001';
+                dampingSlider.value = '0.995';
+                dampingSlider.style.width = '100px';
+                
+                dampingSlider.addEventListener('input', function() {
+                    document.getElementById('guitar-damping-label').textContent = 'Damping';
+                });
+                
+                dampingGroup.appendChild(dampingLabel);
+                dampingGroup.appendChild(dampingSlider);
+                
+                // Body Resonance control
+                var resonanceGroup = document.createElement('div');
+                resonanceGroup.className = 'control-group';
+                
+                var resonanceLabel = document.createElement('label');
+                resonanceLabel.textContent = 'Body';
+                resonanceLabel.id = 'guitar-body-label';
+                resonanceLabel.style.marginBottom = '5px';
+                resonanceLabel.style.fontSize = '0.8em';
+                
+                var resonanceSlider = document.createElement('input');
+                resonanceSlider.type = 'range';
+                resonanceSlider.id = 'guitar-body';
+                resonanceSlider.min = '0';
+                resonanceSlider.max = '1';
+                resonanceSlider.step = '0.01';
+                resonanceSlider.value = '0.3';
+                resonanceSlider.style.width = '100px';
+                
+                resonanceSlider.addEventListener('input', function() {
+                    document.getElementById('guitar-body-label').textContent = 'Body';
+                });
+                
+                resonanceGroup.appendChild(resonanceLabel);
+                resonanceGroup.appendChild(resonanceSlider);
+                
+                guitarControls.appendChild(typeGroup);
+                guitarControls.appendChild(dampingGroup);
+                guitarControls.appendChild(resonanceGroup);
+                
+                controlBar.appendChild(guitarControls);
+            }
+
+            function removeGuitarControls() {
+                var guitarControls = document.getElementById('guitar-controls');
+                if (guitarControls) {
+                    guitarControls.parentNode.removeChild(guitarControls);
+                }
+                
+                document.querySelector('.wave-selector').style.display = 'inline-flex';
+            }
+
+            function createChoirControls() {
+                // Create Choir specific controls
+                document.querySelector('.wave-selector').style.display = 'none';
+                var controlBar = document.querySelector('.control-bar');
+                
+                // Add Choir specific controls
+                var choirControls = document.createElement('div');
+                choirControls.id = 'choir-controls';
+                choirControls.style.display = 'inline-flex';
+                choirControls.style.marginLeft = '10px';
+                
+                // Voice Type control
+                var typeGroup = document.createElement('div');
+                typeGroup.className = 'control-group';
+                typeGroup.style.marginRight = '10px';
+                
+                var typeLabel = document.createElement('label');
+                typeLabel.textContent = 'Voices';
+                typeLabel.style.marginBottom = '5px';
+                typeLabel.style.fontSize = '0.8em';
+                
+                var typeSelect = document.createElement('select');
+                typeSelect.id = 'choir-voices';
+                typeSelect.style.width = '120px';
+                
+                var sopranoOption = document.createElement('option');
+                sopranoOption.value = 'soprano';
+                sopranoOption.textContent = 'Soprano';
+                typeSelect.appendChild(sopranoOption);
+                
+                var altoOption = document.createElement('option');
+                altoOption.value = 'alto';
+                altoOption.textContent = 'Alto';
+                typeSelect.appendChild(altoOption);
+                
+                var tenorOption = document.createElement('option');
+                tenorOption.value = 'tenor';
+                tenorOption.textContent = 'Tenor';
+                typeSelect.appendChild(tenorOption);
+                
+                var bassOption = document.createElement('option');
+                bassOption.value = 'bass';
+                bassOption.textContent = 'Bass';
+                typeSelect.appendChild(bassOption);
+                
+                var mixedOption = document.createElement('option');
+                mixedOption.value = 'mixed';
+                mixedOption.textContent = 'Mixed';
+                mixedOption.selected = true;
+                typeSelect.appendChild(mixedOption);
+                
+                typeGroup.appendChild(typeLabel);
+                typeGroup.appendChild(typeSelect);
+                
+                // Vibrato control
+                var vibratoGroup = document.createElement('div');
+                vibratoGroup.className = 'control-group';
+                vibratoGroup.style.marginRight = '10px';
+                
+                var vibratoLabel = document.createElement('label');
+                vibratoLabel.textContent = 'Vibrato';
+                vibratoLabel.id = 'choir-vibrato-label';
+                vibratoLabel.style.marginBottom = '5px';
+                vibratoLabel.style.fontSize = '0.8em';
+                
+                var vibratoSlider = document.createElement('input');
+                vibratoSlider.type = 'range';
+                vibratoSlider.id = 'choir-vibrato';
+                vibratoSlider.min = '0';
+                vibratoSlider.max = '5';
+                vibratoSlider.step = '0.1';
+                vibratoSlider.value = '2';
+                vibratoSlider.style.width = '100px';
+                
+                vibratoSlider.addEventListener('input', function() {
+                    document.getElementById('choir-vibrato-label').textContent = 'Vibrato';
+                });
+                
+                vibratoGroup.appendChild(vibratoLabel);
+                vibratoGroup.appendChild(vibratoSlider);
+                
+                // Warmth control
+                var warmthGroup = document.createElement('div');
+                warmthGroup.className = 'control-group';
+                
+                var warmthLabel = document.createElement('label');
+                warmthLabel.textContent = 'Warmth';
+                warmthLabel.id = 'choir-warmth-label';
+                warmthLabel.style.marginBottom = '5px';
+                warmthLabel.style.fontSize = '0.8em';
+                
+                var warmthSlider = document.createElement('input');
+                warmthSlider.type = 'range';
+                warmthSlider.id = 'choir-warmth';
+                warmthSlider.min = '0';
+                warmthSlider.max = '1';
+                warmthSlider.step = '0.05';
+                warmthSlider.value = '0.3';
+                warmthSlider.style.width = '100px';
+                
+                warmthSlider.addEventListener('input', function() {
+                    document.getElementById('choir-warmth-label').textContent = 'Warmth';
+                });
+                
+                warmthGroup.appendChild(warmthLabel);
+                warmthGroup.appendChild(warmthSlider);
+                
+                choirControls.appendChild(typeGroup);
+                choirControls.appendChild(vibratoGroup);
+                choirControls.appendChild(warmthGroup);
+                
+                controlBar.appendChild(choirControls);
+            }
+
+            function removeChoirControls() {
+                var choirControls = document.getElementById('choir-controls');
+                if (choirControls) {
+                    choirControls.parentNode.removeChild(choirControls);
+                }
+                
+                document.querySelector('.wave-selector').style.display = 'inline-flex';
+            }
+
+            function createSNESControls() {
+                // Create SNES specific controls
+                document.querySelector('.wave-selector').style.display = 'none';
+                var controlBar = document.querySelector('.control-bar');
+                
+                // Add SNES specific controls
+                var snesControls = document.createElement('div');
+                snesControls.id = 'snes-controls';
+                snesControls.style.display = 'inline-flex';
+                snesControls.style.marginLeft = '10px';
+                
+                // Instrument Type control
+                var typeGroup = document.createElement('div');
+                typeGroup.className = 'control-group';
+                typeGroup.style.marginRight = '10px';
+                
+                var typeLabel = document.createElement('label');
+                typeLabel.textContent = 'Instrument';
+                typeLabel.style.marginBottom = '5px';
+                typeLabel.style.fontSize = '0.8em';
+                
+                var typeSelect = document.createElement('select');
+                typeSelect.id = 'snes-instrument';
+                typeSelect.style.width = '120px';
+                
+                var pianoOption = document.createElement('option');
+                pianoOption.value = 'piano';
+                pianoOption.textContent = 'Piano';
+                typeSelect.appendChild(pianoOption);
+                
+                var stringsOption = document.createElement('option');
+                stringsOption.value = 'strings';
+                stringsOption.textContent = 'Strings';
+                typeSelect.appendChild(stringsOption);
+                
+                var brassOption = document.createElement('option');
+                brassOption.value = 'brass';
+                brassOption.textContent = 'Brass';
+                typeSelect.appendChild(brassOption);
+                
+                var woodwindOption = document.createElement('option');
+                woodwindOption.value = 'woodwind';
+                woodwindOption.textContent = 'Woodwind';
+                typeSelect.appendChild(woodwindOption);
+                
+                var percussionOption = document.createElement('option');
+                percussionOption.value = 'percussion';
+                percussionOption.textContent = 'Percussion';
+                typeSelect.appendChild(percussionOption);
+                
+                typeGroup.appendChild(typeLabel);
+                typeGroup.appendChild(typeSelect);
+                
+                // Reverb control
+                var reverbGroup = document.createElement('div');
+                reverbGroup.className = 'control-group';
+                reverbGroup.style.marginRight = '10px';
+                
+                var reverbLabel = document.createElement('label');
+                reverbLabel.textContent = 'Reverb';
+                reverbLabel.id = 'snes-reverb-label';
+                reverbLabel.style.marginBottom = '5px';
+                reverbLabel.style.fontSize = '0.8em';
+                
+                var reverbSlider = document.createElement('input');
+                reverbSlider.type = 'range';
+                reverbSlider.id = 'snes-reverb';
+                reverbSlider.min = '0';
+                reverbSlider.max = '1';
+                reverbSlider.step = '0.05';
+                reverbSlider.value = '0.3';
+                reverbSlider.style.width = '100px';
+                
+                reverbSlider.addEventListener('input', function() {
+                    document.getElementById('snes-reverb-label').textContent = 'Reverb';
+                });
+                
+                reverbGroup.appendChild(reverbLabel);
+                reverbGroup.appendChild(reverbSlider);
+                
+                // Attack control
+                var attackGroup = document.createElement('div');
+                attackGroup.className = 'control-group';
+                attackGroup.style.marginRight = '10px';
+                
+                var attackLabel = document.createElement('label');
+                attackLabel.textContent = 'Attack';
+                attackLabel.id = 'snes-attack-label';
+                attackLabel.style.marginBottom = '5px';
+                attackLabel.style.fontSize = '0.8em';
+                
+                var attackSlider = document.createElement('input');
+                attackSlider.type = 'range';
+                attackSlider.id = 'snes-attack';
+                attackSlider.min = '0';
+                attackSlider.max = '0.5';
+                attackSlider.step = '0.01';
+                attackSlider.value = '0.05';
+                attackSlider.style.width = '100px';
+                
+                attackSlider.addEventListener('input', function() {
+                    document.getElementById('snes-attack-label').textContent = 'Attack';
+                });
+                
+                attackGroup.appendChild(attackLabel);
+                attackGroup.appendChild(attackSlider);
+                
+                // Release control
+                var releaseGroup = document.createElement('div');
+                releaseGroup.className = 'control-group';
+                
+                var releaseLabel = document.createElement('label');
+                releaseLabel.textContent = 'Release';
+                releaseLabel.id = 'snes-release-label';
+                releaseLabel.style.marginBottom = '5px';
+                releaseLabel.style.fontSize = '0.8em';
+                
+                var releaseSlider = document.createElement('input');
+                releaseSlider.type = 'range';
+                releaseSlider.id = 'snes-release';
+                releaseSlider.min = '0';
+                releaseSlider.max = '2';
+                releaseSlider.step = '0.05';
+                releaseSlider.value = '0.5';
+                releaseSlider.style.width = '100px';
+                
+                releaseSlider.addEventListener('input', function() {
+                    document.getElementById('snes-release-label').textContent = 'Release';
+                });
+                
+                releaseGroup.appendChild(releaseLabel);
+                releaseGroup.appendChild(releaseSlider);
+                
+                snesControls.appendChild(typeGroup);
+                snesControls.appendChild(reverbGroup);
+                snesControls.appendChild(attackGroup);
+                snesControls.appendChild(releaseGroup);
+                
+                controlBar.appendChild(snesControls);
+            }
+
+            function removeSNESControls() {
+                var snesControls = document.getElementById('snes-controls');
+                if (snesControls) {
+                    snesControls.parentNode.removeChild(snesControls);
+                }
+                
+                document.querySelector('.wave-selector').style.display = 'inline-flex';
+            }
+
+            function tryInitAudioContext() {
+                if (!AudioContext) {
+                    console.error("Web Audio API is not supported in this browser");
+                    audioSupported = false;
+                    return;
+                }
+                
+                try {
+                    // Try to create audio context
+                    audioContext = new AudioContext();
+                    
+                    // If it's not suspended, we can fully initialize
+                    if (audioContext.state !== 'suspended') {
+                        completeAudioContextInit();
+                    } else {
+                        // If suspended, we'll wait for user interaction
+                        if(DEBUG) {
+                            console.log("Audio context created but suspended, waiting for user interaction");
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error creating audio context:", e);
+                    audioSupported = false;
+                }
+            }
+
+            function initAudioContext() {
+                if (!AudioContext) {
+                    console.error("Web Audio API is not supported in this browser");
+                    audioSupported = false;
+                    return;
+                }
+                
+                if (audioInitialized) {
+                    if(DEBUG) {
+                        console.log("Audio context already initialized");
+                    }
+                    return;
+                }
+                
+                try {
+                    // Create or get existing audio context
+                    if (!audioContext) {
+                        audioContext = new AudioContext();
+                    }
+                    
+                    completeAudioContextInit();
+                    
+                    // Resume the context if it's suspended
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume().then(function() {
+                            if(DEBUG) {
+                                console.log("Audio context resumed successfully");
+                                console.log("Audio context state after resume:", audioContext.state);
+                            }
+                        }).catch(function(e) {
+                            console.error("Error resuming audio context:", e);
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error initializing audio context:", e);
+                    audioSupported = false;
+                }
+            }
+            
+            function completeAudioContextInit() {
+                mainGainNode = audioContext.createGain();
+                mainGainNode.gain.value = volumeSlider.value;
+                
+                // Add a limiter to prevent clipping
+                var limiter = audioContext.createDynamicsCompressor();
+                limiter.threshold.value = -12; // Start limiting at -12dB
+                limiter.knee.value = 0; // Hard knee
+                limiter.ratio.value = 20; // High ratio for limiting
+                limiter.attack.value = 0.001; // Fast attack
+                limiter.release.value = 0.1; // Moderate release
+                
+                mainGainNode.connect(limiter);
+                limiter.connect(audioContext.destination);
+                
+                audioInitialized = true;
+                
+                if(DEBUG) {
+                    console.log("Audio context initialized successfully");
+                    console.log("Audio context state:", audioContext.state);
+                }
+                
+                // Handle state changes
+                audioContext.addEventListener('statechange', function() {
+                    if(DEBUG) {
+                        console.log("Audio context state changed to:", audioContext.state);
+                    }
+                    
+                    // If the context is suspended, try to resume it
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume().then(function() {
+                            if(DEBUG) {
+                                console.log("Audio context resumed after state change");
+                            }
+                        }).catch(function(e) {
+                            console.error("Error resuming audio context after state change:", e);
+                        });
+                    }
+                });
+            }
+            
+            function ensureAudioContextResumed() {
+                if(!audioInitialized) {
+                    tryInitAudioContext();
+                }
+
+                if (!audioContext || !audioInitialized) {
+                    console.error("Audio context is not initialized");
+                }
+                
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume().then(function() {
+                        if(DEBUG) {
+                            console.log("Audio context resumed successfully");
+                        }
+                    }).catch(function(e) {
+                        console.error("Error resuming audio context:", e);
+                    });
+                    return false;
+                }
+                
+                return true;
+            }
+
+            function createPiano() {
+                // Create main SVG container
+                var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('class', 'piano-svg');
+                
+                // Hexagon dimensions for proper tiling (pointy-top orientation)
+                var hexRadius = 50; // Radius from center to any vertex
+                
+                // For pointy-top hexagons:
+                // Width = 2 * radius
+                // Height = sqrt(3) * radius
+                var hexWidth = hexRadius * 2;
+                var hexHeight = Math.sqrt(3) * hexRadius;
+                
+                // CORRECTED SPACING FOR PROPER TILING:
+                // Horizontal spacing between centers is 1.5 * radius
+                var horizontalSpacing = hexRadius * 1.75;
+                // Vertical spacing between rows is the full height
+                var verticalSpacing = hexHeight * 0.85;
+                
+                // Calculate total width and height with proper spacing
+                var maxRowLength = Math.max.apply(Math, noteRows.map(function(row) { return row.length; }));
+                
+                // For width: (maxRowLength-1) * spacing + hexWidth + offset for odd rows
+                // The offset accounts for the half-spacing shift in alternating rows
+                var totalWidth = (maxRowLength - 1) * horizontalSpacing + hexWidth + (horizontalSpacing / 2);
+                
+                // For height: (noteRows.length-1) * spacing + hexHeight
+                // This properly accounts for the spacing between rows
+                var totalHeight = (noteRows.length - 1) * verticalSpacing + (2 * hexRadius);
+                
+                // Set SVG dimensions
+                svg.setAttribute('width', "100%");
+                svg.setAttribute('height', "100%");
+                svg.setAttribute('viewBox', '0 0 ' + totalWidth + ' ' + totalHeight);
+                
+                // Create hexagon points (pointy-top orientation)
+                function getHexagonPoints(cx, cy, radius) {
+                    var points = [];
+                    // Start at top point and go clockwise
+                    for (var i = 0; i < 6; i++) {
+                        // 30°, 90°, 150°, 210°, 270°, 330° for pointy-top
+                        var angle = (Math.PI / 3) * i - Math.PI / 2;
+                        var x = cx + radius * Math.cos(angle);
+                        var y = cy + radius * Math.sin(angle);
+                        points.push(x + ',' + y);
+                    }
+                    return points.join(' ');
+                }
+                
+                // Create hexagons for each note
+                for (var i = 0; i < noteRows.length; i++) {
+                    var rowData = noteRows[i];
+                    
+                    // Calculate row offset for hexagonal tiling
+                    var rowOffsetX = (i % 2 === 1) ? horizontalSpacing / 2 : 0;
+                    
+                    var rowOffsetY = i * verticalSpacing;
+                    
+                    for (var j = 0; j < rowData.length; j++) {
+                        var noteData = rowData[j];
+                        
+                        // Calculate center position for this hexagon
+                        // FIX: Position the first hexagon at hexRadius, then add spacing for subsequent ones
+                        var cx = rowOffsetX + hexRadius + (j * horizontalSpacing);
+                        var cy = rowOffsetY + hexRadius;
+                        
+                        // Create group for hexagon and text
+                        var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                        g.setAttribute('class', 'hexagon-group');
+                        
+                        // Create hexagon polygon
+                        var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        polygon.setAttribute('class', 'hexagon');
+                        polygon.setAttribute('id', noteData.note);
+                        polygon.setAttribute('points', getHexagonPoints(cx, cy, hexRadius));
+                        polygon.setAttribute('data-key', noteData.key);
+                        polygon.setAttribute('data-note', noteData.note);
+                        polygon.setAttribute('data-freq', noteData.freq);
+                        polygon.setAttribute('data-note-name', noteData.note.replace(/[0-9]/, ''));
+                        
+                        // Create note name text - positioned higher in the hexagon
+                        var noteText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        noteText.setAttribute('class', 'note-text');
+                        noteText.setAttribute('x', cx);
+                        noteText.setAttribute('y', cy); // Moved up from center
+                        noteText.textContent = noteData.note;
+                        
+                        // Create key label text - positioned lower in the hexagon
+                        var keyText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        keyText.setAttribute('class', 'note-key');
+                        keyText.setAttribute('x', cx);
+                        keyText.setAttribute('y', cy + 20); // Moved further down from center
+                        keyText.textContent = noteData.key === 'Shift' ? '⇧' : noteData.key;
+                        
+                        // Add elements to group
+                        g.appendChild(polygon);
+                        g.appendChild(noteText);
+                        g.appendChild(keyText);
+                        
+                        // Add group to SVG
+                        svg.appendChild(g);
+                        
+                        // Store references for event handling
+                        notesByKey[noteData.key] = noteData; // Store the exact key, not lowercase
+                        notesByNoteName[noteData.note] = notesByNoteName[noteData.note] || [];
+                        notesByNoteName[noteData.note].push(polygon);
+                    }
+                }
+                
+                // Add SVG to hexboard
+                hexboard.appendChild(svg);
+            }
+            
+            // --- AUDIO PLAYBACK ---
+            function playNote(note, freq) {
+                if (!audioSupported) {
+                    console.warn("Audio is not supported in this browser");
+                    return;
+                }
+
+                // 1. Ensure AudioContext exists
+                if (!audioContext) {
+                    if(DEBUG) console.log("Creating new AudioContext...");
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                // 2. Ensure the context is running (resumed)
+                if (audioContext.state === 'suspended') {
+                    if(DEBUG) console.log("AudioContext is suspended. Resuming...");
+                    audioContext.resume().then(function() {
+                        if(DEBUG) console.log("AudioContext resumed. Playing note:", note);
+                        // Continue with note playing after resume
+                        continuePlayingNote(note, freq);
+                    }).catch(function(e) {
+                        console.error("Error resuming audio context:", e);
+                    });
+                } else {
+                    // Context is already running, play the note directly
+                    continuePlayingNote(note, freq);
+                }
+            }
+            
+            function continuePlayingNote(note, freq) {
+                // 3. Ensure the main gain node exists
+                if (!mainGainNode) {
+                    if(DEBUG) console.log("Creating mainGainNode...");
+                    mainGainNode = audioContext.createGain();
+                    mainGainNode.gain.value = volumeSlider.value;
+                    mainGainNode.connect(audioContext.destination);
+                }
+
+                // At this point, the audio context is GUARANTEED to be running.
+                if(DEBUG) console.log("Audio context is running. Playing note:", note);
+
+                // 4. Stop the note if it's already playing
+                if (activeOscillators[note]) {
+                    stopNote(note);
+                }
+
+                // 5. Play the note using the selected instrument
+                if (instruments[currentInstrument] && instruments[currentInstrument].playNote) {
+                    return instruments[currentInstrument].playNote(note, freq);
+                }
+                
+                // Fallback to default implementation
+                return playDefaultNote(note, freq);
+            }
+            
+            function playDefaultNote(note, freq) {
+                try {
+                    var now = audioContext.currentTime;
+                    var gainValue = 0.15;
+
+                    var oscillator = audioContext.createOscillator();
+                    var gainNode = audioContext.createGain();
+
+                    // Get wave type from the selected wave option
+                    var selectedWave = document.querySelector('.wave-option.selected');
+                    if (selectedWave) {
+                        oscillator.type = selectedWave.getAttribute('data-wave-type');
+                    } else {
+                        // Default to sine if nothing is selected
+                        oscillator.type = 'sine';
+                    }
+                    
+                    // Round frequency to 3 decimal places
+                    var roundedFreq = Math.round(freq * 1000) / 1000;
+                    oscillator.frequency.setValueAtTime(roundedFreq, now);
+                    
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(gainValue, now + 0.02);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(mainGainNode);
+                    oscillator.start(now);
+
+                    activeOscillators[note] = { 
+                        oscillator: oscillator, 
+                        gainNode: gainNode
+                    };
+                    
+                    if(DEBUG) {
+                        console.log("Note started:", note, "Frequency:", roundedFreq);
+                    }
+                } catch (e) {
+                    console.error("Error playing note:", e);
+                }
+            }
+
+            function play8BitNote(note, freq) {
+                try {
+                    var now = audioContext.currentTime;
+                    var gainValue = 0.12;
+
+                    // Get Game Boy specific parameters
+                    var waveformSelect = document.getElementById('gameboy-wave');
+                    var noiseSelect = document.getElementById('gameboy-noise');
+                    var attackSlider = document.getElementById('gameboy-attack');
+                    var releaseSlider = document.getElementById('gameboy-release');
+                    
+                    var waveformType = waveformSelect ? waveformSelect.value : 'square';
+                    var noiseType = noiseSelect ? noiseSelect.value : 'white';
+                    var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.0;
+                    var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.3;
+
+                    // Create main oscillator for the note
+                    var oscillator = audioContext.createOscillator();
+                    var gainNode = audioContext.createGain();
+                    
+                    // Create noise buffer for Game Boy style
+                    var noiseBuffer = audioContext.createBufferSource();
+                    var noiseGain = audioContext.createGain();
+                    
+                    // Create noise buffer
+                    var bufferSize = audioContext.sampleRate * 2; // 2 seconds of noise
+                    var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                    var output = buffer.getChannelData(0);
+                    
+                    for (var i = 0; i < bufferSize; i++) {
+                        if (noiseType === 'white') {
+                            output[i] = Math.random() * 2 - 1;
+                        } else { // Pink noise is more complex, we'll fake it with a simple filter
+                            output[i] = (Math.random() * 2 - 1) * (i / bufferSize); // A simple lo-fi sweep
+                        }
+                    }
+                    noiseBuffer.buffer = buffer;
+                    noiseBuffer.loop = true;
+                    
+                    // Configure oscillator
+                    oscillator.type = waveformType;
+                    var roundedFreq = Math.round(freq * 1000) / 1000;
+                    oscillator.frequency.setValueAtTime(roundedFreq, now);
+                    
+                    // Much lower noise volume
+                    noiseGain.gain.value = 0.005; // Further reduced
+                    
+                    // Connect the audio graph
+                    oscillator.connect(gainNode);
+                    noiseBuffer.connect(noiseGain);
+                    gainNode.connect(mainGainNode);
+                    noiseGain.connect(mainGainNode);
+                    
+                    // --- ADSR Envelope ---
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(gainValue, now + attackTime);
+                    
+                    // Start the sound
+                    oscillator.start(now);
+                    noiseBuffer.start(now);
+                    
+                    activeOscillators[note] = { 
+                        oscillator: oscillator, 
+                        gainNode: gainNode,
+                        noiseBuffer: noiseBuffer,
+                        noiseGain: noiseGain,
+                        releaseTime: releaseTime
+                    };
+                    
+                    if(DEBUG) {
+                        console.log("8-bit Note started:", note, "Frequency:", roundedFreq);
+                    }
+                } catch (e) {
+                    console.error("Error playing 8-bit note:", e);
+                }
+            }
+
+            function playGuitarNote(note, freq) {
+                try {
+                    var now = audioContext.currentTime;
+                    var gainValue = 0.25;
+
+                    // Get Guitar specific parameters
+                    var typeSelect = document.getElementById('guitar-type');
+                    var dampingSlider = document.getElementById('guitar-damping');
+                    var bodySlider = document.getElementById('guitar-body');
+                    
+                    var guitarType = typeSelect ? typeSelect.value : 'acoustic';
+                    var damping = dampingSlider ? parseFloat(dampingSlider.value) : 0.995;
+                    var bodyResonance = bodySlider ? parseFloat(bodySlider.value) : 0.3;
+
+                    // Create main oscillator for the note
+                    var oscillator = audioContext.createOscillator();
+                    var gainNode = audioContext.createGain();
+                    
+                    // Create additional oscillators for harmonics
+                    var harmonic1 = audioContext.createOscillator();
+                    var harmonic2 = audioContext.createOscillator();
+                    var harmonicGain1 = audioContext.createGain();
+                    var harmonicGain2 = audioContext.createGain();
+                    
+                    // Create filter for guitar body resonance
+                    var filter = audioContext.createBiquadFilter();
+                    
+                    // Create a pluck noise for attack
+                    var pluckNoise = audioContext.createBufferSource();
+                    var pluckBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.05, audioContext.sampleRate);
+                    var pluckData = pluckBuffer.getChannelData(0);
+                    for (var i = 0; i < pluckBuffer.length; i++) {
+                        pluckData[i] = (Math.random() * 2 - 1) * 0.2; // Reduced pluck noise
+                    }
+                    pluckNoise.buffer = pluckBuffer;
+                    var pluckGain = audioContext.createGain();
+                    
+                    // Configure main oscillator
+                    oscillator.type = 'sawtooth';
+                    var roundedFreq = Math.round(freq * 1000) / 1000;
+                    oscillator.frequency.setValueAtTime(roundedFreq, now);
+                    
+                    // Configure harmonics with reduced gain
+                    harmonic1.type = 'sine';
+                    harmonic1.frequency.setValueAtTime(roundedFreq * 2, now); // Octave
+                    harmonicGain1.gain.value = 0.1;
+                    
+                    harmonic2.type = 'sine';
+                    harmonic2.frequency.setValueAtTime(roundedFreq * 3, now); // Fifth
+                    harmonicGain2.gain.value = 0.08;
+                    
+                    // Configure filter based on guitar type
+                    if (guitarType === 'acoustic') {
+                        filter.type = 'lowpass';
+                        filter.frequency.value = roundedFreq * 2.5;
+                        filter.Q.value = 1;
+                    } else if (guitarType === 'electric') {
+                        filter.type = 'lowpass';
+                        filter.frequency.value = roundedFreq * 4;
+                        filter.Q.value = 2;
+                    } else if (guitarType === 'bass') {
+                        filter.type = 'lowpass';
+                        filter.frequency.value = roundedFreq * 1.5;
+                        filter.Q.value = 0.8;
+                    }
+                    
+                    // Connect the audio graph
+                    oscillator.connect(gainNode);
+                    harmonic1.connect(harmonicGain1);
+                    harmonic2.connect(harmonicGain2);
+                    harmonicGain1.connect(gainNode);
+                    harmonicGain2.connect(gainNode);
+                    
+                    // Connect pluck noise for attack
+                    pluckNoise.connect(pluckGain);
+                    pluckGain.connect(filter);
+                    
+                    gainNode.connect(filter);
+                    filter.connect(mainGainNode);
+                    
+                    // --- ADSR Envelope ---
+                    // Quick attack with pluck noise
+                    pluckGain.gain.setValueAtTime(0.1, now); // Reduced pluck gain
+                    pluckGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(gainValue * 0.6, now + 0.01);
+                    
+                    // Start the sound
+                    oscillator.start(now);
+                    harmonic1.start(now);
+                    harmonic2.start(now);
+                    pluckNoise.start(now);
+                    
+                    activeOscillators[note] = { 
+                        oscillator: oscillator, 
+                        gainNode: gainNode,
+                        harmonic1: harmonic1,
+                        harmonic2: harmonic2,
+                        harmonicGain1: harmonicGain1,
+                        harmonicGain2: harmonicGain2,
+                        filter: filter,
+                        pluckNoise: pluckNoise,
+                        pluckGain: pluckGain
+                    };
+                    
+                    if(DEBUG) {
+                        console.log("Guitar Note started:", note, "Frequency:", roundedFreq);
+                    }
+                } catch (e) {
+                    console.error("Error playing guitar note:", e);
+                }
+            }
+
+           function playChoirNote(note, freq) {
+                try {
+                    var now = audioContext.currentTime;
+                    var gainValue = 0.1;
+
+                    // Get Choir specific parameters
+                    var voicesSelect = document.getElementById('choir-voices');
+                    var vibratoSlider = document.getElementById('choir-vibrato');
+                    var warmthSlider = document.getElementById('choir-warmth');
+                    
+                    var voiceType = voicesSelect ? voicesSelect.value : 'mixed';
+                    var vibratoAmount = vibratoSlider ? parseFloat(vibratoSlider.value) : 2;
+                    var warmthAmount = warmthSlider ? parseFloat(warmthSlider.value) : 0.3;
+
+                    // Create master gain for all voices
+                    var masterGain = audioContext.createGain();
+                    masterGain.gain.value = gainValue;
+                    masterGain.connect(mainGainNode);
+                    
+                    // Create a single formant filter to shape sound
+                    var formantFilter = audioContext.createBiquadFilter();
+                    formantFilter.type = 'peaking';
+                    
+                    // Set formant based on voice type
+                    if (voiceType === 'soprano') {
+                        formantFilter.frequency.value = 1500;
+                        formantFilter.Q.value = 1.5;
+                        formantFilter.gain.value = 6;
+                        freq = freq * 1.5;
+                    } else if (voiceType === 'alto') {
+                        formantFilter.frequency.value = 1000;
+                        formantFilter.Q.value = 1.2;
+                        formantFilter.gain.value = 5;
+                        freq = freq * 1.2;
+                    } else if (voiceType === 'tenor') {
+                        formantFilter.frequency.value = 700;
+                        formantFilter.Q.value = 1.0;
+                        formantFilter.gain.value = 4;
+                        freq = freq * 0.9;
+                    } else if (voiceType === 'bass') {
+                        formantFilter.frequency.value = 400;
+                        formantFilter.Q.value = 0.8;
+                        formantFilter.gain.value = 3;
+                        freq = freq * 0.7;
+                    } else { // mixed
+                        formantFilter.frequency.value = 900;
+                        formantFilter.Q.value = 1.0;
+                        formantFilter.gain.value = 4;
+                    }
+                    
+                    // Create a gentle low-pass filter
+                    var lowpassFilter = audioContext.createBiquadFilter();
+                    lowpassFilter.type = 'lowpass';
+                    lowpassFilter.frequency.value = 2500; // Lower cutoff to reduce harshness
+                    lowpassFilter.Q.value = 0.5;
+                    
+                    // Connect filters
+                    masterGain.connect(formantFilter);
+                    formantFilter.connect(lowpassFilter);
+                    lowpassFilter.connect(mainGainNode);
+                    
+                    // Create just 1 voice for cleaner sound
+                    var voices = [];
+                    
+                    for (var i = 0; i < 1; i++) {
+                        // Main oscillator with triangle wave for softer sound
+                        var oscillator = audioContext.createOscillator();
+                        oscillator.type = 'triangle';
+                        
+                        // Add slight detuning for chorus effect
+                        var detune = (Math.random() - 0.5) * 2; // ±1 cent
+                        oscillator.detune.value = detune;
+                        oscillator.frequency.value = freq;
+                        
+                        // Create gentle vibrato
+                        var vibratoLFO = audioContext.createOscillator();
+                        var vibratoGain = audioContext.createGain();
+                        
+                        vibratoLFO.frequency.value = 3 + Math.random() * 2; // 3-5 Hz
+                        vibratoGain.gain.value = vibratoAmount * 0.3; // Very reduced vibrato
+                        
+                        vibratoLFO.connect(vibratoGain);
+                        vibratoGain.connect(oscillator.frequency);
+                        
+                        // Create gain for this voice
+                        var voiceGain = audioContext.createGain();
+                        voiceGain.gain.value = 0.8;
+                        
+                        // Add gentle attack
+                        voiceGain.gain.setValueAtTime(0, now);
+                        voiceGain.gain.linearRampToValueAtTime(0.8, now + 0.05);
+                        voiceGain.gain.linearRampToValueAtTime(0.6, now + 0.2);
+                        
+                        // Connect
+                        oscillator.connect(voiceGain);
+                        voiceGain.connect(masterGain);
+                        
+                        // Start oscillators
+                        oscillator.start(now);
+                        vibratoLFO.start(now);
+                        
+                        // Add subtle warmth with a second harmonic
+                        if (warmthAmount > 0) {
+                            var harmonic = audioContext.createOscillator();
+                            harmonic.type = 'sine';
+                            harmonic.frequency.value = freq * 2;
+                            harmonic.detune.value = detune;
+                            
+                            var harmonicGain = audioContext.createGain();
+                            harmonicGain.gain.value = warmthAmount * 0.05; // Very reduced warmth
+                            
+                            harmonic.connect(harmonicGain);
+                            harmonicGain.connect(masterGain);
+                            harmonic.start(now);
+                            
+                            voices.push({
+                                oscillator: oscillator,
+                                vibratoLFO: vibratoLFO,
+                                vibratoGain: vibratoGain,
+                                voiceGain: voiceGain,
+                                harmonic: harmonic,
+                                harmonicGain: harmonicGain
+                            });
+                        } else {
+                            voices.push({
+                                oscillator: oscillator,
+                                vibratoLFO: vibratoLFO,
+                                vibratoGain: vibratoGain,
+                                voiceGain: voiceGain
+                            });
+                        }
+                    }
+                    
+                    // Store all components for this note
+                    activeOscillators[note] = {
+                        voices: voices,
+                        masterGain: masterGain,
+                        formantFilter: formantFilter,
+                        lowpassFilter: lowpassFilter
+                    };
+                    
+                    if(DEBUG) {
+                        console.log("Choir Note started:", note, "Frequency:", freq);
+                    }
+                } catch (e) {
+                    console.error("Error playing choir note:", e);
+                }
+            }
+
+            function playSNESNote(note, freq) {
+                try {
+                    var now = audioContext.currentTime;
+                    var gainValue = 0.15;
+
+                    // Get SNES specific parameters
+                    var instrumentSelect = document.getElementById('snes-instrument');
+                    var reverbSlider = document.getElementById('snes-reverb');
+                    var attackSlider = document.getElementById('snes-attack');
+                    var releaseSlider = document.getElementById('snes-release');
+                    
+                    var instrumentType = instrumentSelect ? instrumentSelect.value : 'piano';
+                    var reverbAmount = reverbSlider ? parseFloat(reverbSlider.value) : 0.3;
+                    var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.05;
+                    var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.5;
+
+                    // Create main oscillator for the note
+                    var oscillator = audioContext.createOscillator();
+                    var gainNode = audioContext.createGain();
+                    
+                    // Create additional oscillators for harmonics to simulate sample-based instruments
+                    var harmonic1 = audioContext.createOscillator();
+                    var harmonic2 = audioContext.createOscillator();
+                    var harmonicGain1 = audioContext.createGain();
+                    var harmonicGain2 = audioContext.createGain();
+                    
+                    // Create filters for SNES sound
+                    var filter = audioContext.createBiquadFilter();
+                    var filter2 = audioContext.createBiquadFilter();
+                    
+                    // Create reverb using convolver node
+                    var convolver = audioContext.createConvolver();
+                    var reverbGain = audioContext.createGain();
+                    var dryGain = audioContext.createGain();
+                    
+                    // Create reverb impulse response
+                    var length = audioContext.sampleRate * reverbAmount * 2;
+                    var impulse = audioContext.createBuffer(2, length, audioContext.sampleRate);
+                    
+                    for (var channel = 0; channel < 2; channel++) {
+                        var channelData = impulse.getChannelData(channel);
+                        for (var i = 0; i < length; i++) {
+                            channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2);
+                        }
+                    }
+                    
+                    convolver.buffer = impulse;
+                    
+                    // Configure oscillator based on instrument type
+                    if (instrumentType === 'piano') {
+                        oscillator.type = 'triangle';
+                        harmonic1.type = 'sine';
+                        harmonic2.type = 'sine';
+                        harmonic1.frequency.value = freq * 2;
+                        harmonic2.frequency.value = freq * 3;
+                        harmonicGain1.gain.value = 0.2;
+                        harmonicGain2.gain.value = 0.1;
+                        
+                        filter.type = 'lowpass';
+                        filter.frequency.value = freq * 4;
+                        filter.Q.value = 1;
+                        
+                        filter2.type = 'highpass';
+                        filter2.frequency.value = freq * 0.5;
+                        filter2.Q.value = 0.5;
+                    } else if (instrumentType === 'strings') {
+                        oscillator.type = 'sawtooth';
+                        harmonic1.type = 'sawtooth';
+                        harmonic2.type = 'sine';
+                        harmonic1.frequency.value = freq * 2;
+                        harmonic2.frequency.value = freq * 3;
+                        harmonicGain1.gain.value = 0.3;
+                        harmonicGain2.gain.value = 0.2;
+                        
+                        filter.type = 'lowpass';
+                        filter.frequency.value = freq * 3;
+                        filter.Q.value = 0.8;
+                        
+                        filter2.type = 'highpass';
+                        filter2.frequency.value = freq * 0.4;
+                        filter2.Q.value = 0.5;
+                    } else if (instrumentType === 'brass') {
+                        oscillator.type = 'square';
+                        harmonic1.type = 'square';
+                        harmonic2.type = 'sine';
+                        harmonic1.frequency.value = freq * 2;
+                        harmonic2.frequency.value = freq * 1.5;
+                        harmonicGain1.gain.value = 0.4;
+                        harmonicGain2.gain.value = 0.3;
+                        
+                        filter.type = 'lowpass';
+                        filter.frequency.value = freq * 2.5;
+                        filter.Q.value = 1.5;
+                        
+                        filter2.type = 'highpass';
+                        filter2.frequency.value = freq * 0.6;
+                        filter2.Q.value = 0.7;
+                    } else if (instrumentType === 'woodwind') {
+                        oscillator.type = 'triangle';
+                        harmonic1.type = 'sine';
+                        harmonic2.type = 'sine';
+                        harmonic1.frequency.value = freq * 2.5;
+                        harmonic2.frequency.value = freq * 3.5;
+                        harmonicGain1.gain.value = 0.25;
+                        harmonicGain2.gain.value = 0.15;
+                        
+                        filter.type = 'lowpass';
+                        filter.frequency.value = freq * 3.5;
+                        filter.Q.value = 1.2;
+                        
+                        filter2.type = 'highpass';
+                        filter2.frequency.value = freq * 0.5;
+                        filter2.Q.value = 0.6;
+                    } else if (instrumentType === 'percussion') {
+                        oscillator.type = 'square';
+                        harmonic1.type = 'square';
+                        harmonic2.type = 'triangle';
+                        harmonic1.frequency.value = freq * 1.5;
+                        harmonic2.frequency.value = freq * 0.5;
+                        harmonicGain1.gain.value = 0.3;
+                        harmonicGain2.gain.value = 0.2;
+                        
+                        filter.type = 'bandpass';
+                        filter.frequency.value = freq * 1.2;
+                        filter.Q.value = 2;
+                        
+                        filter2.type = 'highpass';
+                        filter2.frequency.value = freq * 0.3;
+                        filter2.Q.value = 0.8;
+                    }
+                    
+                    // Set main oscillator frequency
+                    var roundedFreq = Math.round(freq * 1000) / 1000;
+                    oscillator.frequency.setValueAtTime(roundedFreq, now);
+                    
+                    // Set reverb gains
+                    reverbGain.gain.value = reverbAmount * 0.5;
+                    dryGain.gain.value = 1 - reverbAmount * 0.3;
+                    
+                    // Connect the audio graph
+                    oscillator.connect(gainNode);
+                    harmonic1.connect(harmonicGain1);
+                    harmonic2.connect(harmonicGain2);
+                    harmonicGain1.connect(gainNode);
+                    harmonicGain2.connect(gainNode);
+                    
+                    // Connect to filters
+                    gainNode.connect(filter);
+                    filter.connect(filter2);
+                    
+                    // Connect to dry/wet mix
+                    filter2.connect(dryGain);
+                    filter2.connect(reverbGain);
+                    
+                    dryGain.connect(mainGainNode);
+                    reverbGain.connect(convolver);
+                    convolver.connect(mainGainNode);
+                    
+                    // --- ADSR Envelope ---
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(gainValue, now + attackTime);
+                    
+                    // Start the sound
+                    oscillator.start(now);
+                    harmonic1.start(now);
+                    harmonic2.start(now);
+                    
+                    activeOscillators[note] = { 
+                        oscillator: oscillator, 
+                        gainNode: gainNode,
+                        harmonic1: harmonic1,
+                        harmonic2: harmonic2,
+                        harmonicGain1: harmonicGain1,
+                        harmonicGain2: harmonicGain2,
+                        filter: filter,
+                        filter2: filter2,
+                        convolver: convolver,
+                        reverbGain: reverbGain,
+                        dryGain: dryGain,
+                        releaseTime: releaseTime
+                    };
+                    
+                    if(DEBUG) {
+                        console.log("SNES Note started:", note, "Frequency:", roundedFreq);
+                    }
+                } catch (e) {
+                    console.error("Error playing SNES note:", e);
+                }
+            }
+            
+            function stopNote(note) {
+                if (!audioSupported || !audioContext) return;
+                
+                if (!activeOscillators[note]) {
+                    if(DEBUG) {
+                        console.log("Note is not playing:", note);
+                    }
+                    return;
+                }
+                
+                // Use current instrument's stopNote method
+                if (instruments[currentInstrument] && instruments[currentInstrument].stopNote) {
+                    return instruments[currentInstrument].stopNote(note);
+                }
+                
+                // Fallback to default implementation
+                return stopDefaultNote(note);
+            }
+            
+            function stopDefaultNote(note) {
+                var oscillatorData = activeOscillators[note];
+                
+                try {
+                    var oscillator = oscillatorData.oscillator;
+                    var gainNode = oscillatorData.gainNode;
+                    var now = audioContext.currentTime;
+                    var releaseTime = 0.1; // Shorter release time for immediate stop
+                    
+                    gainNode.gain.cancelScheduledValues(now);
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+                    gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+
+                    oscillator.stop(now + releaseTime + 0.01);
+                    
+                    // Immediately remove from active oscillators
+                    delete activeOscillators[note];
+                    
+                    if(DEBUG) {
+                        console.log("Note stopped:", note);
+                    }
+                } catch (e) {
+                    console.error("Error stopping note:", e);
+                    // Still remove from active oscillators even if stopping failed
+                    delete activeOscillators[note];
+                }
+            }
+            
+            function stop8BitNote(note) {
+                var oscillatorData = activeOscillators[note];
+                
+                if (!oscillatorData) {
+                    if(DEBUG) {
+                        console.log("8-bit note data missing:", note, oscillatorData);
+                    }
+                    delete activeOscillators[note];
+                    return;
+                }
+                
+                try {
+                    var now = audioContext.currentTime;
+                    // FIX: Use the release time that was stored when the note was played
+                    var releaseTime = oscillatorData.releaseTime || 0.3;
+                    
+                    // Stop all components
+                    if (oscillatorData.oscillator) {
+                        try {
+                            oscillatorData.oscillator.stop(now + releaseTime);
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    if (oscillatorData.noiseBuffer) {
+                        try {
+                            oscillatorData.noiseBuffer.stop(now + 0.01); // Stop noise immediately
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    // Fade out gains
+                    if (oscillatorData.gainNode) {
+                        oscillatorData.gainNode.gain.cancelScheduledValues(now);
+                        oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
+                        oscillatorData.gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.noiseGain) {
+                        oscillatorData.noiseGain.gain.cancelScheduledValues(now);
+                        oscillatorData.noiseGain.gain.setValueAtTime(oscillatorData.noiseGain.gain.value, now);
+                        oscillatorData.noiseGain.gain.linearRampToValueAtTime(0, now + 0.01);
+                    }
+                    
+                    // Remove from active oscillators immediately
+                    delete activeOscillators[note];
+                    
+                    if(DEBUG) {
+                        console.log("8-bit Note stopped:", note, "Release time:", releaseTime);
+                    }
+                } catch (e) {
+                    console.error("Error stopping 8-bit note:", e);
+                    // Still remove from active oscillators even if stopping failed
+                    delete activeOscillators[note];
+                }
+            }
+
+            function stopGuitarNote(note) {
+                var oscillatorData = activeOscillators[note];
+                
+                if (!oscillatorData) {
+                    if(DEBUG) {
+                        console.log("Guitar note data missing:", note, oscillatorData);
+                    }
+                    delete activeOscillators[note];
+                    return;
+                }
+                
+                try {
+                    var now = audioContext.currentTime;
+                    var releaseTime = 0.3;
+                    
+                    // Stop all components
+                    if (oscillatorData.oscillator) {
+                        try {
+                            oscillatorData.oscillator.stop(now + releaseTime);
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    if (oscillatorData.harmonic1) {
+                        try {
+                            oscillatorData.harmonic1.stop(now + releaseTime);
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    if (oscillatorData.harmonic2) {
+                        try {
+                            oscillatorData.harmonic2.stop(now + releaseTime);
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    if (oscillatorData.pluckNoise) {
+                        try {
+                            oscillatorData.pluckNoise.stop(now + 0.01);
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    // Fade out gains
+                    if (oscillatorData.gainNode) {
+                        oscillatorData.gainNode.gain.cancelScheduledValues(now);
+                        oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
+                        oscillatorData.gainNode.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.harmonicGain1) {
+                        oscillatorData.harmonicGain1.gain.cancelScheduledValues(now);
+                        oscillatorData.harmonicGain1.gain.setValueAtTime(oscillatorData.harmonicGain1.gain.value, now);
+                        oscillatorData.harmonicGain1.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.harmonicGain2) {
+                        oscillatorData.harmonicGain2.gain.cancelScheduledValues(now);
+                        oscillatorData.harmonicGain2.gain.setValueAtTime(oscillatorData.harmonicGain2.gain.value, now);
+                        oscillatorData.harmonicGain2.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.pluckGain) {
+                        oscillatorData.pluckGain.gain.cancelScheduledValues(now);
+                        oscillatorData.pluckGain.gain.setValueAtTime(oscillatorData.pluckGain.gain.value, now);
+                        oscillatorData.pluckGain.gain.linearRampToValueAtTime(0, now + 0.01);
+                    }
+                    
+                    // Remove from active oscillators immediately
+                    delete activeOscillators[note];
+                    
+                    if(DEBUG) {
+                        console.log("Guitar Note stopped:", note);
+                    }
+                } catch (e) {
+                    console.error("Error stopping guitar note:", e);
+                    // Still remove from active oscillators even if stopping failed
+                    delete activeOscillators[note];
+                }
+            }
+
+            function stopChoirNote(note) {
+                var oscillatorData = activeOscillators[note];
+                
+                if (!oscillatorData) {
+                    if(DEBUG) {
+                        console.log("Choir note data missing:", note, oscillatorData);
+                    }
+                    delete activeOscillators[note];
+                    return;
+                }
+                
+                try {
+                    var now = audioContext.currentTime;
+                    var releaseTime = 0.4;
+                    
+                    // Stop all components immediately
+                    if (oscillatorData.voices) {
+                        for (var i = 0; i < oscillatorData.voices.length; i++) {
+                            var voice = oscillatorData.voices[i];
+                            
+                            if (voice.oscillator) {
+                                try {
+                                    voice.oscillator.stop(now + releaseTime);
+                                } catch (e) {
+                                    // Ignore errors
+                                }
+                            }
+                            
+                            if (voice.vibratoLFO) {
+                                try {
+                                    voice.vibratoLFO.stop(now + 0.01);
+                                } catch (e) {
+                                    // Ignore errors
+                                }
+                            }
+                            
+                            if (voice.harmonic) {
+                                try {
+                                    voice.harmonic.stop(now + releaseTime);
+                                } catch (e) {
+                                    // Ignore errors
+                                }
+                            }
+                            
+                            // Fade out voice gains
+                            if (voice.voiceGain) {
+                                voice.voiceGain.gain.cancelScheduledValues(now);
+                                voice.voiceGain.gain.setValueAtTime(voice.voiceGain.gain.value, now);
+                                voice.voiceGain.gain.linearRampToValueAtTime(0, now + releaseTime);
+                            }
+                            
+                            if (voice.harmonicGain) {
+                                voice.harmonicGain.gain.cancelScheduledValues(now);
+                                voice.harmonicGain.gain.setValueAtTime(voice.harmonicGain.gain.value, now);
+                                voice.harmonicGain.gain.linearRampToValueAtTime(0, now + releaseTime);
+                            }
+                        }
+                    }
+                    
+                    // Fade out master gain
+                    if (oscillatorData.masterGain) {
+                        oscillatorData.masterGain.gain.cancelScheduledValues(now);
+                        oscillatorData.masterGain.gain.setValueAtTime(oscillatorData.masterGain.gain.value, now);
+                        oscillatorData.masterGain.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    // Remove from active oscillators immediately
+                    delete activeOscillators[note];
+                    
+                    if(DEBUG) {
+                        console.log("Choir Note stopped:", note);
+                    }
+                } catch (e) {
+                    console.error("Error stopping choir note:", e);
+                    // Still remove from active oscillators even if stopping failed
+                    delete activeOscillators[note];
+                }
+            }
+
+            function stopSNESNote(note) {
+                var oscillatorData = activeOscillators[note];
+                
+                if (!oscillatorData) {
+                    if(DEBUG) {
+                        console.log("SNES note data missing:", note, oscillatorData);
+                    }
+                    delete activeOscillators[note];
+                    return;
+                }
+                
+                try {
+                    var now = audioContext.currentTime;
+                    // Use the release time that was stored when the note was played
+                    var releaseTime = oscillatorData.releaseTime || 0.5;
+                    
+                    // Stop all components
+                    if (oscillatorData.oscillator) {
+                        try {
+                            oscillatorData.oscillator.stop(now + releaseTime);
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    if (oscillatorData.harmonic1) {
+                        try {
+                            oscillatorData.harmonic1.stop(now + releaseTime);
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    if (oscillatorData.harmonic2) {
+                        try {
+                            oscillatorData.harmonic2.stop(now + releaseTime);
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }
+                    
+                    // Fade out gains
+                    if (oscillatorData.gainNode) {
+                        oscillatorData.gainNode.gain.cancelScheduledValues(now);
+                        oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
+                        oscillatorData.gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.harmonicGain1) {
+                        oscillatorData.harmonicGain1.gain.cancelScheduledValues(now);
+                        oscillatorData.harmonicGain1.gain.setValueAtTime(oscillatorData.harmonicGain1.gain.value, now);
+                        oscillatorData.harmonicGain1.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.harmonicGain2) {
+                        oscillatorData.harmonicGain2.gain.cancelScheduledValues(now);
+                        oscillatorData.harmonicGain2.gain.setValueAtTime(oscillatorData.harmonicGain2.gain.value, now);
+                        oscillatorData.harmonicGain2.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.reverbGain) {
+                        oscillatorData.reverbGain.gain.cancelScheduledValues(now);
+                        oscillatorData.reverbGain.gain.setValueAtTime(oscillatorData.reverbGain.gain.value, now);
+                        oscillatorData.reverbGain.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.dryGain) {
+                        oscillatorData.dryGain.gain.cancelScheduledValues(now);
+                        oscillatorData.dryGain.gain.setValueAtTime(oscillatorData.dryGain.gain.value, now);
+                        oscillatorData.dryGain.gain.linearRampToValueAtTime(0, now + releaseTime);
+                    }
+                    
+                    // Remove from active oscillators immediately
+                    delete activeOscillators[note];
+                    
+                    if(DEBUG) {
+                        console.log("SNES Note stopped:", note, "Release time:", releaseTime);
+                    }
+                } catch (e) {
+                    console.error("Error stopping SNES note:", e);
+                    // Still remove from active oscillators even if stopping failed
+                    delete activeOscillators[note];
+                }
+            }
+
+            // --- VISUAL FEEDBACK ---
+            function showKeyPress(note) {
+                var hexes = notesByNoteName[note];
+                if (hexes) {
+                    for (var i = 0; i < hexes.length; i++) {
+                        hexes[i].classList.add('active');
+                    }
+                }
+            }
+
+            function hideKeyPress(note) {
+                var hexes = notesByNoteName[note];
+                if (hexes) {
+                    for (var i = 0; i < hexes.length; i++) {
+                        hexes[i].classList.remove('active');
+                    }
+                }
+            }
+
+            // --- EVENT HANDLERS ---
+            function handleNoteOn(noteData, pointerId) {
+                if (!noteData) return;
+                var note = noteData.note;
+                var freq = noteData.freq;
+                
+                playNote(note, freq);
+                showKeyPress(note);
+                if (pointerId !== undefined) notesByPointerId[pointerId] = noteData;
+
+                if (isRecording) {
+                    var currentTime = performance.now();
+                    
+                    if (firstNoteTime === null) {
+                        firstNoteTime = currentTime;
+                    }
+                    
+                    recordingActiveNotes[note] = {
+                        freq: freq,
+                        startTime: currentTime
+                    };
+                }
+            }
+
+            function handleNoteOff(noteData, pointerId) {
+                if (!noteData) return;
+                var note = noteData.note;
+
+                stopNote(note);
+                hideKeyPress(note);
+                if (pointerId !== undefined) delete notesByPointerId[pointerId];
+
+                if (isRecording && recordingActiveNotes[note]) {
+                    var noteStartData = recordingActiveNotes[note];
+                    var noteEndTime = performance.now();
+                    var durationMs = noteEndTime - noteStartData.startTime;
+
+                    if (durationMs > 20) {
+                        recordedMelody.push({
+                            note: note,
+                            freq: noteStartData.freq,
+                            time: noteStartData.startTime - firstNoteTime,
+                            duration: durationMs
+                        });
+                    }
+                    delete recordingActiveNotes[note];
+                }
+            }
+
+            function addEventListeners() {
+                // Mouse events for SVG
+                hexboard.addEventListener('mousedown', function(e) {
+                    var hex = e.target;
+                    if (hex.classList.contains('hexagon')) {
+                        e.preventDefault();
+                        isDragging = true;
+                        var noteData = { 
+                            note: hex.getAttribute('data-note'), 
+                            freq: parseFloat(hex.getAttribute('data-freq')) 
+                        };
+                        currentMouseNote = noteData;
+                        handleNoteOn(noteData);
+                    }
+                });
+
+                document.addEventListener('mousemove', function(e) {
+                    if (!isDragging) return;
+                    
+                    var hex = document.elementFromPoint(e.clientX, e.clientY);
+                    if (hex && hex.classList.contains('hexagon')) {
+                        var noteData = { 
+                            note: hex.getAttribute('data-note'), 
+                            freq: parseFloat(hex.getAttribute('data-freq')) 
+                        };
+                        
+                        if (!currentMouseNote || currentMouseNote.note !== noteData.note) {
+                            if (currentMouseNote) {
+                                handleNoteOff(currentMouseNote);
+                            }
+                            handleNoteOn(noteData);
+                            currentMouseNote = noteData;
+                        }
+                    }
+                });
+
+                document.addEventListener('mouseup', function(e) {
+                    if (!isDragging) return;
+                    
+                    isDragging = false;
+                    if (currentMouseNote) {
+                        handleNoteOff(currentMouseNote);
+                        currentMouseNote = null;
+                    }
+                    
+                    // Stop ALL notes when mouse is released
+                    for (var note in activeOscillators) {
+                        stopNote(note);
+                        hideKeyPress(note);
+                    }
+                });
+
+                // Touch events for mobile
+                hexboard.addEventListener('touchstart', function(e) {
+                    var hex = e.target;
+                    if (hex.classList.contains('hexagon')) {
+                        e.preventDefault();
+                        isDragging = true;
+                        var touch = e.touches[0];
+                        var noteData = { 
+                            note: hex.getAttribute('data-note'), 
+                            freq: parseFloat(hex.getAttribute('data-freq')) 
+                        };
+                        handleNoteOn(noteData, touch.identifier);
+                    }
+                });
+
+                document.addEventListener('touchmove', function(e) {
+                    if (!isDragging) return;
+                    
+                    var touch = e.touches[0];
+                    var hex = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (hex && hex.classList.contains('hexagon')) {
+                        var noteData = { 
+                            note: hex.getAttribute('data-note'), 
+                            freq: parseFloat(hex.getAttribute('data-freq')) 
+                        };
+                        var currentNoteData = notesByPointerId[touch.identifier];
+                        
+                        if (!currentNoteData || currentNoteData.note !== noteData.note) {
+                            if (currentNoteData) {
+                                handleNoteOff(currentNoteData, touch.identifier);
+                            }
+                            handleNoteOn(noteData, touch.identifier);
+                        }
+                    }
+                });
+
+                document.addEventListener('touchend', function(e) {
+                    if (!isDragging) return;
+                    
+                    isDragging = false;
+                    for (var i = 0; i < e.changedTouches.length; i++) {
+                        var touch = e.changedTouches[i];
+                        var noteData = notesByPointerId[touch.identifier];
+                        if (noteData) {
+                            handleNoteOff(noteData, touch.identifier);
+                        }
+                    }
+                    
+                    // Stop ALL notes when touch ends
+                    for (var note in activeOscillators) {
+                        stopNote(note);
+                        hideKeyPress(note);
+                    }
+                });
+
+                window.addEventListener('keydown', function(e) {
+                    if (e.repeat || e.metaKey || e.ctrlKey) return;
+                    var key = e.key; // Use the actual key, not lowercase
+                    
+                    // Just check if the key exists in our notesByKey object
+                    var noteData = notesByKey[key];
+                    if (noteData) {
+                        e.preventDefault();
+                        handleNoteOn(noteData);
+                    }
+                });
+
+                window.addEventListener('keyup', function(e) {
+                    var key = e.key; // Use the actual key, not lowercase
+                    
+                    // Just check if the key exists in our notesByKey object
+                    var noteData = notesByKey[key];
+                    if (noteData) {
+                        e.preventDefault();
+                        handleNoteOff(noteData);
+                    }
+                });
+
+                recordButton.addEventListener('click', toggleRecording);
+                
+                // Panel event listeners
+                panelCloseBtn.addEventListener('click', closePanel);
+                
+                // Long press detection for play button
+                playButton.addEventListener('mousedown', startLongPress);
+                playButton.addEventListener('mouseup', endLongPress);
+                playButton.addEventListener('mouseleave', cancelLongPress);
+                playButton.addEventListener('touchstart', startLongPress);
+                playButton.addEventListener('touchend', endLongPress);
+                playButton.addEventListener('touchcancel', cancelLongPress);
+                
+                // Instrument button event listener
+                instrumentButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    instrumentDropdown.classList.toggle('active');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function() {
+                    instrumentDropdown.classList.remove('active');
+                });
+                
+                // Wave type selection
+                var waveOptions = document.querySelectorAll('.wave-option');
+                for (var i = 0; i < waveOptions.length; i++) {
+                    waveOptions[i].addEventListener('click', function() {
+                        // Remove selected class from all options
+                        for (var j = 0; j < waveOptions.length; j++) {
+                            waveOptions[j].classList.remove('selected');
+                        }
+                        
+                        // Add selected class to clicked option
+                        this.classList.add('selected');
+                    });
+                }
+                
+                // Set sine as default selected wave
+                document.querySelector('.wave-option[data-wave-type="sine"]').classList.add('selected');
+                
+                // Other button listeners
+                fullscreenButton.addEventListener('click', toggleFullscreen);
+                volumeSlider.addEventListener('input', function(e) {
+                    if (mainGainNode) mainGainNode.gain.value = e.target.value;
+                });
+                
+                // Import/Export button listeners //TODO
+                exportButton.addEventListener('click', exportMelody);
+                
+                importButton.addEventListener('click', function() {
+                    fileInput.click();
+                });
+                
+                fileInput.addEventListener('change', importMelody);
+                
+                // Audio conversion button listener
+                importAudioButton.addEventListener('click', function() {
+                    audioFileInput.click();
+                });
+                
+                audioFileInput.addEventListener('change', convertAudioFile);
+            }
+
+            // --- PANEL FUNCTIONS ---
+            function startLongPress(e) {
+                e.preventDefault();
+                longPressTimer = setTimeout(function() {
+                    openPanel();
+                    panelOpen = true;
+                }, longPressDelay);
+            }
+
+            function endLongPress(e) {
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+                
+                // Only trigger playback if panel didn't open
+                if (!panelOpen) {
+                    togglePlayback();
+                }
+                
+                // Reset panelOpen flag
+                setTimeout(function() {
+                    panelOpen = false;
+                }, 100);
+            }
+
+            function cancelLongPress(e) {
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+            }
+
+            function openPanel() {
+                overlayPanel.classList.add('active');
+                longPressTimer = null;
+                updatePanelContent();
+            }
+
+            function closePanel() {
+                overlayPanel.classList.remove('active');
+            }
+            
+            function updatePanelContent() {
+                // Clear existing content
+                panelContent.innerHTML = '';
+                
+                if (recordedMelody.length === 0) {
+                    var emptyMessage = document.createElement('div');
+                    emptyMessage.textContent = 'No melody recorded yet. Record a melody to see it here.';
+                    emptyMessage.style.textAlign = 'center';
+                    emptyMessage.style.padding = '20px';
+                    panelContent.appendChild(emptyMessage);
+                    return;
+                }
+                
+                // Create header row
+                var headerRow = document.createElement('div');
+                headerRow.className = 'note-list-header';
+                
+                var headerNote = document.createElement('div');
+                headerNote.className = 'note-name';
+                headerNote.textContent = 'Note';
+                
+                var headerFreq = document.createElement('div');
+                headerFreq.className = 'note-freq';
+                headerFreq.textContent = 'Freq. (Hz)';
+                
+                var headerTime = document.createElement('div');
+                headerTime.className = 'note-time';
+                headerTime.textContent = 'Time (ms)';
+                
+                var headerDuration = document.createElement('div');
+                headerDuration.className = 'note-duration';
+                headerDuration.textContent = 'Duration (ms)';
+                
+                headerRow.appendChild(headerNote);
+                headerRow.appendChild(headerFreq);
+                headerRow.appendChild(headerTime);
+                headerRow.appendChild(headerDuration);
+                
+                panelContent.appendChild(headerRow);
+                
+                // Add notes
+                for (var i = 0; i < recordedMelody.length; i++) {
+                    var note = recordedMelody[i];
+                    var noteItem = document.createElement('div');
+                    noteItem.className = 'note-item';
+                    
+                    var noteName = document.createElement('div');
+                    noteName.className = 'note-name';
+                    noteName.textContent = note.note;
+                    
+                    var noteFreq = document.createElement('div');
+                    noteFreq.className = 'note-freq';
+                    noteFreq.textContent = note.freq.toFixed(3);
+                    
+                    var noteTime = document.createElement('div');
+                    noteTime.className = 'note-time';
+                    noteTime.textContent = note.time.toFixed(0);
+                    
+                    var noteDuration = document.createElement('div');
+                    noteDuration.className = 'note-duration';
+                    noteDuration.textContent = note.duration.toFixed(0);
+                    
+                    noteItem.appendChild(noteName);
+                    noteItem.appendChild(noteFreq);
+                    noteItem.appendChild(noteTime);
+                    noteItem.appendChild(noteDuration);
+                    
+                    panelContent.appendChild(noteItem);
+                }
+            }
+            
+            // --- IMPORT/EXPORT FUNCTIONS ---
+            function exportMelody() {
+                if (recordedMelody.length === 0) {
+                    alert('No melody to export. Record a melody first.');
+                    return;
+                }
+                
+                var melodyData = {
+                    name: 'Hexano Melody',
+                    date: new Date().toISOString(),
+                    notes: recordedMelody
+                };
+                
+                var dataStr = JSON.stringify(melodyData, null, 2);
+                var dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                var exportFileDefaultName = 'melody.json';
+                
+                var linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+            
+            function importMelody(event) {
+                var file = event.target.files[0];
+                if (!file) return;
+                
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        var melodyData = JSON.parse(e.target.result);
+                        
+                        // Validate the imported data
+                        if (!melodyData.notes || !Array.isArray(melodyData.notes)) {
+                            throw new Error('Invalid melody file format');
+                        }
+                        
+                        // Update the recorded melody
+                        recordedMelody = melodyData.notes;
+                        
+                        // Update the panel content
+                        updatePanelContent();
+                        
+                        alert('Melody imported successfully!');
+                    } catch (error) {
+                        alert('Error importing melody: ' + error.message);
+                    }
+                };
+                
+                reader.readAsText(file);
+                
+                // Reset the file input value to allow importing the same file again
+                event.target.value = '';
+            }
+
+            // --- AUDIO CONVERSION FUNCTIONS ---
+            function convertAudioFile(event) {
+                var file = event.target.files[0];
+                if (!file) return;
+                
+                // Initialize audio context if not already done
+                if (!audioInitialized) {
+                    initAudioContext();
+                }
+                
+                // Show progress indicator
+                progressContainer.classList.add('active');
+                progressText.textContent = 'Loading audio file...';
+                progressFill.style.width = '10%';
+                
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    audioContext.decodeAudioData(e.target.result)
+                        .then(function(buffer) {
+                            progressText.textContent = 'Analyzing frequencies...';
+                            progressFill.style.width = '30%';
+                            
+                            // Analyze the audio buffer
+                            analyzeAudioBuffer(buffer)
+                                .then(function(melody) {
+                                    progressText.textContent = 'Processing melody...';
+                                    progressFill.style.width = '70%';
+                                    
+                                    // Update the recorded melody with the new one
+                                    recordedMelody = melody;
+                                    
+                                    // Update the panel content
+                                    updatePanelContent();
+                                    
+                                    progressText.textContent = 'Complete!';
+                                    progressFill.style.width = '100%';
+                                    
+                                    // Hide the progress indicator after a short delay
+                                    setTimeout(function() {
+                                        progressContainer.classList.remove('active');
+                                        progressFill.style.width = '0%';
+                                    }, 1000);
+                                })
+                                .catch(function(error) {
+                                    console.error('Error analyzing audio:', error);
+                                    progressText.textContent = 'Error: ' + error.message;
+                                    
+                                    // Hide the progress indicator after a delay
+                                    setTimeout(function() {
+                                        progressContainer.classList.remove('active');
+                                        progressFill.style.width = '0%';
+                                    }, 3000);
+                                });
+                        })
+                        .catch(function(error) {
+                            console.error('Error decoding audio data:', error);
+                            progressText.textContent = 'Error decoding audio: ' + error.message;
+                            
+                            // Hide the progress indicator after a delay
+                            setTimeout(function() {
+                                progressContainer.classList.remove('active');
+                                progressFill.style.width = '0%';
+                            }, 3000);
+                        });
+                };
+                
+                reader.readAsArrayBuffer(file);
+                
+                // Reset the file input value to allow selecting the same file again
+                event.target.value = '';
+            }
+            
+            // Add this function alongside other functions like init(), playNote(), etc.
+            function analyzeAudioBuffer(buffer) {
+    return new Promise(function(resolve, reject) {
+        try {
+            var sampleRate = buffer.sampleRate;
+            var channelData = buffer.getChannelData(0);
+            
+            // Create a new audio context for analysis
+            var analysisContext = new AudioContext();
+            
+            // Create a buffer source
+            var source = analysisContext.createBufferSource();
+            source.buffer = buffer;
+            
+            // Create an analyzer node
+            var analyzer = analysisContext.createAnalyser();
+            analyzer.fftSize = 4096;
+            analyzer.smoothingTimeConstant = 0.7; // Increased smoothing
+            analyzer.minDecibels = -70; // Raised minimum to filter more noise
+            analyzer.maxDecibels = -20;
+            
+            // Connect nodes
+            source.connect(analyzer);
+            
+            // Variables for tracking notes
+            var melody = [];
+            var currentNotes = {};
+            var noteStartTime = {};
+            var noteConfirmCount = {}; // Track how many frames a note has been detected
+            var analysisComplete = false;
+            
+            // Analysis parameters - more restrictive
+            var minNoteDuration = 100; // Increased minimum duration
+            var noteThreshold = 25; // Raised threshold
+            var frequencyResolution = sampleRate / analyzer.fftSize;
+            var confirmThreshold = 3; // Number of frames to confirm a note
+            
+            // Get frequency data
+            var bufferLength = analyzer.frequencyBinCount;
+            var dataArray = new Uint8Array(bufferLength);
+            
+            // Improved peak detection
+            function findPeaks(dataArray, threshold) {
+                var peaks = [];
+                
+                for (var i = 2; i < dataArray.length - 2; i++) {
+                    if (dataArray[i] < threshold) continue;
+                    
+                    // More strict local maximum check
+                    if (dataArray[i] > dataArray[i-1] && dataArray[i] > dataArray[i+1] &&
+                        dataArray[i] > dataArray[i-2] && dataArray[i] > dataArray[i+2] &&
+                        dataArray[i] > dataArray[i-3] && dataArray[i] > dataArray[i+3]) {
+                        
+                        var frequency = i * frequencyResolution;
+                        
+                        if (frequency >= 50 && frequency <= 5000) {
+                            peaks.push({
+                                index: i,
+                                frequency: frequency,
+                                amplitude: dataArray[i]
+                            });
+                        }
+                    }
+                }
+                
+                // Sort by amplitude and take top peaks
+                peaks.sort(function(a, b) {
+                    return b.amplitude - a.amplitude;
+                });
+                
+                return peaks.slice(0, 6);
+            }
+            
+            // Analysis function
+            function analyze() {
+                if (analysisComplete) return;
+                
+                analyzer.getByteFrequencyData(dataArray);
+                
+                // Find peaks
+                var peaks = findPeaks(dataArray, noteThreshold);
+                
+                // Get current time
+                var currentTime = source.context.currentTime * 1000;
+                
+                // Create detected notes
+                var detectedNotes = {};
+                
+                for (var i = 0; i < peaks.length; i++) {
+                    var nearestNote = findNearestNote(peaks[i].frequency);
+                    
+                    if (nearestNote) {
+                        detectedNotes[nearestNote.note] = nearestNote;
+                    }
+                }
+                
+                // Check for new notes
+                for (var noteName in detectedNotes) {
+                    if (!currentNotes[noteName]) {
+                        // First detection - increment confirm count
+                        noteConfirmCount[noteName] = (noteConfirmCount[noteName] || 0) + 1;
+                        
+                        // Only start the note after it's been confirmed multiple times
+                        if (noteConfirmCount[noteName] >= confirmThreshold) {
+                            currentNotes[noteName] = detectedNotes[noteName];
+                            noteStartTime[noteName] = currentTime;
+                        }
+                    } else {
+                        // Note already detected - reset confirm count
+                        noteConfirmCount[noteName] = confirmThreshold;
+                    }
+                }
+                
+                // Check for notes that ended
+                for (var noteName in currentNotes) {
+                    if (!detectedNotes[noteName]) {
+                        // Decrement confirm count
+                        noteConfirmCount[noteName] = (noteConfirmCount[noteName] || confirmThreshold) - 1;
+                        
+                        // Only end the note after it's been missed multiple times
+                        if (noteConfirmCount[noteName] <= 0) {
+                            var duration = currentTime - noteStartTime[noteName];
+                            
+                            if (duration >= minNoteDuration) {
+                                melody.push({
+                                    note: noteName,
+                                    freq: currentNotes[noteName].freq,
+                                    time: noteStartTime[noteName],
+                                    duration: duration
+                                });
+                            }
+                            
+                            delete currentNotes[noteName];
+                            delete noteStartTime[noteName];
+                            delete noteConfirmCount[noteName];
+                        }
+                    }
+                }
+                
+                // Update progress
+                var progress = (currentTime / (buffer.duration * 1000)) * 100;
+                progressFill.style.width = Math.min(progress, 100) + '%';
+                
+                // Continue analysis
+                if (currentTime < buffer.duration * 1000) {
+                    requestAnimationFrame(analyze);
+                } else {
+                    finishAnalysis();
+                }
+            }
+            
+            function finishAnalysis() {
+                if (analysisComplete) return;
+                analysisComplete = true;
+                
+                // Save any remaining notes
+                for (var noteName in currentNotes) {
+                    var duration = (buffer.duration * 1000) - noteStartTime[noteName];
+                    
+                    if (duration >= minNoteDuration) {
+                        melody.push({
+                            note: noteName,
+                            freq: currentNotes[noteName].freq,
+                            time: noteStartTime[noteName],
+                            duration: duration
+                        });
+                    }
+                }
+                
+                // Sort melody by time
+                melody.sort(function(a, b) {
+                    return a.time - b.time;
+                });
+                
+                // Clean up
+                source.stop();
+                analysisContext.close();
+                
+                // Update progress to 100%
+                progressFill.style.width = '100%';
+                
+                // Always resolve, even with empty melody
+                resolve(melody);
+            }
+            
+            // Start the source and analysis
+            source.start();
+            requestAnimationFrame(analyze);
+            
+            // Fallback timeout
+            setTimeout(function() {
+                if (!analysisComplete) {
+                    finishAnalysis();
+                }
+            }, buffer.duration * 1000 + 1000);
+            
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function findNearestNote(frequency) {
+    if (frequency < 30 || frequency > 6000) {
+        return null;
+    }
+    
+    var closestNote = null;
+    var minDifference = Infinity;
+    
+    for (var i = 0; i < noteLayout.length; i++) {
+        var note = noteLayout[i];
+        var difference = Math.abs(frequency - note.freq);
+        
+        if (difference < minDifference) {
+            minDifference = difference;
+            closestNote = note;
+        }
+    }
+    
+    // More strict matching - within 50 cents (quarter semitone)
+    var centsDifference = 1200 * Math.log2(frequency / closestNote.freq);
+    
+    if (Math.abs(centsDifference) < 50) {
+        return closestNote;
+    }
+    
+    return null;
+}
+
+            // --- CONTROL BAR LOGIC ---
+            function toggleRecording() {
+                if (!audioSupported) {
+                    alert("Audio recording is not supported in this browser");
+                    return;
+                }
+                
+                isRecording = !isRecording;
+                if (isRecording) {
+                    if (isPlaying) stopPlayback();
+                    recordButton.className = 'recording';
+                    recordedMelody = [];
+                    recordingActiveNotes = {};
+                    recordingStartTime = performance.now();
+                    firstNoteTime = null;
+                } else {
+                    recordButton.className = '';
+                    var recordingStopTime = performance.now();
+                    
+                    for (var note in recordingActiveNotes) {
+                        if (recordingActiveNotes.hasOwnProperty(note)) {
+                            var noteStartData = recordingActiveNotes[note];
+                            recordedMelody.push({
+                                note: note,
+                                freq: noteStartData.freq,
+                                time: noteStartData.startTime - firstNoteTime,
+                                duration: recordingStopTime - noteStartData.startTime
+                            });
+                        }
+                    }
+                    recordingActiveNotes = {};
+
+                    if (recordedMelody.length > 0) {
+                        generateWav();
+                    }
+                }
+            }
+            
+            function togglePlayback() {
+                if (!audioSupported) {
+                    alert("Audio playback is not supported in this browser");
+                    return;
+                }
+                
+                if (isPlaying) stopPlayback();
+                else if (recordedMelody.length > 0) startPlayback();
+            }
+            
+            function startPlayback() {
+                if (isRecording) toggleRecording();
+
+                isPlaying = true;
+                playIcon.style.display = 'none';
+                stopIcon.style.display = 'block';
+                
+                if(DEBUG) {
+                    console.log("Recorded Melody:");
+                    console.log(recordedMelody);
+                }
+
+                // Before starting playback, ensure the audio context is running
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                if (audioContext.state === 'suspended') {
+                    if(DEBUG) console.log("Suspending playback to resume audio context...");
+                    audioContext.resume().then(function() {
+                        if(DEBUG) console.log("Audio context resumed. Starting playback...");
+                        continuePlayback();
+                    }).catch(function(e) {
+                        console.error("Error resuming audio context:", e);
+                    });
+                } else {
+                    continuePlayback();
+                }
+            }
+            
+            function continuePlayback() {
+                if(DEBUG) console.log("Starting melody playback...");
+
+                for (var i = 0; i < recordedMelody.length; i++) {
+                    var noteEvent = recordedMelody[i];
+                    var noteData = { note: noteEvent.note, freq: noteEvent.freq };
+                    
+                    (function(note, time, duration) {
+                        var playTimeout = setTimeout(function() { 
+                            handleNoteOn(note); 
+                        }, time);
+                        var stopTimeout = setTimeout(function() { 
+                            handleNoteOff(note); 
+                        }, time + duration);
+                        playbackTimeouts.push(playTimeout, stopTimeout);
+                    })(noteData, noteEvent.time, noteEvent.duration);
+                }
+                
+                var totalDuration = recordedMelody.length > 0 ? 
+                    Math.max.apply(Math, recordedMelody.map(function(n) { return n.time + n.duration; })) : 0;
+                var finalTimeout = setTimeout(stopPlayback, totalDuration + 500);
+                playbackTimeouts.push(finalTimeout);
+            }
+
+            function stopPlayback() {
+                isPlaying = false;
+                playIcon.style.display = 'block';
+                stopIcon.style.display = 'none';
+                
+                for (var i = 0; i < playbackTimeouts.length; i++) {
+                    clearTimeout(playbackTimeouts[i]);
+                }
+                playbackTimeouts = [];
+                
+                // Stop all notes when playback stops
+                for (var note in activeOscillators) {
+                    stopNote(note);
+                    hideKeyPress(note);
+                }
+            }
+            
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) {
+                        document.documentElement.webkitRequestFullscreen();
+                    } else if (document.documentElement.mozRequestFullScreen) {
+                        document.documentElement.mozRequestFullScreen();
+                    } else if (document.documentElement.msRequestFullscreen) {
+                        document.documentElement.msRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
+            }
+            
+            document.addEventListener('fullscreenchange', function() {
+                var isFullscreen = !!document.fullscreenElement;
+                fullscreenEnterIcon.style.display = isFullscreen ? 'none' : 'block';
+                fullscreenExitIcon.style.display = isFullscreen ? 'block' : 'none';
+            });
+            
+            document.addEventListener('webkitfullscreenchange', function() {
+                var isFullscreen = !!document.webkitFullscreenElement;
+                fullscreenEnterIcon.style.display = isFullscreen ? 'none' : 'block';
+                fullscreenExitIcon.style.display = isFullscreen ? 'block' : 'none';
+            });
+            
+            document.addEventListener('mozfullscreenchange', function() {
+                var isFullscreen = !!document.mozFullScreenElement;
+                fullscreenEnterIcon.style.display = isFullscreen ? 'none' : 'block';
+                fullscreenExitIcon.style.display = isFullscreen ? 'block' : 'none';
+            });
+            
+            document.addEventListener('MSFullscreenChange', function() {
+                var isFullscreen = !!document.msFullscreenElement;
+                fullscreenEnterIcon.style.display = isFullscreen ? 'none' : 'block';
+                fullscreenExitIcon.style.display = isFullscreen ? 'block' : 'none';
+            });
+            
+            // --- WAV EXPORT ---
+            function generateWav() {
+                if (recordedMelody.length === 0 || !audioSupported) return;
+
+                var totalMs = Math.max.apply(Math, recordedMelody.map(function(note) { 
+                    return note.time + note.duration; 
+                }));
+                var durationSec = (totalMs / 1000) + 0.5;
+                
+                try {
+                    var offlineContext = new OfflineAudioContext(1, Math.ceil(44100 * durationSec), 44100);
+                    var offlineGainNode = offlineContext.createGain();
+                    offlineGainNode.gain.value = volumeSlider.value;
+                    offlineGainNode.connect(offlineContext.destination);
+
+                    // Get wave type based on current instrument
+                    var waveType;
+                    if (currentInstrument === '8bit') {
+                        var waveformSelect = document.getElementById('gameboy-wave');
+                        waveType = waveformSelect ? waveformSelect.value : 'square';
+                    } else if (currentInstrument === 'guitar') {
+                        // For guitar, we'll use sawtooth as a base
+                        waveType = 'sawtooth';
+                    } else if (currentInstrument === 'choir') {
+                        // For choir, we'll use sine as a base
+                        waveType = 'sine';
+                    } else if (currentInstrument === 'snes') {
+                        // For SNES, we'll use triangle as a base
+                        waveType = 'triangle';
+                    } else {
+                        var selectedWave = document.querySelector('.wave-option.selected');
+                        waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
+                    }
+
+                    for (var i = 0; i < recordedMelody.length; i++) {
+                        var note = recordedMelody[i];
+                        var startTime = note.time / 1000;
+                        var noteDuration = note.duration / 1000;
+                        if (noteDuration <= 0.01) continue;
+
+                        var attackTime = 0.02;
+                        var releaseTime = Math.min(noteDuration * 0.5, 0.2);
+
+                        var oscillator = offlineContext.createOscillator();
+                        var gainNode = offlineContext.createGain();
+                        
+                        oscillator.type = waveType;
+                        // Round frequency to 3 decimal places
+                        var roundedFreq = Math.round(note.freq * 1000) / 1000;
+                        oscillator.frequency.value = roundedFreq;
+
+                        gainNode.gain.setValueAtTime(0, startTime);
+                        gainNode.gain.linearRampToValueAtTime(0.7, startTime + attackTime);
+                        gainNode.gain.linearRampToValueAtTime(0, startTime + noteDuration);
+
+                        oscillator.connect(gainNode);
+                        gainNode.connect(offlineGainNode);
+                        oscillator.start(startTime);
+                        oscillator.stop(startTime + noteDuration + 0.05);
+                    }
+
+                    offlineContext.startRendering().then(function(renderedBuffer) {
+                        var wavBlob = bufferToWave(renderedBuffer);
+                        downloadBlob(wavBlob, 'hexagon.wav');
+                    }).catch(function(e) {
+                        console.error("Failed to render WAV:", e);
+                        alert("Sorry, there was an error creating the audio file.");
+                    });
+                } catch (e) {
+                    console.error("Error generating WAV:", e);
+                    alert("Sorry, there was an error creating the audio file.");
+                }
+            }
+
+            function downloadBlob(blob, filename) {
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                a.parentNode.removeChild(a);
+            }
+
+            function bufferToWave(abuffer) { // TODO
+                var numOfChan = abuffer.numberOfChannels,
+                    len = abuffer.length * numOfChan * 2 + 44,
+                    buffer = new ArrayBuffer(len),
+                    view = new DataView(buffer),
+                    channels = [],
+                    i, sample, offset = 0, pos = 0;
+                
+                // Write WAVE header
+                setUint32(0x46464952); // "RIFF"
+                setUint32(len - 8); // file length - 8
+                setUint32(0x45564157); // "WAVE"
+                setUint32(0x20746d66); // "fmt " chunk
+                setUint32(16); // length = 16
+                setUint16(1); // PCM
+                setUint16(numOfChan);
+                setUint32(abuffer.sampleRate);
+                setUint32(abuffer.sampleRate * 4); // avg. bytes/sec
+                setUint16(4); // block-align
+                setUint16(16); // BitsPerSample (16)
+
+                // Write data sub-chunk
+                setUint32(0x61746164); // "data" - chunk
+                setUint32(len - pos - 4); // chunk length
+                
+                // Write interleaved data
+                for (var i = 0; i < abuffer.numberOfChannels; i++)
+                    channels.push(abuffer.getChannelData(i));
+                
+                while (pos < abuffer.length) {
+                    for (var i = 0; i < abuffer.numberOfChannels; i++) {
+                        sample = Math.max(-1, Math.min(1, channels[i][pos]));
+                        sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                        view.setInt16(offset, sample, true);
+                        offset += 2;
+                    }
+                    pos++;
+                }
+                
+                return new Blob([buffer], { type: "audio/wav" });
+                
+                function setUint16(data) {
+                    view.setUint16(pos, data, true);
+                    pos += 2;
+                }
+                
+                function setUint32(data) {
+                    view.setUint32(pos, data, true);
+                    pos += 4;
+                }
+            }
+
+            init();
+        });
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <div id="control-bar" class="control-bar">
+            <button id="record-button" title="Record / Stop and Save WAV">
+                <div id="record-indicator"></div>
+            </button>
+            <button id="play-button" title="Play / Stop Melody">
+                <svg id="play-icon" class="icon" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                <svg id="stop-icon" class="icon" viewBox="0 0 24 24" style="display: none;">
+                    <path d="M6 6h12v12H6z"/>
+                </svg>
+            </button>
+
+            <div class="instrument-selector">
+                <button id="instrument-button" title="Select Instrument">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                </button>
+                <div id="instrument-dropdown" class="instrument-dropdown">
+                    <!-- Instrument options will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="wave-selector">
+                <div class="wave-option" data-wave-type="sine" title="Sine Wave">
+                    <svg viewBox="0 0 60 30">
+                        <path d="M0,15 Q7.5,5 15,15 T30,15 T45,15 T60,15" />
+                    </svg>
+                </div>
+                <div class="wave-option" data-wave-type="square" title="Square Wave">
+                    <svg viewBox="0 0 60 30">
+                        <path d="M5,22 L15,22 L15,8 L45,8 L45,22 L55,22" />
+                    </svg>
+                </div>
+                <div class="wave-option" data-wave-type="sawtooth" title="Sawtooth Wave">
+                    <svg viewBox="0 0 60 30">
+                        <path d="M0,22 L30,8 L30,22 L60,8" />
+                    </svg>
+                </div>
+                <div class="wave-option" data-wave-type="triangle" title="Triangle Wave">
+                    <svg viewBox="0 0 60 30">
+                        <path d="M0,22 L15,8 L30,22 L45,8 L60,22" />
+                    </svg>
+                </div>
+            </div>
+
+            <input type="range" id="volume-slider" min="0" max="1" value="0.5" step="0.01" title="Volume">
+
+            <button id="fullscreen-button" title="Toggle Fullscreen">
+                <svg id="fullscreen-enter-icon" class="icon" viewBox="0 0 24 24">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+                <svg id="fullscreen-exit-icon" class="icon" viewBox="0 0 24 24" style="display:none;">
+                    <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="hexboard-container">
+            <div id="hexboard" class="hexboard">
+                <!-- SVG piano will be generated here -->
+            </div>
+        </div>
+        
+        <!-- Melody Panel -->
+        <div id="overlay-panel" class="overlay-panel">
+            <button id="panel-close-btn" class="close-btn">×</button>
+            <div class="panel-header">
+                <h2>Recorded Melody</h2>
+            </div>
+            <div id="panel-content" class="panel-content">
+                <!-- Notes will be displayed here -->
+            </div>
+            <div class="panel-buttons">
+                <button id="export-button" class="panel-button">Export JSON</button>
+                <button id="import-audio-button" class="panel-button">Import Audio</button>
+                <button id="import-button" class="panel-button">Import JSON</button>
+                <input type="file" id="file-input" accept=".json" style="display: none;">
+                <input type="file" id="audio-file-input" accept="audio/*" style="display: none;">
+            </div>
+        </div>
+        
+        <!-- Progress Bar for Audio Conversion -->
+        <div id="progress-container" class="progress-container">
+            <div id="progress-text" class="progress-text">Processing...</div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+```
