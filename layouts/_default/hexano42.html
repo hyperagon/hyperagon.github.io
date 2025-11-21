@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hexano 4</title>
+    <title>Hexano 4.2</title>
     <style type="text/css">
         /* --- Basic Setup & Theme --- */
         html, body {
@@ -587,7 +587,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <script type="text/javascript">
         var DEBUG = false;
         document.addEventListener('DOMContentLoaded', function() {
-            // --- DOM ELEMENTS ---
+            /* --- DOM ELEMENTS --- */
             var hexboardContainer = document.querySelector('.hexboard-container');
             var hexboard = document.querySelector('.hexboard');
             var recordButton = document.getElementById('record-button');
@@ -613,7 +613,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var progressFill = document.getElementById('progress-fill');
             var progressText = document.getElementById('progress-text');
 
-            // --- AUDIO SETUP ---
+            /* --- AUDIO SETUP --- */
             var AudioContext = window.AudioContext || window.webkitAudioContext;
             var audioContext;
             var mainGainNode;
@@ -621,7 +621,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var audioSupported = true;
             var audioInitialized = false;
 
-            // --- STATE MANAGEMENT ---
+            /* --- STATE MANAGEMENT --- */
             var isRecording = false;
             var isPlaying = false;
             var recordingStartTime;
@@ -647,26 +647,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var isDragging = false;
             var currentMouseNote = null;
 
-            // Panel state
+            /* Panel state */
             var longPressTimer = null;
-            var longPressDelay = 500; // milliseconds
+            var longPressDelay = 500; /* milliseconds */
             var panelOpen = false;
 
-            // --- INSTRUMENT SYSTEM ---
+            /* --- INSTRUMENT SYSTEM --- */
             var currentInstrument = 'none';
             var instruments = {
                 'ddefault': {
                     name: 'Default',
                     playNote: function(note, freq) {
-                        // Default implementation
+                        /* Default implementation */
                         return playDefaultNote(note, freq);
                     },
                     stopNote: function(note) {
-                        // Default implementation
+                        /* Default implementation */
                         return stopDefaultNote(note);
                     },
                     init: function() {
-                        // Default implementation
+                        /* Default implementation */
                         return;
                     }
                 },
@@ -679,17 +679,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         return stop8BitNote(note);
                     },
                     init: function() {
-                        // Apply Game Boy theme - ONLY BACKGROUND
+                        /* Apply Game Boy theme - ONLY BACKGROUND */
                         document.body.classList.add('gameboy-theme');
                         
-                        // Create Game Boy specific controls if needed
+                        /* Create Game Boy specific controls if needed */
                         createGameBoyControls();
                     },
                     cleanup: function() {
-                        // Remove Game Boy theme - ONLY BACKGROUND
+                        /* Remove Game Boy theme - ONLY BACKGROUND */
                         document.body.classList.remove('gameboy-theme');
                         
-                        // Remove Game Boy specific controls if they exist
+                        /* Remove Game Boy specific controls if they exist */
                         removeGameBoyControls();
                     }
                 },
@@ -702,17 +702,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         return stopGuitarNote(note);
                     },
                     init: function() {
-                        // Apply Guitar theme - ONLY BACKGROUND
+                        /* Apply Guitar theme - ONLY BACKGROUND */
                         document.body.classList.add('guitar-theme');
                         
-                        // Create Guitar specific controls if needed
+                        /* Create Guitar specific controls if needed */
                         createGuitarControls();
                     },
                     cleanup: function() {
-                        // Remove Guitar theme - ONLY BACKGROUND
+                        /* Remove Guitar theme - ONLY BACKGROUND */
                         document.body.classList.remove('guitar-theme');
                         
-                        // Remove Guitar specific controls if they exist
+                        /* Remove Guitar specific controls if they exist */
                         removeGuitarControls();
                     }
                 },
@@ -725,17 +725,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         return stopChoirNote(note);
                     },
                     init: function() {
-                        // Apply Choir theme - ONLY BACKGROUND
+                        /* Apply Choir theme - ONLY BACKGROUND */
                         document.body.classList.add('choir-theme');
                         
-                        // Create Choir specific controls if needed
+                        /* Create Choir specific controls if needed */
                         createChoirControls();
                     },
                     cleanup: function() {
-                        // Remove Choir theme - ONLY BACKGROUND
+                        /* Remove Choir theme - ONLY BACKGROUND */
                         document.body.classList.remove('choir-theme');
                         
-                        // Remove Choir specific controls if they exist
+                        /* Remove Choir specific controls if they exist */
                         removeChoirControls();
                     }
                 },
@@ -748,25 +748,25 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         return stopSNESNote(note);
                     },
                     init: function() {
-                        // Apply SNES theme - ONLY BACKGROUND
+                        /* Apply SNES theme - ONLY BACKGROUND */
                         document.body.classList.add('snes-theme');
                         
-                        // Create SNES specific controls if needed
+                        /* Create SNES specific controls if needed */
                         createSNESControls();
                     },
                     cleanup: function() {
-                        // Remove SNES theme - ONLY BACKGROUND
+                        /* Remove SNES theme - ONLY BACKGROUND */
                         document.body.classList.remove('snes-theme');
                         
-                        // Remove SNES specific controls if they exist
+                        /* Remove SNES specific controls if they exist */
                         removeSNESControls();
                     }
                 }
             };
 
-            // --- NOTE DATA (Wicki-Hayden inspired layout) ---
+            /* --- NOTE DATA (Wicki-Hayden inspired layout) --- */
             var noteLayout = [
-                // Octave 1
+                /* Octave 1 */
                 { key: '', note: 'C1', freq: 32.703, type: 'white' },
                 { key: '', note: 'C#1', freq: 34.648, type: 'black' },
                 { key: '', note: 'D1', freq: 36.708, type: 'white' },
@@ -780,7 +780,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 { key: '', note: 'A#1', freq: 58.270, type: 'black' },
                 { key: '', note: 'B1', freq: 61.735, type: 'white' },
 
-                // Octave 2
+                /* Octave 2 */
                 { key: '', note: 'C2', freq: 65.406, type: 'white' },
                 { key: '', note: 'C#2', freq: 69.296, type: 'black' },
                 { key: '', note: 'D2', freq: 73.416, type: 'white' },
@@ -794,7 +794,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 { key: '', note: 'A#2', freq: 116.541, type: 'black' },
                 { key: '', note: 'B2', freq: 123.471, type: 'white' },
                 
-                // Octave 3
+                /* Octave 3 */
                 { key: 'z', note: 'C3', freq: 130.813, type: 'white' },
                 { key: 'Z', note: 'C#3', freq: 138.591, type: 'black' },
                 { key: 'x', note: 'D3', freq: 146.832, type: 'white' },
@@ -808,7 +808,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 { key: 'N', note: 'A#3', freq: 233.082, type: 'black' },
                 { key: 'm', note: 'B3', freq: 246.942, type: 'white' },
 
-                // Octave 4 (Middle C is C4)
+                /* Octave 4 (Middle C is C4) */
                 { key: 'a', note: 'C4', freq: 261.626, type: 'white' },
                 { key: 'A', note: 'C#4', freq: 277.183, type: 'black' },
                 { key: 's', note: 'D4', freq: 293.665, type: 'white' },
@@ -822,7 +822,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 { key: 'H', note: 'A#4', freq: 466.164, type: 'black' },
                 { key: 'j', note: 'B4', freq: 493.883, type: 'white' },
 
-                // Octave 5
+                /* Octave 5 */
                 { key: 'q', note: 'C5', freq: 523.251, type: 'white' },
                 { key: 'Q', note: 'C#5', freq: 554.365, type: 'black' },
                 { key: 'w', note: 'D5', freq: 587.330, type: 'white' },
@@ -836,7 +836,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 { key: 'Y', note: 'A#5', freq: 932.328, type: 'black' },
                 { key: 'u', note: 'B5', freq: 987.767, type: 'black' },
 
-                // Octave 6
+                /* Octave 6 */
                 { key: '1', note: 'C6', freq: 1046.502, type: 'white' },
                 { key: '', note: 'C#6', freq: 1108.731, type: 'black' },
                 { key: '2', note: 'D6', freq: 1174.659, type: 'white' },
@@ -850,7 +850,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 { key: '', note: 'A#6', freq: 1864.655, type: 'black' },
                 { key: '7', note: 'B6', freq: 1975.533, type: 'white' },
 
-                // Octave 7
+                /* Octave 7 */
                 { key: '', note: 'C7', freq: 2093.005, type: 'white' },
                 { key: '', note: 'C#7', freq: 2217.461, type: 'black' },
                 { key: '', note: 'D7', freq: 2349.318, type: 'white' },
@@ -866,42 +866,42 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             ];
                     
             var noteRows = [
-                noteLayout.slice(0, 12),   // C1 to B1
-                noteLayout.slice(12, 24),  // C2 to B2
-                noteLayout.slice(24, 36),  // C3 to B3
-                noteLayout.slice(36, 48),  // C4 to B4
-                noteLayout.slice(48, 60),  // C5 to B5
-                noteLayout.slice(60, 72),  // C6 to B6
-                noteLayout.slice(72, 84),  // C7 to B7
+                noteLayout.slice(0, 12),   /* C1 to B1 */
+                noteLayout.slice(12, 24),  /* C2 to B2 */
+                noteLayout.slice(24, 36),  /* C3 to B3 */
+                noteLayout.slice(36, 48),  /* C4 to B4 */
+                noteLayout.slice(48, 60),  /* C5 to B5 */
+                noteLayout.slice(60, 72),  /* C6 to B6 */
+                noteLayout.slice(72, 84),  /* C7 to B7 */
             ];
 
             var notesByKey = {};
             var notesByNoteName = {};
 
-            // --- INITIALIZATION ---
+            /* --- INITIALIZATION --- */
             function init() {
                 createPiano();
                 addEventListeners();
                 
-                // Initialize instrument selector
+                /* Initialize instrument selector */
                 initInstrumentSelector();
                 
-                // Initialize hexboard scaling
+                /* Initialize hexboard scaling */
                 scaleHexboard();
                 window.addEventListener('resize', scaleHexboard);
                 window.addEventListener('orientationchange', scaleHexboard);
             }
 
-            // --- HEXBOARD SCALING ---
+            /* --- HEXBOARD SCALING --- */
             function scaleHexboard() {
                 if (!hexboard || !hexboardContainer) return;
 
                 var svg = hexboard.querySelector('.piano-svg');
                 if (!svg) return;
 
-                // --- STEP 1: RESET ---
-                // We must clear previous overrides so the container can shrink 
-                // to its natural size before we measure it.
+                /* --- STEP 1: RESET --- */
+                /* We must clear previous overrides so the container can shrink  */
+                /* to its natural size before we measure it. */
                 hexboard.style.width = '';
                 hexboard.style.height = '';
                 hexboard.style.minWidth = '';
@@ -909,7 +909,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 svg.style.width = '';
                 svg.style.height = '';
 
-                // --- STEP 2: MEASURE ---
+                /* --- STEP 2: MEASURE --- */
                 var containerWidth = hexboardContainer.clientWidth;
                 var containerHeight = hexboardContainer.clientHeight;
 
@@ -924,15 +924,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 let scale;
 
                 if (isPortrait) {
-                // PORTRAIT:
-                // 1. Fit the board's LENGTH (originalWidth) to the screen HEIGHT.
-                // 2. Ignore the screen width (don't shrink just because it's narrow).
+                /* PORTRAIT: */
+                /* 1. Fit the board's LENGTH (originalWidth) to the screen HEIGHT. */
+                /* 2. Ignore the screen width (don't shrink just because it's narrow). */
                 scale = containerHeight / originalWidth;
 
                 hexboard.style.transform = 'rotate(90deg)';
                 } else {
-                // LANDSCAPE:
-                // Standard fit (respect both dimensions so it doesn't get cut off).
+                /* LANDSCAPE: */
+                /* Standard fit (respect both dimensions so it doesn't get cut off). */
                 scale = Math.min(containerWidth / originalWidth, containerHeight / originalHeight);
 
                 hexboard.style.transform = 'rotate(0deg)';
@@ -941,22 +941,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 var finalWidth = originalWidth * scale;
                 var finalHeight = originalHeight * scale;
 
-                // --- STEP 3: APPLY ---
+                /* --- STEP 3: APPLY --- */
 
-                // Force specific pixel sizes on the wrapper
+                /* Force specific pixel sizes on the wrapper */
                 hexboard.style.width = finalWidth + 'px';
                 hexboard.style.height = finalHeight + 'px';
 
-                // Lock min-size to prevent Flexbox from squashing it 
-                // (This fixes the "width shrinks it" issue)
+                /* Lock min-size to prevent Flexbox from squashing it  */
+                /* (This fixes the "width shrinks it" issue) */
                 hexboard.style.minWidth = finalWidth + 'px';
                 hexboard.style.minHeight = finalHeight + 'px';
 
-                // Force SVG to fill that exact space
+                /* Force SVG to fill that exact space */
                 svg.style.width = finalWidth + 'px';
                 svg.style.height = finalHeight + 'px';
 
-                // Cleanup constraints
+                /* Cleanup constraints */
                 hexboard.style.maxWidth = 'none';
                 hexboard.style.maxHeight = 'none';
                 svg.style.maxWidth = 'none';
@@ -968,7 +968,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function initInstrumentSelector() {
-                // Populate instrument dropdown
+                /* Populate instrument dropdown */
                 for (var instrumentId in instruments) {
                     var instrument = instruments[instrumentId];
                     var option = document.createElement('div');
@@ -994,15 +994,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return;
                 }
                 
-                // Cleanup previous instrument
+                /* Cleanup previous instrument */
                 if (instruments[currentInstrument] && instruments[currentInstrument].cleanup) {
                     instruments[currentInstrument].cleanup();
                 }
                 
-                // Update current instrument
+                /* Update current instrument */
                 currentInstrument = instrumentId;
                 
-                // Update UI
+                /* Update UI */
                 var options = instrumentDropdown.querySelectorAll('.instrument-option');
                 for (var i = 0; i < options.length; i++) {
                     options[i].classList.remove('selected');
@@ -1011,27 +1011,27 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 }
                 
-                // Initialize new instrument
+                /* Initialize new instrument */
                 if (instruments[instrumentId].init) {
                     instruments[instrumentId].init();
                 }
                 
-                // Close dropdown
+                /* Close dropdown */
                 instrumentDropdown.classList.remove('active');
             }
 
             function createGameBoyControls() {
-                // Create Game Boy specific controls if needed
+                /* Create Game Boy specific controls if needed */
                 document.querySelector('.wave-selector').style.display = 'none';
                 var controlBar = document.querySelector('.control-bar');
                 
-                // Add Game Boy specific controls
+                /* Add Game Boy specific controls */
                 var gameboyControls = document.createElement('div');
                 gameboyControls.id = 'gameboy-controls';
                 gameboyControls.style.display = 'inline-flex';
                 gameboyControls.style.marginLeft = '10px';
                 
-                // Wave Channel control
+                /* Wave Channel control */
                 var waveGroup = document.createElement('div');
                 waveGroup.className = 'control-group';
                 waveGroup.style.marginRight = '10px';
@@ -1063,7 +1063,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 waveGroup.appendChild(waveLabel);
                 waveGroup.appendChild(waveSelect);
                 
-                // Noise Channel control
+                /* Noise Channel control */
                 var noiseGroup = document.createElement('div');
                 noiseGroup.className = 'control-group';
                 noiseGroup.style.marginRight = '10px';
@@ -1090,7 +1090,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 noiseGroup.appendChild(noiseLabel);
                 noiseGroup.appendChild(noiseSelect);
                 
-                // Attack control
+                /* Attack control */
                 var attackGroup = document.createElement('div');
                 attackGroup.className = 'control-group';
                 attackGroup.style.marginRight = '10px';
@@ -1117,7 +1117,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 attackGroup.appendChild(attackLabel);
                 attackGroup.appendChild(attackSlider);
                 
-                // Release control
+                /* Release control */
                 var releaseGroup = document.createElement('div');
                 releaseGroup.className = 'control-group';
                 
@@ -1161,17 +1161,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function createGuitarControls() {
-                // Create Guitar specific controls
+                /* Create Guitar specific controls */
                 document.querySelector('.wave-selector').style.display = 'none';
                 var controlBar = document.querySelector('.control-bar');
                 
-                // Add Guitar specific controls
+                /* Add Guitar specific controls */
                 var guitarControls = document.createElement('div');
                 guitarControls.id = 'guitar-controls';
                 guitarControls.style.display = 'inline-flex';
                 guitarControls.style.marginLeft = '10px';
                 
-                // Guitar Type control
+                /* Guitar Type control */
                 var typeGroup = document.createElement('div');
                 typeGroup.className = 'control-group';
                 typeGroup.style.marginRight = '10px';
@@ -1203,7 +1203,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 typeGroup.appendChild(typeLabel);
                 typeGroup.appendChild(typeSelect);
                 
-                // Damping control
+                /* Damping control */
                 var dampingGroup = document.createElement('div');
                 dampingGroup.className = 'control-group';
                 dampingGroup.style.marginRight = '10px';
@@ -1230,7 +1230,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 dampingGroup.appendChild(dampingLabel);
                 dampingGroup.appendChild(dampingSlider);
                 
-                // Body Resonance control
+                /* Body Resonance control */
                 var resonanceGroup = document.createElement('div');
                 resonanceGroup.className = 'control-group';
                 
@@ -1273,17 +1273,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function createChoirControls() {
-                // Create Choir specific controls
+                /* Create Choir specific controls */
                 document.querySelector('.wave-selector').style.display = 'none';
                 var controlBar = document.querySelector('.control-bar');
                 
-                // Add Choir specific controls
+                /* Add Choir specific controls */
                 var choirControls = document.createElement('div');
                 choirControls.id = 'choir-controls';
                 choirControls.style.display = 'inline-flex';
                 choirControls.style.marginLeft = '10px';
                 
-                // Voice Type control
+                /* Voice Type control */
                 var typeGroup = document.createElement('div');
                 typeGroup.className = 'control-group';
                 typeGroup.style.marginRight = '10px';
@@ -1326,7 +1326,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 typeGroup.appendChild(typeLabel);
                 typeGroup.appendChild(typeSelect);
                 
-                // Vibrato control
+                /* Vibrato control */
                 var vibratoGroup = document.createElement('div');
                 vibratoGroup.className = 'control-group';
                 vibratoGroup.style.marginRight = '10px';
@@ -1353,7 +1353,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 vibratoGroup.appendChild(vibratoLabel);
                 vibratoGroup.appendChild(vibratoSlider);
                 
-                // Warmth control
+                /* Warmth control */
                 var warmthGroup = document.createElement('div');
                 warmthGroup.className = 'control-group';
                 
@@ -1396,17 +1396,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function createSNESControls() {
-                // Create SNES specific controls
+                /* Create SNES specific controls */
                 document.querySelector('.wave-selector').style.display = 'none';
                 var controlBar = document.querySelector('.control-bar');
                 
-                // Add SNES specific controls
+                /* Add SNES specific controls */
                 var snesControls = document.createElement('div');
                 snesControls.id = 'snes-controls';
                 snesControls.style.display = 'inline-flex';
                 snesControls.style.marginLeft = '10px';
                 
-                // Instrument Type control
+                /* Instrument Type control */
                 var typeGroup = document.createElement('div');
                 typeGroup.className = 'control-group';
                 typeGroup.style.marginRight = '10px';
@@ -1448,7 +1448,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 typeGroup.appendChild(typeLabel);
                 typeGroup.appendChild(typeSelect);
                 
-                // Reverb control
+                /* Reverb control */
                 var reverbGroup = document.createElement('div');
                 reverbGroup.className = 'control-group';
                 reverbGroup.style.marginRight = '10px';
@@ -1475,7 +1475,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 reverbGroup.appendChild(reverbLabel);
                 reverbGroup.appendChild(reverbSlider);
                 
-                // Attack control
+                /* Attack control */
                 var attackGroup = document.createElement('div');
                 attackGroup.className = 'control-group';
                 attackGroup.style.marginRight = '10px';
@@ -1502,7 +1502,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 attackGroup.appendChild(attackLabel);
                 attackGroup.appendChild(attackSlider);
                 
-                // Release control
+                /* Release control */
                 var releaseGroup = document.createElement('div');
                 releaseGroup.className = 'control-group';
                 
@@ -1553,14 +1553,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
                 
                 try {
-                    // Try to create audio context
+                    /* Try to create audio context */
                     audioContext = new AudioContext();
                     
-                    // If it's not suspended, we can fully initialize
+                    /* If it's not suspended, we can fully initialize */
                     if (audioContext.state !== 'suspended') {
                         completeAudioContextInit();
                     } else {
-                        // If suspended, we'll wait for user interaction
+                        /* If suspended, we'll wait for user interaction */
                         if(DEBUG) {
                             console.log("Audio context created but suspended, waiting for user interaction");
                         }
@@ -1586,14 +1586,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
                 
                 try {
-                    // Create or get existing audio context
+                    /* Create or get existing audio context */
                     if (!audioContext) {
                         audioContext = new AudioContext();
                     }
                     
                     completeAudioContextInit();
                     
-                    // Resume the context if it's suspended
+                    /* Resume the context if it's suspended */
                     if (audioContext.state === 'suspended') {
                         audioContext.resume().then(function() {
                             if(DEBUG) {
@@ -1614,13 +1614,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 mainGainNode = audioContext.createGain();
                 mainGainNode.gain.value = volumeSlider.value;
                 
-                // Add a limiter to prevent clipping
+                /* Add a limiter to prevent clipping */
                 var limiter = audioContext.createDynamicsCompressor();
-                limiter.threshold.value = -12; // Start limiting at -12dB
-                limiter.knee.value = 0; // Hard knee
-                limiter.ratio.value = 20; // High ratio for limiting
-                limiter.attack.value = 0.001; // Fast attack
-                limiter.release.value = 0.1; // Moderate release
+                limiter.threshold.value = -12; /* Start limiting at -12dB */
+                limiter.knee.value = 0; /* Hard knee */
+                limiter.ratio.value = 20; /* High ratio for limiting */
+                limiter.attack.value = 0.001; /* Fast attack */
+                limiter.release.value = 0.1; /* Moderate release */
                 
                 mainGainNode.connect(limiter);
                 limiter.connect(audioContext.destination);
@@ -1632,13 +1632,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     console.log("Audio context state:", audioContext.state);
                 }
                 
-                // Handle state changes
+                /* Handle state changes */
                 audioContext.addEventListener('statechange', function() {
                     if(DEBUG) {
                         console.log("Audio context state changed to:", audioContext.state);
                     }
                     
-                    // If the context is suspended, try to resume it
+                    /* If the context is suspended, try to resume it */
                     if (audioContext.state === 'suspended') {
                         audioContext.resume().then(function() {
                             if(DEBUG) {
@@ -1675,47 +1675,47 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function createPiano() {
-                // Create main SVG container
+                /* Create main SVG container */
                 var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('class', 'piano-svg');
                 
-                // Hexagon dimensions for proper tiling (pointy-top orientation)
-                var hexRadius = 50; // Radius from center to any vertex
+                /* Hexagon dimensions for proper tiling (pointy-top orientation) */
+                var hexRadius = 50; /* Radius from center to any vertex */
                 
-                // For pointy-top hexagons:
-                // Width = 2 * radius
-                // Height = sqrt(3) * radius
+                /* For pointy-top hexagons: */
+                /* Width = 2 * radius */
+                /* Height = sqrt(3) * radius */
                 var hexWidth = hexRadius * 2;
                 var hexHeight = Math.sqrt(3) * hexRadius;
                 
-                // CORRECTED SPACING FOR PROPER TILING:
-                // Horizontal spacing between centers is 1.5 * radius
+                /* CORRECTED SPACING FOR PROPER TILING: */
+                /* Horizontal spacing between centers is 1.5 * radius */
                 var horizontalSpacing = hexRadius * 1.75;
-                // Vertical spacing between rows is the full height
+                /* Vertical spacing between rows is the full height */
                 var verticalSpacing = hexHeight * 0.85;
                 
-                // Calculate total width and height with proper spacing
+                /* Calculate total width and height with proper spacing */
                 var maxRowLength = Math.max.apply(Math, noteRows.map(function(row) { return row.length; }));
                 
-                // For width: (maxRowLength-1) * spacing + hexWidth + offset for odd rows
-                // The offset accounts for the half-spacing shift in alternating rows
+                /* For width: (maxRowLength-1) * spacing + hexWidth + offset for odd rows */
+                /* The offset accounts for the half-spacing shift in alternating rows */
                 var totalWidth = (maxRowLength - 1) * horizontalSpacing + hexWidth + (horizontalSpacing / 2);
                 
-                // For height: (noteRows.length-1) * spacing + hexHeight
-                // This properly accounts for the spacing between rows
+                /* For height: (noteRows.length-1) * spacing + hexHeight */
+                /* This properly accounts for the spacing between rows */
                 var totalHeight = (noteRows.length - 1) * verticalSpacing + (2 * hexRadius);
                 
-                // Set SVG dimensions
+                /* Set SVG dimensions */
                 svg.setAttribute('width', "100%");
                 svg.setAttribute('height', "100%");
                 svg.setAttribute('viewBox', '0 0 ' + totalWidth + ' ' + totalHeight);
                 
-                // Create hexagon points (pointy-top orientation)
+                /* Create hexagon points (pointy-top orientation) */
                 function getHexagonPoints(cx, cy, radius) {
                     var points = [];
-                    // Start at top point and go clockwise
+                    /* Start at top point and go clockwise */
                     for (var i = 0; i < 6; i++) {
-                        // 30°, 90°, 150°, 210°, 270°, 330° for pointy-top
+                        /* 30°, 90°, 150°, 210°, 270°, 330° for pointy-top */
                         var angle = (Math.PI / 3) * i - Math.PI / 2;
                         var x = cx + radius * Math.cos(angle);
                         var y = cy + radius * Math.sin(angle);
@@ -1724,11 +1724,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return points.join(' ');
                 }
                 
-                // Create hexagons for each note
+                /* Create hexagons for each note */
                 for (var i = 0; i < noteRows.length; i++) {
                     var rowData = noteRows[i];
                     
-                    // Calculate row offset for hexagonal tiling
+                    /* Calculate row offset for hexagonal tiling */
                     var rowOffsetX = (i % 2 === 1) ? horizontalSpacing / 2 : 0;
                     
                     var rowOffsetY = i * verticalSpacing;
@@ -1736,16 +1736,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     for (var j = 0; j < rowData.length; j++) {
                         var noteData = rowData[j];
                         
-                        // Calculate center position for this hexagon
-                        // FIX: Position the first hexagon at hexRadius, then add spacing for subsequent ones
+                        /* Calculate center position for this hexagon */
+                        /* FIX: Position the first hexagon at hexRadius, then add spacing for subsequent ones */
                         var cx = rowOffsetX + hexRadius + (j * horizontalSpacing);
                         var cy = rowOffsetY + hexRadius;
                         
-                        // Create group for hexagon and text
+                        /* Create group for hexagon and text */
                         var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                         g.setAttribute('class', 'hexagon-group');
                         
-                        // Create hexagon polygon
+                        /* Create hexagon polygon */
                         var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                         polygon.setAttribute('class', 'hexagon');
                         polygon.setAttribute('id', noteData.note);
@@ -1755,70 +1755,70 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         polygon.setAttribute('data-freq', noteData.freq);
                         polygon.setAttribute('data-note-name', noteData.note.replace(/[0-9]/, ''));
                         
-                        // Create note name text - positioned higher in the hexagon
+                        /* Create note name text - positioned higher in the hexagon */
                         var noteText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         noteText.setAttribute('class', 'note-text');
                         noteText.setAttribute('x', cx);
-                        noteText.setAttribute('y', cy); // Moved up from center
+                        noteText.setAttribute('y', cy); /* Moved up from center */
                         noteText.textContent = noteData.note;
                         
-                        // Create key label text - positioned lower in the hexagon
+                        /* Create key label text - positioned lower in the hexagon */
                         var keyText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         keyText.setAttribute('class', 'note-key');
                         keyText.setAttribute('x', cx);
-                        keyText.setAttribute('y', cy + 20); // Moved further down from center
+                        keyText.setAttribute('y', cy + 20); /* Moved further down from center */
                         keyText.textContent = noteData.key === 'Shift' ? '⇧' : noteData.key;
                         
-                        // Add elements to group
+                        /* Add elements to group */
                         g.appendChild(polygon);
                         g.appendChild(noteText);
                         g.appendChild(keyText);
                         
-                        // Add group to SVG
+                        /* Add group to SVG */
                         svg.appendChild(g);
                         
-                        // Store references for event handling
-                        notesByKey[noteData.key] = noteData; // Store the exact key, not lowercase
+                        /* Store references for event handling */
+                        notesByKey[noteData.key] = noteData; /* Store the exact key, not lowercase */
                         notesByNoteName[noteData.note] = notesByNoteName[noteData.note] || [];
                         notesByNoteName[noteData.note].push(polygon);
                     }
                 }
                 
-                // Add SVG to hexboard
+                /* Add SVG to hexboard */
                 hexboard.appendChild(svg);
             }
             
-            // --- AUDIO PLAYBACK ---
+            /* --- AUDIO PLAYBACK --- */
             function playNote(note, freq) {
                 if (!audioSupported) {
                     console.warn("Audio is not supported in this browser");
                     return;
                 }
 
-                // 1. Ensure AudioContext exists
+                /* 1. Ensure AudioContext exists */
                 if (!audioContext) {
                     if(DEBUG) console.log("Creating new AudioContext...");
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
 
-                // 2. Ensure the context is running (resumed)
+                /* 2. Ensure the context is running (resumed) */
                 if (audioContext.state === 'suspended') {
                     if(DEBUG) console.log("AudioContext is suspended. Resuming...");
                     audioContext.resume().then(function() {
                         if(DEBUG) console.log("AudioContext resumed. Playing note:", note);
-                        // Continue with note playing after resume
+                        /* Continue with note playing after resume */
                         continuePlayingNote(note, freq);
                     }).catch(function(e) {
                         console.error("Error resuming audio context:", e);
                     });
                 } else {
-                    // Context is already running, play the note directly
+                    /* Context is already running, play the note directly */
                     continuePlayingNote(note, freq);
                 }
             }
             
             function continuePlayingNote(note, freq) {
-                // 3. Ensure the main gain node exists
+                /* 3. Ensure the main gain node exists */
                 if (!mainGainNode) {
                     if(DEBUG) console.log("Creating mainGainNode...");
                     mainGainNode = audioContext.createGain();
@@ -1826,20 +1826,20 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     mainGainNode.connect(audioContext.destination);
                 }
 
-                // At this point, the audio context is GUARANTEED to be running.
+                /* At this point, the audio context is GUARANTEED to be running. */
                 if(DEBUG) console.log("Audio context is running. Playing note:", note);
 
-                // 4. Stop the note if it's already playing
+                /* 4. Stop the note if it's already playing */
                 if (activeOscillators[note]) {
                     stopNote(note);
                 }
 
-                // 5. Play the note using the selected instrument
+                /* 5. Play the note using the selected instrument */
                 if (instruments[currentInstrument] && instruments[currentInstrument].playNote) {
                     return instruments[currentInstrument].playNote(note, freq);
                 }
                 
-                // Fallback to default implementation
+                /* Fallback to default implementation */
                 return playDefaultNote(note, freq);
             }
             
@@ -1851,16 +1851,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var oscillator = audioContext.createOscillator();
                     var gainNode = audioContext.createGain();
 
-                    // Get wave type from the selected wave option
+                    /* Get wave type from the selected wave option */
                     var selectedWave = document.querySelector('.wave-option.selected');
                     if (selectedWave) {
                         oscillator.type = selectedWave.getAttribute('data-wave-type');
                     } else {
-                        // Default to sine if nothing is selected
+                        /* Default to sine if nothing is selected */
                         oscillator.type = 'sine';
                     }
                     
-                    // Round frequency to 3 decimal places
+                    /* Round frequency to 3 decimal places */
                     var roundedFreq = Math.round(freq * 1000) / 1000;
                     oscillator.frequency.setValueAtTime(roundedFreq, now);
                     
@@ -1889,7 +1889,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var now = audioContext.currentTime;
                     var gainValue = 0.12;
 
-                    // Get Game Boy specific parameters
+                    /* Get Game Boy specific parameters */
                     var waveformSelect = document.getElementById('gameboy-wave');
                     var noiseSelect = document.getElementById('gameboy-noise');
                     var attackSlider = document.getElementById('gameboy-attack');
@@ -1900,48 +1900,48 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.0;
                     var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.3;
 
-                    // Create main oscillator for the note
+                    /* Create main oscillator for the note */
                     var oscillator = audioContext.createOscillator();
                     var gainNode = audioContext.createGain();
                     
-                    // Create noise buffer for Game Boy style
+                    /* Create noise buffer for Game Boy style */
                     var noiseBuffer = audioContext.createBufferSource();
                     var noiseGain = audioContext.createGain();
                     
-                    // Create noise buffer
-                    var bufferSize = audioContext.sampleRate * 2; // 2 seconds of noise
+                    /* Create noise buffer */
+                    var bufferSize = audioContext.sampleRate * 2; /* 2 seconds of noise */
                     var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
                     var output = buffer.getChannelData(0);
                     
                     for (var i = 0; i < bufferSize; i++) {
                         if (noiseType === 'white') {
                             output[i] = Math.random() * 2 - 1;
-                        } else { // Pink noise is more complex, we'll fake it with a simple filter
-                            output[i] = (Math.random() * 2 - 1) * (i / bufferSize); // A simple lo-fi sweep
+                        } else { /* Pink noise is more complex, we'll fake it with a simple filter */
+                            output[i] = (Math.random() * 2 - 1) * (i / bufferSize); /* A simple lo-fi sweep */
                         }
                     }
                     noiseBuffer.buffer = buffer;
                     noiseBuffer.loop = true;
                     
-                    // Configure oscillator
+                    /* Configure oscillator */
                     oscillator.type = waveformType;
                     var roundedFreq = Math.round(freq * 1000) / 1000;
                     oscillator.frequency.setValueAtTime(roundedFreq, now);
                     
-                    // Much lower noise volume
-                    noiseGain.gain.value = 0.005; // Further reduced
+                    /* Much lower noise volume */
+                    noiseGain.gain.value = 0.005; /* Further reduced */
                     
-                    // Connect the audio graph
+                    /* Connect the audio graph
                     oscillator.connect(gainNode);
                     noiseBuffer.connect(noiseGain);
                     gainNode.connect(mainGainNode);
                     noiseGain.connect(mainGainNode);
                     
-                    // --- ADSR Envelope ---
+                    /* --- ADSR Envelope --- */
                     gainNode.gain.setValueAtTime(0, now);
                     gainNode.gain.linearRampToValueAtTime(gainValue, now + attackTime);
                     
-                    // Start the sound
+                    /* Start the sound */
                     oscillator.start(now);
                     noiseBuffer.start(now);
                     
@@ -1966,7 +1966,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var now = audioContext.currentTime;
                     var gainValue = 0.25;
 
-                    // Get Guitar specific parameters
+                    /* Get Guitar specific parameters */
                     var typeSelect = document.getElementById('guitar-type');
                     var dampingSlider = document.getElementById('guitar-damping');
                     var bodySlider = document.getElementById('guitar-body');
@@ -1975,44 +1975,44 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var damping = dampingSlider ? parseFloat(dampingSlider.value) : 0.995;
                     var bodyResonance = bodySlider ? parseFloat(bodySlider.value) : 0.3;
 
-                    // Create main oscillator for the note
+                    /* Create main oscillator for the note */
                     var oscillator = audioContext.createOscillator();
                     var gainNode = audioContext.createGain();
                     
-                    // Create additional oscillators for harmonics
+                    /* Create additional oscillators for harmonics */
                     var harmonic1 = audioContext.createOscillator();
                     var harmonic2 = audioContext.createOscillator();
                     var harmonicGain1 = audioContext.createGain();
                     var harmonicGain2 = audioContext.createGain();
                     
-                    // Create filter for guitar body resonance
+                    /* Create filter for guitar body resonance */
                     var filter = audioContext.createBiquadFilter();
                     
-                    // Create a pluck noise for attack
+                    /* Create a pluck noise for attack */
                     var pluckNoise = audioContext.createBufferSource();
                     var pluckBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.05, audioContext.sampleRate);
                     var pluckData = pluckBuffer.getChannelData(0);
                     for (var i = 0; i < pluckBuffer.length; i++) {
-                        pluckData[i] = (Math.random() * 2 - 1) * 0.2; // Reduced pluck noise
+                        pluckData[i] = (Math.random() * 2 - 1) * 0.2; /* Reduced pluck noise */
                     }
                     pluckNoise.buffer = pluckBuffer;
                     var pluckGain = audioContext.createGain();
                     
-                    // Configure main oscillator
+                    /* Configure main oscillator */
                     oscillator.type = 'sawtooth';
                     var roundedFreq = Math.round(freq * 1000) / 1000;
                     oscillator.frequency.setValueAtTime(roundedFreq, now);
                     
-                    // Configure harmonics with reduced gain
+                    /* Configure harmonics with reduced gain */
                     harmonic1.type = 'sine';
-                    harmonic1.frequency.setValueAtTime(roundedFreq * 2, now); // Octave
+                    harmonic1.frequency.setValueAtTime(roundedFreq * 2, now); /* Octave */
                     harmonicGain1.gain.value = 0.1;
                     
                     harmonic2.type = 'sine';
-                    harmonic2.frequency.setValueAtTime(roundedFreq * 3, now); // Fifth
+                    harmonic2.frequency.setValueAtTime(roundedFreq * 3, now); /* Fifth */
                     harmonicGain2.gain.value = 0.08;
                     
-                    // Configure filter based on guitar type
+                    /* Configure filter based on guitar type */
                     if (guitarType === 'acoustic') {
                         filter.type = 'lowpass';
                         filter.frequency.value = roundedFreq * 2.5;
@@ -2027,29 +2027,29 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         filter.Q.value = 0.8;
                     }
                     
-                    // Connect the audio graph
+                    /* Connect the audio graph */
                     oscillator.connect(gainNode);
                     harmonic1.connect(harmonicGain1);
                     harmonic2.connect(harmonicGain2);
                     harmonicGain1.connect(gainNode);
                     harmonicGain2.connect(gainNode);
                     
-                    // Connect pluck noise for attack
+                    /* Connect pluck noise for attack */
                     pluckNoise.connect(pluckGain);
                     pluckGain.connect(filter);
                     
                     gainNode.connect(filter);
                     filter.connect(mainGainNode);
                     
-                    // --- ADSR Envelope ---
-                    // Quick attack with pluck noise
-                    pluckGain.gain.setValueAtTime(0.1, now); // Reduced pluck gain
+                    /* --- ADSR Envelope --- */
+                    /* Quick attack with pluck noise */
+                    pluckGain.gain.setValueAtTime(0.1, now); /* Reduced pluck gain */
                     pluckGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
                     
                     gainNode.gain.setValueAtTime(0, now);
                     gainNode.gain.linearRampToValueAtTime(gainValue * 0.6, now + 0.01);
                     
-                    // Start the sound
+                    /* Start the sound */
                     oscillator.start(now);
                     harmonic1.start(now);
                     harmonic2.start(now);
@@ -2080,7 +2080,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var now = audioContext.currentTime;
                     var gainValue = 0.1;
 
-                    // Get Choir specific parameters
+                    /* Get Choir specific parameters */
                     var voicesSelect = document.getElementById('choir-voices');
                     var vibratoSlider = document.getElementById('choir-vibrato');
                     var warmthSlider = document.getElementById('choir-warmth');
@@ -2089,16 +2089,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var vibratoAmount = vibratoSlider ? parseFloat(vibratoSlider.value) : 2;
                     var warmthAmount = warmthSlider ? parseFloat(warmthSlider.value) : 0.3;
 
-                    // Create master gain for all voices
+                    /* Create master gain for all voices */
                     var masterGain = audioContext.createGain();
                     masterGain.gain.value = gainValue;
                     masterGain.connect(mainGainNode);
                     
-                    // Create a single formant filter to shape sound
+                    /* Create a single formant filter to shape sound */
                     var formantFilter = audioContext.createBiquadFilter();
                     formantFilter.type = 'peaking';
                     
-                    // Set formant based on voice type
+                    /* Set formant based on voice type */
                     if (voiceType === 'soprano') {
                         formantFilter.frequency.value = 1500;
                         formantFilter.Q.value = 1.5;
@@ -2119,64 +2119,64 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         formantFilter.Q.value = 0.8;
                         formantFilter.gain.value = 3;
                         freq = freq * 0.7;
-                    } else { // mixed
+                    } else { /* mixed */
                         formantFilter.frequency.value = 900;
                         formantFilter.Q.value = 1.0;
                         formantFilter.gain.value = 4;
                     }
                     
-                    // Create a gentle low-pass filter
+                    /* Create a gentle low-pass filter */
                     var lowpassFilter = audioContext.createBiquadFilter();
                     lowpassFilter.type = 'lowpass';
-                    lowpassFilter.frequency.value = 2500; // Lower cutoff to reduce harshness
+                    lowpassFilter.frequency.value = 2500; /* Lower cutoff to reduce harshness */
                     lowpassFilter.Q.value = 0.5;
                     
-                    // Connect filters
+                    /* Connect filters */
                     masterGain.connect(formantFilter);
                     formantFilter.connect(lowpassFilter);
                     lowpassFilter.connect(mainGainNode);
                     
-                    // Create just 1 voice for cleaner sound
+                    /* Create just 1 voice for cleaner sound */
                     var voices = [];
                     
                     for (var i = 0; i < 1; i++) {
-                        // Main oscillator with triangle wave for softer sound
+                        /* Main oscillator with triangle wave for softer sound */
                         var oscillator = audioContext.createOscillator();
                         oscillator.type = 'triangle';
                         
-                        // Add slight detuning for chorus effect
-                        var detune = (Math.random() - 0.5) * 2; // ±1 cent
+                        /* Add slight detuning for chorus effect */
+                        var detune = (Math.random() - 0.5) * 2; /* ±1 cent */
                         oscillator.detune.value = detune;
-                        oscillator.frequency.value = freq;
+0                        oscillator.frequency.value = freq;
                         
-                        // Create gentle vibrato
+                        /* Create gentle vibrato */
                         var vibratoLFO = audioContext.createOscillator();
                         var vibratoGain = audioContext.createGain();
                         
-                        vibratoLFO.frequency.value = 3 + Math.random() * 2; // 3-5 Hz
-                        vibratoGain.gain.value = vibratoAmount * 0.3; // Very reduced vibrato
+                        vibratoLFO.frequency.value = 3 + Math.random() * 2; /* 3-5 Hz */
+                        vibratoGain.gain.value = vibratoAmount * 0.3; /* Very reduced vibrato */
                         
                         vibratoLFO.connect(vibratoGain);
                         vibratoGain.connect(oscillator.frequency);
                         
-                        // Create gain for this voice
+                        /* Create gain for this voice */
                         var voiceGain = audioContext.createGain();
                         voiceGain.gain.value = 0.8;
                         
-                        // Add gentle attack
+                        /* Add gentle attack */
                         voiceGain.gain.setValueAtTime(0, now);
                         voiceGain.gain.linearRampToValueAtTime(0.8, now + 0.05);
                         voiceGain.gain.linearRampToValueAtTime(0.6, now + 0.2);
                         
-                        // Connect
+                        /* Connect */
                         oscillator.connect(voiceGain);
                         voiceGain.connect(masterGain);
                         
-                        // Start oscillators
+                        /* Start oscillators */
                         oscillator.start(now);
                         vibratoLFO.start(now);
                         
-                        // Add subtle warmth with a second harmonic
+                        /* Add subtle warmth with a second harmonic */
                         if (warmthAmount > 0) {
                             var harmonic = audioContext.createOscillator();
                             harmonic.type = 'sine';
@@ -2184,7 +2184,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             harmonic.detune.value = detune;
                             
                             var harmonicGain = audioContext.createGain();
-                            harmonicGain.gain.value = warmthAmount * 0.05; // Very reduced warmth
+                            harmonicGain.gain.value = warmthAmount * 0.05; /* Very reduced warmth */
                             
                             harmonic.connect(harmonicGain);
                             harmonicGain.connect(masterGain);
@@ -2208,7 +2208,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     }
                     
-                    // Store all components for this note
+                    /* Store all components for this note */
                     activeOscillators[note] = {
                         voices: voices,
                         masterGain: masterGain,
@@ -2229,7 +2229,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var now = audioContext.currentTime;
                     var gainValue = 0.15;
 
-                    // Get SNES specific parameters
+                    /* Get SNES specific parameters */
                     var instrumentSelect = document.getElementById('snes-instrument');
                     var reverbSlider = document.getElementById('snes-reverb');
                     var attackSlider = document.getElementById('snes-attack');
@@ -2240,26 +2240,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.05;
                     var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.5;
 
-                    // Create main oscillator for the note
+                    /* Create main oscillator for the note */
                     var oscillator = audioContext.createOscillator();
                     var gainNode = audioContext.createGain();
                     
-                    // Create additional oscillators for harmonics to simulate sample-based instruments
+                    /* Create additional oscillators for harmonics to simulate sample-based instruments */
                     var harmonic1 = audioContext.createOscillator();
                     var harmonic2 = audioContext.createOscillator();
                     var harmonicGain1 = audioContext.createGain();
                     var harmonicGain2 = audioContext.createGain();
                     
-                    // Create filters for SNES sound
+                    /* Create filters for SNES sound */
                     var filter = audioContext.createBiquadFilter();
                     var filter2 = audioContext.createBiquadFilter();
                     
-                    // Create reverb using convolver node
+                    /* Create reverb using convolver node */
                     var convolver = audioContext.createConvolver();
                     var reverbGain = audioContext.createGain();
                     var dryGain = audioContext.createGain();
                     
-                    // Create reverb impulse response
+                    /* Create reverb impulse response */
                     var length = audioContext.sampleRate * reverbAmount * 2;
                     var impulse = audioContext.createBuffer(2, length, audioContext.sampleRate);
                     
@@ -2272,7 +2272,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     
                     convolver.buffer = impulse;
                     
-                    // Configure oscillator based on instrument type
+                    /* Configure oscillator based on instrument type */
                     if (instrumentType === 'piano') {
                         oscillator.type = 'triangle';
                         harmonic1.type = 'sine';
@@ -2355,26 +2355,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         filter2.Q.value = 0.8;
                     }
                     
-                    // Set main oscillator frequency
+                    /* Set main oscillator frequency */
                     var roundedFreq = Math.round(freq * 1000) / 1000;
                     oscillator.frequency.setValueAtTime(roundedFreq, now);
                     
-                    // Set reverb gains
+                    /* Set reverb gains */
                     reverbGain.gain.value = reverbAmount * 0.5;
                     dryGain.gain.value = 1 - reverbAmount * 0.3;
                     
-                    // Connect the audio graph
+                    /* Connect the audio graph */
                     oscillator.connect(gainNode);
                     harmonic1.connect(harmonicGain1);
                     harmonic2.connect(harmonicGain2);
                     harmonicGain1.connect(gainNode);
                     harmonicGain2.connect(gainNode);
                     
-                    // Connect to filters
+                    /* Connect to filters */
                     gainNode.connect(filter);
                     filter.connect(filter2);
                     
-                    // Connect to dry/wet mix
+                    /* Connect to dry/wet mix */
                     filter2.connect(dryGain);
                     filter2.connect(reverbGain);
                     
@@ -2382,11 +2382,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     reverbGain.connect(convolver);
                     convolver.connect(mainGainNode);
                     
-                    // --- ADSR Envelope ---
+                    /* --- ADSR Envelope --- */
                     gainNode.gain.setValueAtTime(0, now);
                     gainNode.gain.linearRampToValueAtTime(gainValue, now + attackTime);
                     
-                    // Start the sound
+                    /* Start the sound */
                     oscillator.start(now);
                     harmonic1.start(now);
                     harmonic2.start(now);
@@ -2424,12 +2424,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return;
                 }
                 
-                // Use current instrument's stopNote method
+                /* Use current instrument's stopNote method */
                 if (instruments[currentInstrument] && instruments[currentInstrument].stopNote) {
                     return instruments[currentInstrument].stopNote(note);
                 }
                 
-                // Fallback to default implementation
+                /* Fallback to default implementation */
                 return stopDefaultNote(note);
             }
             
@@ -2440,7 +2440,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var oscillator = oscillatorData.oscillator;
                     var gainNode = oscillatorData.gainNode;
                     var now = audioContext.currentTime;
-                    var releaseTime = 0.1; // Shorter release time for immediate stop
+                    var releaseTime = 0.1; /* Shorter release time for immediate stop */
                     
                     gainNode.gain.cancelScheduledValues(now);
                     gainNode.gain.setValueAtTime(gainNode.gain.value, now);
@@ -2448,7 +2448,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
                     oscillator.stop(now + releaseTime + 0.01);
                     
-                    // Immediately remove from active oscillators
+                    /* Immediately remove from active oscillators */
                     delete activeOscillators[note];
                     
                     if(DEBUG) {
@@ -2456,7 +2456,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 } catch (e) {
                     console.error("Error stopping note:", e);
-                    // Still remove from active oscillators even if stopping failed
+                    /* Still remove from active oscillators even if stopping failed */
                     delete activeOscillators[note];
                 }
             }
@@ -2474,27 +2474,27 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 try {
                     var now = audioContext.currentTime;
-                    // FIX: Use the release time that was stored when the note was played
+                    /* FIX: Use the release time that was stored when the note was played */
                     var releaseTime = oscillatorData.releaseTime || 0.3;
                     
-                    // Stop all components
+                    /* Stop all components */
                     if (oscillatorData.oscillator) {
                         try {
                             oscillatorData.oscillator.stop(now + releaseTime);
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
                     if (oscillatorData.noiseBuffer) {
                         try {
-                            oscillatorData.noiseBuffer.stop(now + 0.01); // Stop noise immediately
+                            oscillatorData.noiseBuffer.stop(now + 0.01); /* Stop noise immediately */
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
-                    // Fade out gains
+                    /* Fade out gains */
                     if (oscillatorData.gainNode) {
                         oscillatorData.gainNode.gain.cancelScheduledValues(now);
                         oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
@@ -2507,7 +2507,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         oscillatorData.noiseGain.gain.linearRampToValueAtTime(0, now + 0.01);
                     }
                     
-                    // Remove from active oscillators immediately
+                    /* Remove from active oscillators immediately */
                     delete activeOscillators[note];
                     
                     if(DEBUG) {
@@ -2515,7 +2515,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 } catch (e) {
                     console.error("Error stopping 8-bit note:", e);
-                    // Still remove from active oscillators even if stopping failed
+                    /* Still remove from active oscillators even if stopping failed */
                     delete activeOscillators[note];
                 }
             }
@@ -2535,12 +2535,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var now = audioContext.currentTime;
                     var releaseTime = 0.3;
                     
-                    // Stop all components
+                    /* Stop all components */
                     if (oscillatorData.oscillator) {
                         try {
                             oscillatorData.oscillator.stop(now + releaseTime);
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
@@ -2548,7 +2548,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         try {
                             oscillatorData.harmonic1.stop(now + releaseTime);
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
@@ -2556,7 +2556,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         try {
                             oscillatorData.harmonic2.stop(now + releaseTime);
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
@@ -2564,11 +2564,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         try {
                             oscillatorData.pluckNoise.stop(now + 0.01);
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
-                    // Fade out gains
+                    /* Fade out gains */
                     if (oscillatorData.gainNode) {
                         oscillatorData.gainNode.gain.cancelScheduledValues(now);
                         oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
@@ -2593,7 +2593,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         oscillatorData.pluckGain.gain.linearRampToValueAtTime(0, now + 0.01);
                     }
                     
-                    // Remove from active oscillators immediately
+                    /* Remove from active oscillators immediately */
                     delete activeOscillators[note];
                     
                     if(DEBUG) {
@@ -2601,7 +2601,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 } catch (e) {
                     console.error("Error stopping guitar note:", e);
-                    // Still remove from active oscillators even if stopping failed
+                    /* Still remove from active oscillators even if stopping failed */
                     delete activeOscillators[note];
                 }
             }
@@ -2621,7 +2621,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     var now = audioContext.currentTime;
                     var releaseTime = 0.4;
                     
-                    // Stop all components immediately
+                    /* Stop all components immediately */
                     if (oscillatorData.voices) {
                         for (var i = 0; i < oscillatorData.voices.length; i++) {
                             var voice = oscillatorData.voices[i];
@@ -2630,7 +2630,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 try {
                                     voice.oscillator.stop(now + releaseTime);
                                 } catch (e) {
-                                    // Ignore errors
+                                    /* Ignore errors */
                                 }
                             }
                             
@@ -2638,7 +2638,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 try {
                                     voice.vibratoLFO.stop(now + 0.01);
                                 } catch (e) {
-                                    // Ignore errors
+                                    /* Ignore errors */
                                 }
                             }
                             
@@ -2646,11 +2646,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 try {
                                     voice.harmonic.stop(now + releaseTime);
                                 } catch (e) {
-                                    // Ignore errors
+                                    /* Ignore errors */
                                 }
                             }
                             
-                            // Fade out voice gains
+                            /* Fade out voice gains */
                             if (voice.voiceGain) {
                                 voice.voiceGain.gain.cancelScheduledValues(now);
                                 voice.voiceGain.gain.setValueAtTime(voice.voiceGain.gain.value, now);
@@ -2665,14 +2665,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     }
                     
-                    // Fade out master gain
+                    /* Fade out master gain */
                     if (oscillatorData.masterGain) {
                         oscillatorData.masterGain.gain.cancelScheduledValues(now);
                         oscillatorData.masterGain.gain.setValueAtTime(oscillatorData.masterGain.gain.value, now);
                         oscillatorData.masterGain.gain.linearRampToValueAtTime(0, now + releaseTime);
                     }
                     
-                    // Remove from active oscillators immediately
+                    /* Remove from active oscillators immediately */
                     delete activeOscillators[note];
                     
                     if(DEBUG) {
@@ -2680,7 +2680,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 } catch (e) {
                     console.error("Error stopping choir note:", e);
-                    // Still remove from active oscillators even if stopping failed
+                    /* Still remove from active oscillators even if stopping failed */
                     delete activeOscillators[note];
                 }
             }
@@ -2698,15 +2698,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 try {
                     var now = audioContext.currentTime;
-                    // Use the release time that was stored when the note was played
+                    /* Use the release time that was stored when the note was played */
                     var releaseTime = oscillatorData.releaseTime || 0.5;
                     
-                    // Stop all components
+                    /* Stop all components */
                     if (oscillatorData.oscillator) {
                         try {
                             oscillatorData.oscillator.stop(now + releaseTime);
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
@@ -2714,7 +2714,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         try {
                             oscillatorData.harmonic1.stop(now + releaseTime);
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
@@ -2722,11 +2722,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         try {
                             oscillatorData.harmonic2.stop(now + releaseTime);
                         } catch (e) {
-                            // Ignore errors
+                            /* Ignore errors */
                         }
                     }
                     
-                    // Fade out gains
+                    /* Fade out gains */
                     if (oscillatorData.gainNode) {
                         oscillatorData.gainNode.gain.cancelScheduledValues(now);
                         oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
@@ -2757,7 +2757,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         oscillatorData.dryGain.gain.linearRampToValueAtTime(0, now + releaseTime);
                     }
                     
-                    // Remove from active oscillators immediately
+                    /* Remove from active oscillators immediately */
                     delete activeOscillators[note];
                     
                     if(DEBUG) {
@@ -2765,12 +2765,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 } catch (e) {
                     console.error("Error stopping SNES note:", e);
-                    // Still remove from active oscillators even if stopping failed
+                    /* Still remove from active oscillators even if stopping failed */
                     delete activeOscillators[note];
                 }
             }
 
-            // --- VISUAL FEEDBACK ---
+            /* --- VISUAL FEEDBACK --- */
             function showKeyPress(note) {
                 var hexes = notesByNoteName[note];
                 if (hexes) {
@@ -2789,7 +2789,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
             }
 
-            // --- EVENT HANDLERS ---
+            /* --- EVENT HANDLERS --- */
             function handleNoteOn(noteData, pointerId) {
                 if (!noteData) return;
                 var note = noteData.note;
@@ -2839,7 +2839,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function addEventListeners() {
-                // Mouse events for SVG
+                /* Mouse events for SVG */
                 hexboard.addEventListener('mousedown', function(e) {
                     var hex = e.target;
                     if (hex.classList.contains('hexagon')) {
@@ -2883,14 +2883,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         currentMouseNote = null;
                     }
                     
-                    // Stop ALL notes when mouse is released
+                    /* Stop ALL notes when mouse is released */
                     for (var note in activeOscillators) {
                         stopNote(note);
                         hideKeyPress(note);
                     }
                 });
 
-                // Touch events for mobile
+                /* Touch events for mobile */
                 hexboard.addEventListener('touchstart', function(e) {
                     var hex = e.target;
                     if (hex.classList.contains('hexagon')) {
@@ -2938,7 +2938,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     }
                     
-                    // Stop ALL notes when touch ends
+                    /* Stop ALL notes when touch ends */
                     for (var note in activeOscillators) {
                         stopNote(note);
                         hideKeyPress(note);
@@ -2947,9 +2947,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
                 window.addEventListener('keydown', function(e) {
                     if (e.repeat || e.metaKey || e.ctrlKey) return;
-                    var key = e.key; // Use the actual key, not lowercase
+                    var key = e.key; /* Use the actual key, not lowercase */
                     
-                    // Just check if the key exists in our notesByKey object
+                    /* Just check if the key exists in our notesByKey object */
                     var noteData = notesByKey[key];
                     if (noteData) {
                         e.preventDefault();
@@ -2958,9 +2958,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 });
 
                 window.addEventListener('keyup', function(e) {
-                    var key = e.key; // Use the actual key, not lowercase
+                    var key = e.key; /* Use the actual key, not lowercase */
                     
-                    // Just check if the key exists in our notesByKey object
+                    /* Just check if the key exists in our notesByKey object */
                     var noteData = notesByKey[key];
                     if (noteData) {
                         e.preventDefault();
@@ -2970,10 +2970,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
                 recordButton.addEventListener('click', toggleRecording);
                 
-                // Panel event listeners
+                /* Panel event listeners */
                 panelCloseBtn.addEventListener('click', closePanel);
                 
-                // Long press detection for play button
+                /* Long press detection for play button */
                 playButton.addEventListener('mousedown', startLongPress);
                 playButton.addEventListener('mouseup', endLongPress);
                 playButton.addEventListener('mouseleave', cancelLongPress);
@@ -2981,41 +2981,41 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 playButton.addEventListener('touchend', endLongPress);
                 playButton.addEventListener('touchcancel', cancelLongPress);
                 
-                // Instrument button event listener
+                /* Instrument button event listener */
                 instrumentButton.addEventListener('click', function(e) {
                     e.stopPropagation();
                     instrumentDropdown.classList.toggle('active');
                 });
                 
-                // Close dropdown when clicking outside
+                /* Close dropdown when clicking outside */
                 document.addEventListener('click', function() {
                     instrumentDropdown.classList.remove('active');
                 });
                 
-                // Wave type selection
+                /* Wave type selection */
                 var waveOptions = document.querySelectorAll('.wave-option');
                 for (var i = 0; i < waveOptions.length; i++) {
                     waveOptions[i].addEventListener('click', function() {
-                        // Remove selected class from all options
+                        /* Remove selected class from all options */
                         for (var j = 0; j < waveOptions.length; j++) {
                             waveOptions[j].classList.remove('selected');
                         }
                         
-                        // Add selected class to clicked option
+                        /* Add selected class to clicked option */
                         this.classList.add('selected');
                     });
                 }
                 
-                // Set sine as default selected wave
+                /* Set sine as default selected wave */
                 document.querySelector('.wave-option[data-wave-type="sine"]').classList.add('selected');
                 
-                // Other button listeners
+                /* Other button listeners */
                 fullscreenButton.addEventListener('click', toggleFullscreen);
                 volumeSlider.addEventListener('input', function(e) {
                     if (mainGainNode) mainGainNode.gain.value = e.target.value;
                 });
                 
-                // Import/Export button listeners //TODO
+                /* Import/Export button listeners  */
                 exportButton.addEventListener('click', exportMelody);
                 
                 importButton.addEventListener('click', function() {
@@ -3024,7 +3024,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 fileInput.addEventListener('change', importMelody);
                 
-                // Audio conversion button listener
+                /* Audio conversion button listener */
                 importAudioButton.addEventListener('click', function() {
                     audioFileInput.click();
                 });
@@ -3032,7 +3032,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 audioFileInput.addEventListener('change', convertAudioFile);
             }
 
-            // --- PANEL FUNCTIONS ---
+            /* --- PANEL FUNCTIONS --- */
             function startLongPress(e) {
                 e.preventDefault();
                 longPressTimer = setTimeout(function() {
@@ -3047,12 +3047,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     longPressTimer = null;
                 }
                 
-                // Only trigger playback if panel didn't open
+                /* Only trigger playback if panel didn't open */
                 if (!panelOpen) {
                     togglePlayback();
                 }
                 
-                // Reset panelOpen flag
+                /* Reset panelOpen flag */
                 setTimeout(function() {
                     panelOpen = false;
                 }, 100);
@@ -3076,7 +3076,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
             
             function updatePanelContent() {
-                // Clear existing content
+                /* Clear existing content */
                 panelContent.innerHTML = '';
                 
                 if (recordedMelody.length === 0) {
@@ -3088,7 +3088,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return;
                 }
                 
-                // Create header row
+                /* Create header row */
                 var headerRow = document.createElement('div');
                 headerRow.className = 'note-list-header';
                 
@@ -3115,7 +3115,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 panelContent.appendChild(headerRow);
                 
-                // Add notes
+                /* Add notes */
                 for (var i = 0; i < recordedMelody.length; i++) {
                     var note = recordedMelody[i];
                     var noteItem = document.createElement('div');
@@ -3146,7 +3146,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
             }
             
-            // --- IMPORT/EXPORT FUNCTIONS ---
+            /* --- IMPORT/EXPORT FUNCTIONS --- */
             function exportMelody() {
                 if (recordedMelody.length === 0) {
                     alert('No melody to export. Record a melody first.');
@@ -3179,15 +3179,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     try {
                         var melodyData = JSON.parse(e.target.result);
                         
-                        // Validate the imported data
+                        /* Validate the imported data */
                         if (!melodyData.notes || !Array.isArray(melodyData.notes)) {
                             throw new Error('Invalid melody file format');
                         }
                         
-                        // Update the recorded melody
+                        /* Update the recorded melody */
                         recordedMelody = melodyData.notes;
                         
-                        // Update the panel content
+                        /* Update the panel content */
                         updatePanelContent();
                         
                         alert('Melody imported successfully!');
@@ -3198,21 +3198,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 reader.readAsText(file);
                 
-                // Reset the file input value to allow importing the same file again
+                /* Reset the file input value to allow importing the same file again */
                 event.target.value = '';
             }
 
-            // --- AUDIO CONVERSION FUNCTIONS ---
+            /* --- AUDIO CONVERSION FUNCTIONS --- */
             function convertAudioFile(event) {
                 var file = event.target.files[0];
                 if (!file) return;
                 
-                // Initialize audio context if not already done
+                /* Initialize audio context if not already done */
                 if (!audioInitialized) {
                     initAudioContext();
                 }
                 
-                // Show progress indicator
+                /* Show progress indicator */
                 progressContainer.classList.add('active');
                 progressText.textContent = 'Loading audio file...';
                 progressFill.style.width = '10%';
@@ -3224,22 +3224,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             progressText.textContent = 'Analyzing frequencies...';
                             progressFill.style.width = '30%';
                             
-                            // Analyze the audio buffer
+                            /* Analyze the audio buffer */
                             analyzeAudioBuffer(buffer)
                                 .then(function(melody) {
                                     progressText.textContent = 'Processing melody...';
                                     progressFill.style.width = '70%';
                                     
-                                    // Update the recorded melody with the new one
+                                    /* Update the recorded melody with the new one */
                                     recordedMelody = melody;
                                     
-                                    // Update the panel content
+                                    /* Update the panel content */
                                     updatePanelContent();
                                     
                                     progressText.textContent = 'Complete!';
                                     progressFill.style.width = '100%';
                                     
-                                    // Hide the progress indicator after a short delay
+                                    /* Hide the progress indicator after a short delay */
                                     setTimeout(function() {
                                         progressContainer.classList.remove('active');
                                         progressFill.style.width = '0%';
@@ -3249,7 +3249,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                     console.error('Error analyzing audio:', error);
                                     progressText.textContent = 'Error: ' + error.message;
                                     
-                                    // Hide the progress indicator after a delay
+                                    /* Hide the progress indicator after a delay */
                                     setTimeout(function() {
                                         progressContainer.classList.remove('active');
                                         progressFill.style.width = '0%';
@@ -3260,7 +3260,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             console.error('Error decoding audio data:', error);
                             progressText.textContent = 'Error decoding audio: ' + error.message;
                             
-                            // Hide the progress indicator after a delay
+                            /* Hide the progress indicator after a delay */
                             setTimeout(function() {
                                 progressContainer.classList.remove('active');
                                 progressFill.style.width = '0%';
@@ -3270,59 +3270,59 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 reader.readAsArrayBuffer(file);
                 
-                // Reset the file input value to allow selecting the same file again
+                /* Reset the file input value to allow selecting the same file again */
                 event.target.value = '';
             }
             
-            // Add this function alongside other functions like init(), playNote(), etc.
+            /* Add this function alongside other functions like init(), playNote(), etc. */
             function analyzeAudioBuffer(buffer) {
     return new Promise(function(resolve, reject) {
         try {
             var sampleRate = buffer.sampleRate;
             var channelData = buffer.getChannelData(0);
             
-            // Create a new audio context for analysis
+            /* Create a new audio context for analysis */
             var analysisContext = new AudioContext();
             
-            // Create a buffer source
+            /* Create a buffer source */
             var source = analysisContext.createBufferSource();
             source.buffer = buffer;
             
-            // Create an analyzer node
+            /* Create an analyzer node */
             var analyzer = analysisContext.createAnalyser();
             analyzer.fftSize = 4096;
-            analyzer.smoothingTimeConstant = 0.7; // Increased smoothing
-            analyzer.minDecibels = -70; // Raised minimum to filter more noise
+            analyzer.smoothingTimeConstant = 0.7; /* Increased smoothing */
+            analyzer.minDecibels = -70; /* Raised minimum to filter more noise */
             analyzer.maxDecibels = -20;
             
-            // Connect nodes
+            /* Connect nodes */
             source.connect(analyzer);
             
-            // Variables for tracking notes
+            /* Variables for tracking notes */
             var melody = [];
             var currentNotes = {};
             var noteStartTime = {};
-            var noteConfirmCount = {}; // Track how many frames a note has been detected
+            var noteConfirmCount = {}; /* Track how many frames a note has been detected */
             var analysisComplete = false;
             
-            // Analysis parameters - more restrictive
-            var minNoteDuration = 100; // Increased minimum duration
-            var noteThreshold = 25; // Raised threshold
+            /* Analysis parameters - more restrictive */
+            var minNoteDuration = 100; /* Increased minimum duration */
+            var noteThreshold = 25; /* Raised threshold */
             var frequencyResolution = sampleRate / analyzer.fftSize;
-            var confirmThreshold = 3; // Number of frames to confirm a note
+            var confirmThreshold = 3; /* Number of frames to confirm a note */
             
-            // Get frequency data
+            /* Get frequency data */
             var bufferLength = analyzer.frequencyBinCount;
             var dataArray = new Uint8Array(bufferLength);
             
-            // Improved peak detection
+            /* Improved peak detection */
             function findPeaks(dataArray, threshold) {
                 var peaks = [];
                 
                 for (var i = 2; i < dataArray.length - 2; i++) {
                     if (dataArray[i] < threshold) continue;
                     
-                    // More strict local maximum check
+                    /* More strict local maximum check */
                     if (dataArray[i] > dataArray[i-1] && dataArray[i] > dataArray[i+1] &&
                         dataArray[i] > dataArray[i-2] && dataArray[i] > dataArray[i+2] &&
                         dataArray[i] > dataArray[i-3] && dataArray[i] > dataArray[i+3]) {
@@ -3339,7 +3339,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 }
                 
-                // Sort by amplitude and take top peaks
+                /* Sort by amplitude and take top peaks */
                 peaks.sort(function(a, b) {
                     return b.amplitude - a.amplitude;
                 });
@@ -3347,19 +3347,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 return peaks.slice(0, 6);
             }
             
-            // Analysis function
+            /* Analysis function */
             function analyze() {
                 if (analysisComplete) return;
                 
                 analyzer.getByteFrequencyData(dataArray);
                 
-                // Find peaks
+                /* Find peaks */
                 var peaks = findPeaks(dataArray, noteThreshold);
                 
-                // Get current time
+                /* Get current time */
                 var currentTime = source.context.currentTime * 1000;
                 
-                // Create detected notes
+                /* Create detected notes */
                 var detectedNotes = {};
                 
                 for (var i = 0; i < peaks.length; i++) {
@@ -3370,30 +3370,30 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 }
                 
-                // Check for new notes
+                /* Check for new notes */
                 for (var noteName in detectedNotes) {
                     if (!currentNotes[noteName]) {
-                        // First detection - increment confirm count
+                        /* First detection - increment confirm count */
                         noteConfirmCount[noteName] = (noteConfirmCount[noteName] || 0) + 1;
                         
-                        // Only start the note after it's been confirmed multiple times
+                        /* Only start the note after it's been confirmed multiple times */
                         if (noteConfirmCount[noteName] >= confirmThreshold) {
                             currentNotes[noteName] = detectedNotes[noteName];
                             noteStartTime[noteName] = currentTime;
                         }
                     } else {
-                        // Note already detected - reset confirm count
+                        /* Note already detected - reset confirm count */
                         noteConfirmCount[noteName] = confirmThreshold;
                     }
                 }
                 
-                // Check for notes that ended
+                /* Check for notes that ended */
                 for (var noteName in currentNotes) {
                     if (!detectedNotes[noteName]) {
-                        // Decrement confirm count
+                        /* Decrement confirm count */
                         noteConfirmCount[noteName] = (noteConfirmCount[noteName] || confirmThreshold) - 1;
                         
-                        // Only end the note after it's been missed multiple times
+                        /* Only end the note after it's been missed multiple times */
                         if (noteConfirmCount[noteName] <= 0) {
                             var duration = currentTime - noteStartTime[noteName];
                             
@@ -3413,11 +3413,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 }
                 
-                // Update progress
+                /* Update progress */
                 var progress = (currentTime / (buffer.duration * 1000)) * 100;
                 progressFill.style.width = Math.min(progress, 100) + '%';
                 
-                // Continue analysis
+                /* Continue analysis */
                 if (currentTime < buffer.duration * 1000) {
                     requestAnimationFrame(analyze);
                 } else {
@@ -3429,7 +3429,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 if (analysisComplete) return;
                 analysisComplete = true;
                 
-                // Save any remaining notes
+                /* Save any remaining notes */
                 for (var noteName in currentNotes) {
                     var duration = (buffer.duration * 1000) - noteStartTime[noteName];
                     
@@ -3443,27 +3443,27 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 }
                 
-                // Sort melody by time
+                /* Sort melody by time */
                 melody.sort(function(a, b) {
                     return a.time - b.time;
                 });
                 
-                // Clean up
+                /* Clean up */
                 source.stop();
                 analysisContext.close();
                 
-                // Update progress to 100%
+                /* Update progress to 100% */
                 progressFill.style.width = '100%';
                 
-                // Always resolve, even with empty melody
+                /* Always resolve, even with empty melody */
                 resolve(melody);
             }
             
-            // Start the source and analysis
+            /* Start the source and analysis */
             source.start();
             requestAnimationFrame(analyze);
             
-            // Fallback timeout
+            /* Fallback timeout */
             setTimeout(function() {
                 if (!analysisComplete) {
                     finishAnalysis();
@@ -3494,7 +3494,7 @@ function findNearestNote(frequency) {
         }
     }
     
-    // More strict matching - within 50 cents (quarter semitone)
+    /* More strict matching - within 50 cents (quarter semitone) */
     var centsDifference = 1200 * Math.log2(frequency / closestNote.freq);
     
     if (Math.abs(centsDifference) < 50) {
@@ -3504,7 +3504,7 @@ function findNearestNote(frequency) {
     return null;
 }
 
-            // --- CONTROL BAR LOGIC ---
+            /* --- CONTROL BAR LOGIC --- */
             function toggleRecording() {
                 if (!audioSupported) {
                     alert("Audio recording is not supported in this browser");
@@ -3564,7 +3564,7 @@ function findNearestNote(frequency) {
                     console.log(recordedMelody);
                 }
 
-                // Before starting playback, ensure the audio context is running
+                /* Before starting playback, ensure the audio context is running */
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
@@ -3616,7 +3616,7 @@ function findNearestNote(frequency) {
                 }
                 playbackTimeouts = [];
                 
-                // Stop all notes when playback stops
+                /* Stop all notes when playback stops */
                 for (var note in activeOscillators) {
                     stopNote(note);
                     hideKeyPress(note);
@@ -3671,7 +3671,7 @@ function findNearestNote(frequency) {
                 fullscreenExitIcon.style.display = isFullscreen ? 'block' : 'none';
             });
             
-            // --- WAV EXPORT ---
+            /* --- WAV EXPORT --- */
             function generateWav() {
                 if (recordedMelody.length === 0 || !audioSupported) return;
 
@@ -3686,19 +3686,19 @@ function findNearestNote(frequency) {
                     offlineGainNode.gain.value = volumeSlider.value;
                     offlineGainNode.connect(offlineContext.destination);
 
-                    // Get wave type based on current instrument
+                    /* Get wave type based on current instrument */
                     var waveType;
                     if (currentInstrument === '8bit') {
                         var waveformSelect = document.getElementById('gameboy-wave');
                         waveType = waveformSelect ? waveformSelect.value : 'square';
                     } else if (currentInstrument === 'guitar') {
-                        // For guitar, we'll use sawtooth as a base
+                        /* For guitar, we'll use sawtooth as a base */
                         waveType = 'sawtooth';
                     } else if (currentInstrument === 'choir') {
-                        // For choir, we'll use sine as a base
+                        /* For choir, we'll use sine as a base */
                         waveType = 'sine';
                     } else if (currentInstrument === 'snes') {
-                        // For SNES, we'll use triangle as a base
+                        /* For SNES, we'll use triangle as a base */
                         waveType = 'triangle';
                     } else {
                         var selectedWave = document.querySelector('.wave-option.selected');
@@ -3718,7 +3718,7 @@ function findNearestNote(frequency) {
                         var gainNode = offlineContext.createGain();
                         
                         oscillator.type = waveType;
-                        // Round frequency to 3 decimal places
+                        /* Round frequency to 3 decimal places */
                         var roundedFreq = Math.round(note.freq * 1000) / 1000;
                         oscillator.frequency.value = roundedFreq;
 
@@ -3757,7 +3757,7 @@ function findNearestNote(frequency) {
                 a.parentNode.removeChild(a);
             }
 
-            function bufferToWave(abuffer) { // TODO
+            function bufferToWave(abuffer) {
                 var numOfChan = abuffer.numberOfChannels,
                     len = abuffer.length * numOfChan * 2 + 44,
                     buffer = new ArrayBuffer(len),
@@ -3765,24 +3765,24 @@ function findNearestNote(frequency) {
                     channels = [],
                     i, sample, offset = 0, pos = 0;
                 
-                // Write WAVE header
-                setUint32(0x46464952); // "RIFF"
-                setUint32(len - 8); // file length - 8
-                setUint32(0x45564157); // "WAVE"
-                setUint32(0x20746d66); // "fmt " chunk
-                setUint32(16); // length = 16
-                setUint16(1); // PCM
+                /* Write WAVE header */
+                setUint32(0x46464952); /* "RIFF" */
+                setUint32(len - 8); /* file length - 8 */
+                setUint32(0x45564157); /* "WAVE" */
+                setUint32(0x20746d66); /* "fmt " chunk */
+                setUint32(16); /* length = 16 */
+                setUint16(1); /* PCM */
                 setUint16(numOfChan);
                 setUint32(abuffer.sampleRate);
-                setUint32(abuffer.sampleRate * 4); // avg. bytes/sec
-                setUint16(4); // block-align
-                setUint16(16); // BitsPerSample (16)
+                setUint32(abuffer.sampleRate * 4); /* avg. bytes/sec */
+                setUint16(4); /* block-align */
+                setUint16(16); /* BitsPerSample (16) */
 
-                // Write data sub-chunk
-                setUint32(0x61746164); // "data" - chunk
-                setUint32(len - pos - 4); // chunk length
+                /* Write data sub-chunk */
+                setUint32(0x61746164); /* "data" - chunk */
+                setUint32(len - pos - 4); /* chunk length */
                 
-                // Write interleaved data
+                /* Write interleaved data */
                 for (var i = 0; i < abuffer.numberOfChannels; i++)
                     channels.push(abuffer.getChannelData(i));
                 
@@ -3907,4 +3907,3 @@ function findNearestNote(frequency) {
     </div>
 </body>
 </html>
-```
