@@ -1533,47 +1533,47 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function createPiano() {
-                // Create main SVG container
+                /* Create main SVG container */
                 var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('class', 'piano-svg');
                 
-                // Hexagon dimensions for proper tiling (pointy-top orientation)
-                var hexRadius = 50; // Radius from center to any vertex
+                /* Hexagon dimensions for proper tiling (pointy-top orientation) */
+                var hexRadius = 50; /* Radius from center to any vertex */
                 
-                // For pointy-top hexagons:
-                // Width = 2 * radius
-                // Height = sqrt(3) * radius
+                /* For pointy-top hexagons: */
+                /* Width = 2 * radius */
+                /* Height = sqrt(3) * radius */
                 var hexWidth = hexRadius * 2;
                 var hexHeight = Math.sqrt(3) * hexRadius;
                 
-                // CORRECTED SPACING FOR PROPER TILING:
-                // Horizontal spacing between centers is 1.5 * radius
+                /* CORRECTED SPACING FOR PROPER TILING: */
+                /* Horizontal spacing between centers is 1.5 * radius */
                 var horizontalSpacing = hexRadius * 1.75;
-                // Vertical spacing between rows is the full height
+                /* Vertical spacing between rows is the full height */
                 var verticalSpacing = hexHeight * 0.85;
                 
-                // Calculate total width and height with proper spacing
+                /* Calculate total width and height with proper spacing */
                 var maxRowLength = Math.max.apply(Math, noteRows.map(function(row) { return row.length; }));
                 
-                // For width: (maxRowLength-1) * spacing + hexWidth + offset for odd rows
-                // The offset accounts for the half-spacing shift in alternating rows
+                /* For width: (maxRowLength-1) * spacing + hexWidth + offset for odd rows */
+                /* The offset accounts for the half-spacing shift in alternating rows */
                 var totalWidth = (maxRowLength - 1) * horizontalSpacing + hexWidth + (horizontalSpacing / 2);
                 
-                // For height: (noteRows.length-1) * spacing + hexHeight
-                // This properly accounts for the spacing between rows
-                var totalHeight = (noteRows.length - 1) * verticalSpacing + hexHeight;
+                /* For height: (noteRows.length-1) * spacing + hexHeight */
+                /* This properly accounts for the spacing between rows */
+                var totalHeight = (noteRows.length - 1) * verticalSpacing + (2 * hexRadius);
                 
-                // Set SVG dimensions
+                /* Set SVG dimensions */
                 svg.setAttribute('width', "100%");
                 svg.setAttribute('height', "100%");
                 svg.setAttribute('viewBox', '0 0 ' + totalWidth + ' ' + totalHeight);
                 
-                // Create hexagon points (pointy-top orientation)
+                /* Create hexagon points (pointy-top orientation) */
                 function getHexagonPoints(cx, cy, radius) {
                     var points = [];
-                    // Start at top point and go clockwise
+                    /* Start at top point and go clockwise */
                     for (var i = 0; i < 6; i++) {
-                        // 30°, 90°, 150°, 210°, 270°, 330° for pointy-top
+                        /* 30°, 90°, 150°, 210°, 270°, 330° for pointy-top */
                         var angle = (Math.PI / 3) * i - Math.PI / 2;
                         var x = cx + radius * Math.cos(angle);
                         var y = cy + radius * Math.sin(angle);
@@ -1582,11 +1582,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return points.join(' ');
                 }
                 
-                // Create hexagons for each note
+                /* Create hexagons for each note */
                 for (var i = 0; i < noteRows.length; i++) {
                     var rowData = noteRows[i];
                     
-                    // Calculate row offset for hexagonal tiling
+                    /* Calculate row offset for hexagonal tiling */
                     var rowOffsetX = (i % 2 === 1) ? horizontalSpacing / 2 : 0;
                     
                     var rowOffsetY = i * verticalSpacing;
@@ -1594,16 +1594,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     for (var j = 0; j < rowData.length; j++) {
                         var noteData = rowData[j];
                         
-                        // Calculate center position for this hexagon
-                        // FIX: Position the first hexagon at hexRadius, then add spacing for subsequent ones
+                        /* Calculate center position for this hexagon */
+                        /* FIX: Position the first hexagon at hexRadius, then add spacing for subsequent ones */
                         var cx = rowOffsetX + hexRadius + (j * horizontalSpacing);
                         var cy = rowOffsetY + hexRadius;
                         
-                        // Create group for hexagon and text
+                        /* Create group for hexagon and text */
                         var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                         g.setAttribute('class', 'hexagon-group');
                         
-                        // Create hexagon polygon
+                        /* Create hexagon polygon */
                         var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                         polygon.setAttribute('class', 'hexagon');
                         polygon.setAttribute('id', noteData.note);
@@ -1613,36 +1613,36 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         polygon.setAttribute('data-freq', noteData.freq);
                         polygon.setAttribute('data-note-name', noteData.note.replace(/[0-9]/, ''));
                         
-                        // Create note name text - positioned higher in the hexagon
+                        /* Create note name text - positioned higher in the hexagon */
                         var noteText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         noteText.setAttribute('class', 'note-text');
                         noteText.setAttribute('x', cx);
-                        noteText.setAttribute('y', cy); // Moved up from center
+                        noteText.setAttribute('y', cy); /* Moved up from center */
                         noteText.textContent = noteData.note;
                         
-                        // Create key label text - positioned lower in the hexagon
+                        /* Create key label text - positioned lower in the hexagon */
                         var keyText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         keyText.setAttribute('class', 'note-key');
                         keyText.setAttribute('x', cx);
-                        keyText.setAttribute('y', cy + 20); // Moved further down from center
+                        keyText.setAttribute('y', cy + 20); /* Moved further down from center */
                         keyText.textContent = noteData.key === 'Shift' ? '⇧' : noteData.key;
                         
-                        // Add elements to group
+                        /* Add elements to group */
                         g.appendChild(polygon);
                         g.appendChild(noteText);
                         g.appendChild(keyText);
                         
-                        // Add group to SVG
+                        /* Add group to SVG */
                         svg.appendChild(g);
                         
-                        // Store references for event handling
-                        notesByKey[noteData.key] = noteData; // Store the exact key, not lowercase
+                        /* Store references for event handling */
+                        notesByKey[noteData.key] = noteData; /* Store the exact key, not lowercase */
                         notesByNoteName[noteData.note] = notesByNoteName[noteData.note] || [];
                         notesByNoteName[noteData.note].push(polygon);
                     }
                 }
                 
-                // Add SVG to hexboard
+                /* Add SVG to hexboard */
                 hexboard.appendChild(svg);
             }
             
