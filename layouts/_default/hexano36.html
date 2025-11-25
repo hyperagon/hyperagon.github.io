@@ -9,10 +9,10 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
-<head>
+
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hexano 3.5</title>
+    <title>Hexano 3.6</title>
     <style type="text/css">
         /* --- Basic Setup & Theme --- */
         html, body {
@@ -34,22 +34,25 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
         /* --- Main Layout --- */
         .app-container {
-            display: block;
+            display: flex;
+            flex-direction: column;
             width: 100%;
             height: 100%;
-            position: relative;
         }
 
-        .hexboard {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+        .hexboard-container {
+            flex-grow: 1; /* This makes it fill the remaining vertical space */
+            
+            /* Keep these existing styles */
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: auto;
+            overflow: hidden;
+        }
+
+        .hexboard {
+            display: block;
+            transition: transform 0.3s ease;
         }
 
         /* --- Control Bar --- */
@@ -580,11 +583,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             background-color: #8B4513 !important;
         }
 
-        /* Choir instrument specific styles */
-        .choir-theme {
-            background-color: #4a148c !important;
-        }
-
         /* SNES instrument specific styles */
         .snes-theme {
             background-color: #5D4E37 !important;
@@ -594,6 +592,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         var DEBUG = false;
         document.addEventListener('DOMContentLoaded', function() {
             // --- DOM ELEMENTS ---
+            var hexboardContainer = document.querySelector('.hexboard-container');
             var hexboard = document.querySelector('.hexboard');
             var recordButton = document.getElementById('record-button');
             var playButton = document.getElementById('play-button');
@@ -719,29 +718,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         
                         // Remove Guitar specific controls if they exist
                         removeGuitarControls();
-                    }
-                },
-                'choir': {
-                    name: 'Choir',
-                    playNote: function(note, freq) {
-                        return playChoirNote(note, freq);
-                    },
-                    stopNote: function(note) {
-                        return stopChoirNote(note);
-                    },
-                    init: function() {
-                        // Apply Choir theme - ONLY BACKGROUND
-                        document.body.classList.add('choir-theme');
-                        
-                        // Create Choir specific controls if needed
-                        createChoirControls();
-                    },
-                    cleanup: function() {
-                        // Remove Choir theme - ONLY BACKGROUND
-                        document.body.classList.remove('choir-theme');
-                        
-                        // Remove Choir specific controls if they exist
-                        removeChoirControls();
                     }
                 },
                 '16bit': {
@@ -890,6 +866,86 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 // Initialize instrument selector
                 initInstrumentSelector();
+                
+                /* Initialize hexboard scaling */
+                scaleHexboard();
+                window.addEventListener('resize', scaleHexboard);
+                window.addEventListener('orientationchange', scaleHexboard);
+            }
+
+            /* --- HEXBOARD SCALING --- */
+            function scaleHexboard() {
+                if (!hexboard || !hexboardContainer) return;
+
+                var svg = hexboard.querySelector('.piano-svg');
+                if (!svg) return;
+
+                /* --- STEP 1: RESET --- */
+                /* We must clear previous overrides so the container can shrink  */
+                /* to its natural size before we measure it. */
+                hexboard.style.width = '';
+                hexboard.style.height = '';
+                hexboard.style.minWidth = '';
+                hexboard.style.minHeight = '';
+                svg.style.width = '';
+                svg.style.height = '';
+
+                /* --- STEP 2: MEASURE --- */
+                var containerWidth = hexboardContainer.clientWidth;
+                var containerHeight = hexboardContainer.clientHeight;
+
+                if (containerWidth === 0 || containerHeight === 0) return;
+
+                var viewBox = svg.getAttribute('viewBox').split(' ');
+                var originalWidth = parseFloat(viewBox[2]);
+                var originalHeight = parseFloat(viewBox[3]);
+
+                var isPortrait = window.innerHeight > window.innerWidth;
+
+                let scale;
+
+                if (isPortrait) {
+                /* PORTRAIT: */
+                /* 1. Fit the board's LENGTH (originalWidth) to the screen HEIGHT. */
+                /* 2. Ignore the screen width (don't shrink just because it's narrow). */
+                scale = containerHeight / originalWidth;
+
+                hexboard.style.transform = 'rotate(90deg)';
+                } else {
+                /* LANDSCAPE: */
+                /* Standard fit (respect both dimensions so it doesn't get cut off). */
+                scale = Math.min(containerWidth / originalWidth, containerHeight / originalHeight);
+
+                hexboard.style.transform = 'rotate(0deg)';
+                }
+
+                var finalWidth = originalWidth * scale;
+                var finalHeight = originalHeight * scale;
+
+                /* --- STEP 3: APPLY --- */
+
+                /* Force specific pixel sizes on the wrapper */
+                hexboard.style.width = finalWidth + 'px';
+                hexboard.style.height = finalHeight + 'px';
+
+                /* Lock min-size to prevent Flexbox from squashing it  */
+                /* (This fixes the "width shrinks it" issue) */
+                hexboard.style.minWidth = finalWidth + 'px';
+                hexboard.style.minHeight = finalHeight + 'px';
+
+                /* Force SVG to fill that exact space */
+                svg.style.width = finalWidth + 'px';
+                svg.style.height = finalHeight + 'px';
+
+                /* Cleanup constraints */
+                hexboard.style.maxWidth = 'none';
+                hexboard.style.maxHeight = 'none';
+                svg.style.maxWidth = 'none';
+                svg.style.maxHeight = 'none';
+
+                hexboard.style.flexShrink = '0';
+                hexboard.style.transformOrigin = 'center center';
+                hexboard.style.margin = 'auto';
             }
 
             function initInstrumentSelector() {
@@ -1196,130 +1252,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 document.querySelector('.wave-selector').style.display = 'inline-flex';
             }
-
-            function createChoirControls() {
-                // Create Choir specific controls
-                document.querySelector('.wave-selector').style.display = 'none';
-                var controlBar = document.querySelector('.control-bar');
-                
-                // Add Choir specific controls
-                var choirControls = document.createElement('div');
-                choirControls.id = 'choir-controls';
-                choirControls.style.display = 'inline-flex';
-                choirControls.style.marginLeft = '10px';
-                
-                // Voice Type control
-                var typeGroup = document.createElement('div');
-                typeGroup.className = 'control-group';
-                typeGroup.style.marginRight = '10px';
-                
-                var typeLabel = document.createElement('label');
-                typeLabel.textContent = 'Voices';
-                typeLabel.style.marginBottom = '5px';
-                typeLabel.style.fontSize = '0.8em';
-                
-                var typeSelect = document.createElement('select');
-                typeSelect.id = 'choir-voices';
-                typeSelect.style.width = '120px';
-                
-                var sopranoOption = document.createElement('option');
-                sopranoOption.value = 'soprano';
-                sopranoOption.textContent = 'Soprano';
-                typeSelect.appendChild(sopranoOption);
-                
-                var altoOption = document.createElement('option');
-                altoOption.value = 'alto';
-                altoOption.textContent = 'Alto';
-                typeSelect.appendChild(altoOption);
-                
-                var tenorOption = document.createElement('option');
-                tenorOption.value = 'tenor';
-                tenorOption.textContent = 'Tenor';
-                typeSelect.appendChild(tenorOption);
-                
-                var bassOption = document.createElement('option');
-                bassOption.value = 'bass';
-                bassOption.textContent = 'Bass';
-                typeSelect.appendChild(bassOption);
-                
-                var mixedOption = document.createElement('option');
-                mixedOption.value = 'mixed';
-                mixedOption.textContent = 'Mixed';
-                mixedOption.selected = true;
-                typeSelect.appendChild(mixedOption);
-                
-                typeGroup.appendChild(typeLabel);
-                typeGroup.appendChild(typeSelect);
-                
-                // Vibrato control
-                var vibratoGroup = document.createElement('div');
-                vibratoGroup.className = 'control-group';
-                vibratoGroup.style.marginRight = '10px';
-                
-                var vibratoLabel = document.createElement('label');
-                vibratoLabel.textContent = 'Vibrato';
-                vibratoLabel.id = 'choir-vibrato-label';
-                vibratoLabel.style.marginBottom = '5px';
-                vibratoLabel.style.fontSize = '0.8em';
-                
-                var vibratoSlider = document.createElement('input');
-                vibratoSlider.type = 'range';
-                vibratoSlider.id = 'choir-vibrato';
-                vibratoSlider.min = '0';
-                vibratoSlider.max = '5';
-                vibratoSlider.step = '0.1';
-                vibratoSlider.value = '2';
-                vibratoSlider.style.width = '100px';
-                
-                vibratoSlider.addEventListener('input', function() {
-                    document.getElementById('choir-vibrato-label').textContent = 'Vibrato';
-                });
-                
-                vibratoGroup.appendChild(vibratoLabel);
-                vibratoGroup.appendChild(vibratoSlider);
-                
-                // Warmth control
-                var warmthGroup = document.createElement('div');
-                warmthGroup.className = 'control-group';
-                
-                var warmthLabel = document.createElement('label');
-                warmthLabel.textContent = 'Warmth';
-                warmthLabel.id = 'choir-warmth-label';
-                warmthLabel.style.marginBottom = '5px';
-                warmthLabel.style.fontSize = '0.8em';
-                
-                var warmthSlider = document.createElement('input');
-                warmthSlider.type = 'range';
-                warmthSlider.id = 'choir-warmth';
-                warmthSlider.min = '0';
-                warmthSlider.max = '1';
-                warmthSlider.step = '0.05';
-                warmthSlider.value = '0.3';
-                warmthSlider.style.width = '100px';
-                
-                warmthSlider.addEventListener('input', function() {
-                    document.getElementById('choir-warmth-label').textContent = 'Warmth';
-                });
-                
-                warmthGroup.appendChild(warmthLabel);
-                warmthGroup.appendChild(warmthSlider);
-                
-                choirControls.appendChild(typeGroup);
-                choirControls.appendChild(vibratoGroup);
-                choirControls.appendChild(warmthGroup);
-                
-                controlBar.appendChild(choirControls);
-            }
-
-            function removeChoirControls() {
-                var choirControls = document.getElementById('choir-controls');
-                if (choirControls) {
-                    choirControls.parentNode.removeChild(choirControls);
-                }
-                
-                document.querySelector('.wave-selector').style.display = 'inline-flex';
-            }
-
+            
             function createSNESControls() {
                 // Create SNES specific controls
                 document.querySelector('.wave-selector').style.display = 'none';
@@ -2000,155 +1933,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
             }
 
-           function playChoirNote(note, freq) {
-                try {
-                    var now = audioContext.currentTime;
-                    var gainValue = 0.1;
-
-                    // Get Choir specific parameters
-                    var voicesSelect = document.getElementById('choir-voices');
-                    var vibratoSlider = document.getElementById('choir-vibrato');
-                    var warmthSlider = document.getElementById('choir-warmth');
-                    
-                    var voiceType = voicesSelect ? voicesSelect.value : 'mixed';
-                    var vibratoAmount = vibratoSlider ? parseFloat(vibratoSlider.value) : 2;
-                    var warmthAmount = warmthSlider ? parseFloat(warmthSlider.value) : 0.3;
-
-                    // Create master gain for all voices
-                    var masterGain = audioContext.createGain();
-                    masterGain.gain.value = gainValue;
-                    masterGain.connect(mainGainNode);
-                    
-                    // Create a single formant filter to shape sound
-                    var formantFilter = audioContext.createBiquadFilter();
-                    formantFilter.type = 'peaking';
-                    
-                    // Set formant based on voice type
-                    if (voiceType === 'soprano') {
-                        formantFilter.frequency.value = 1500;
-                        formantFilter.Q.value = 1.5;
-                        formantFilter.gain.value = 6;
-                        freq = freq * 1.5;
-                    } else if (voiceType === 'alto') {
-                        formantFilter.frequency.value = 1000;
-                        formantFilter.Q.value = 1.2;
-                        formantFilter.gain.value = 5;
-                        freq = freq * 1.2;
-                    } else if (voiceType === 'tenor') {
-                        formantFilter.frequency.value = 700;
-                        formantFilter.Q.value = 1.0;
-                        formantFilter.gain.value = 4;
-                        freq = freq * 0.9;
-                    } else if (voiceType === 'bass') {
-                        formantFilter.frequency.value = 400;
-                        formantFilter.Q.value = 0.8;
-                        formantFilter.gain.value = 3;
-                        freq = freq * 0.7;
-                    } else { // mixed
-                        formantFilter.frequency.value = 900;
-                        formantFilter.Q.value = 1.0;
-                        formantFilter.gain.value = 4;
-                    }
-                    
-                    // Create a gentle low-pass filter
-                    var lowpassFilter = audioContext.createBiquadFilter();
-                    lowpassFilter.type = 'lowpass';
-                    lowpassFilter.frequency.value = 2500; // Lower cutoff to reduce harshness
-                    lowpassFilter.Q.value = 0.5;
-                    
-                    // Connect filters
-                    masterGain.connect(formantFilter);
-                    formantFilter.connect(lowpassFilter);
-                    lowpassFilter.connect(mainGainNode);
-                    
-                    // Create just 1 voice for cleaner sound
-                    var voices = [];
-                    
-                    for (var i = 0; i < 1; i++) {
-                        // Main oscillator with triangle wave for softer sound
-                        var oscillator = audioContext.createOscillator();
-                        oscillator.type = 'triangle';
-                        
-                        // Add slight detuning for chorus effect
-                        var detune = (Math.random() - 0.5) * 2; // ±1 cent
-                        oscillator.detune.value = detune;
-                        oscillator.frequency.value = freq;
-                        
-                        // Create gentle vibrato
-                        var vibratoLFO = audioContext.createOscillator();
-                        var vibratoGain = audioContext.createGain();
-                        
-                        vibratoLFO.frequency.value = 3 + Math.random() * 2; // 3-5 Hz
-                        vibratoGain.gain.value = vibratoAmount * 0.3; // Very reduced vibrato
-                        
-                        vibratoLFO.connect(vibratoGain);
-                        vibratoGain.connect(oscillator.frequency);
-                        
-                        // Create gain for this voice
-                        var voiceGain = audioContext.createGain();
-                        voiceGain.gain.value = 0.8;
-                        
-                        // Add gentle attack
-                        voiceGain.gain.setValueAtTime(0, now);
-                        voiceGain.gain.linearRampToValueAtTime(0.8, now + 0.05);
-                        voiceGain.gain.linearRampToValueAtTime(0.6, now + 0.2);
-                        
-                        // Connect
-                        oscillator.connect(voiceGain);
-                        voiceGain.connect(masterGain);
-                        
-                        // Start oscillators
-                        oscillator.start(now);
-                        vibratoLFO.start(now);
-                        
-                        // Add subtle warmth with a second harmonic
-                        if (warmthAmount > 0) {
-                            var harmonic = audioContext.createOscillator();
-                            harmonic.type = 'sine';
-                            harmonic.frequency.value = freq * 2;
-                            harmonic.detune.value = detune;
-                            
-                            var harmonicGain = audioContext.createGain();
-                            harmonicGain.gain.value = warmthAmount * 0.05; // Very reduced warmth
-                            
-                            harmonic.connect(harmonicGain);
-                            harmonicGain.connect(masterGain);
-                            harmonic.start(now);
-                            
-                            voices.push({
-                                oscillator: oscillator,
-                                vibratoLFO: vibratoLFO,
-                                vibratoGain: vibratoGain,
-                                voiceGain: voiceGain,
-                                harmonic: harmonic,
-                                harmonicGain: harmonicGain
-                            });
-                        } else {
-                            voices.push({
-                                oscillator: oscillator,
-                                vibratoLFO: vibratoLFO,
-                                vibratoGain: vibratoGain,
-                                voiceGain: voiceGain
-                            });
-                        }
-                    }
-                    
-                    // Store all components for this note
-                    activeOscillators[note] = {
-                        voices: voices,
-                        masterGain: masterGain,
-                        formantFilter: formantFilter,
-                        lowpassFilter: lowpassFilter
-                    };
-                    
-                    if(DEBUG) {
-                        console.log("Choir Note started:", note, "Frequency:", freq);
-                    }
-                } catch (e) {
-                    console.error("Error playing choir note:", e);
-                }
-            }
-
             function playSNESNote(note, freq) {
                 try {
                     var now = audioContext.currentTime;
@@ -2526,85 +2310,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 } catch (e) {
                     console.error("Error stopping guitar note:", e);
-                    // Still remove from active oscillators even if stopping failed
-                    delete activeOscillators[note];
-                }
-            }
-
-            function stopChoirNote(note) {
-                var oscillatorData = activeOscillators[note];
-                
-                if (!oscillatorData) {
-                    if(DEBUG) {
-                        console.log("Choir note data missing:", note, oscillatorData);
-                    }
-                    delete activeOscillators[note];
-                    return;
-                }
-                
-                try {
-                    var now = audioContext.currentTime;
-                    var releaseTime = 0.4;
-                    
-                    // Stop all components immediately
-                    if (oscillatorData.voices) {
-                        for (var i = 0; i < oscillatorData.voices.length; i++) {
-                            var voice = oscillatorData.voices[i];
-                            
-                            if (voice.oscillator) {
-                                try {
-                                    voice.oscillator.stop(now + releaseTime);
-                                } catch (e) {
-                                    // Ignore errors
-                                }
-                            }
-                            
-                            if (voice.vibratoLFO) {
-                                try {
-                                    voice.vibratoLFO.stop(now + 0.01);
-                                } catch (e) {
-                                    // Ignore errors
-                                }
-                            }
-                            
-                            if (voice.harmonic) {
-                                try {
-                                    voice.harmonic.stop(now + releaseTime);
-                                } catch (e) {
-                                    // Ignore errors
-                                }
-                            }
-                            
-                            // Fade out voice gains
-                            if (voice.voiceGain) {
-                                voice.voiceGain.gain.cancelScheduledValues(now);
-                                voice.voiceGain.gain.setValueAtTime(voice.voiceGain.gain.value, now);
-                                voice.voiceGain.gain.linearRampToValueAtTime(0, now + releaseTime);
-                            }
-                            
-                            if (voice.harmonicGain) {
-                                voice.harmonicGain.gain.cancelScheduledValues(now);
-                                voice.harmonicGain.gain.setValueAtTime(voice.harmonicGain.gain.value, now);
-                                voice.harmonicGain.gain.linearRampToValueAtTime(0, now + releaseTime);
-                            }
-                        }
-                    }
-                    
-                    // Fade out master gain
-                    if (oscillatorData.masterGain) {
-                        oscillatorData.masterGain.gain.cancelScheduledValues(now);
-                        oscillatorData.masterGain.gain.setValueAtTime(oscillatorData.masterGain.gain.value, now);
-                        oscillatorData.masterGain.gain.linearRampToValueAtTime(0, now + releaseTime);
-                    }
-                    
-                    // Remove from active oscillators immediately
-                    delete activeOscillators[note];
-                    
-                    if(DEBUG) {
-                        console.log("Choir Note stopped:", note);
-                    }
-                } catch (e) {
-                    console.error("Error stopping choir note:", e);
                     // Still remove from active oscillators even if stopping failed
                     delete activeOscillators[note];
                 }
@@ -3619,9 +3324,6 @@ function findNearestNote(frequency) {
                     } else if (currentInstrument === 'guitar') {
                         // For guitar, we'll use sawtooth as a base
                         waveType = 'sawtooth';
-                    } else if (currentInstrument === 'choir') {
-                        // For choir, we'll use sine as a base
-                        waveType = 'sine';
                     } else if (currentInstrument === 'snes') {
                         // For SNES, we'll use triangle as a base
                         waveType = 'triangle';
@@ -3798,8 +3500,10 @@ function findNearestNote(frequency) {
                 </svg>
             </button>
         </div>
-        <div id="hexboard" class="hexboard">
-            <!-- SVG piano will be generated here -->
+        <div class="hexboard-container">
+            <div id="hexboard" class="hexboard">
+                <!-- SVG piano will be generated here -->
+            </div>
         </div>
         
         <!-- Melody Panel -->
