@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hexano 4.2</title>
+    <title>Hexano 4.3</title>
     <style type="text/css">
         /* --- Basic Setup & Theme --- */
         html, body {
@@ -578,6 +578,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         .snes-theme {
             background-color: #5D4E37 !important;
         }
+
+        /* Drums instrument specific styles */
+        .drums-theme {
+            background-color: #3a3a3a !important;
+        }
     </style>
     <script type="text/javascript">
         var DEBUG = false;
@@ -732,6 +737,29 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         
                         /* Remove SNES specific controls if they exist */
                         removeSNESControls();
+                    }
+                },
+                'drums': {
+                    name: 'Drums & Percussion',
+                    playNote: function(note, freq) {
+                        return playDrumNote(note, freq);
+                    },
+                    stopNote: function(note) {
+                        return stopDrumNote(note);
+                    },
+                    init: function() {
+                        /* Apply Drums theme - ONLY BACKGROUND */
+                        document.body.classList.add('drums-theme');
+                        
+                        /* Create Drums specific controls if needed */
+                        createDrumsControls();
+                    },
+                    cleanup: function() {
+                        /* Remove Drums theme - ONLY BACKGROUND */
+                        document.body.classList.remove('drums-theme');
+                        
+                        /* Remove Drums specific controls if they exist */
+                        removeDrumsControls();
                     }
                 }
             };
@@ -1389,6 +1417,129 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 var snesControls = document.getElementById('snes-controls');
                 if (snesControls) {
                     snesControls.parentNode.removeChild(snesControls);
+                }
+                
+                document.querySelector('.wave-selector').style.display = 'inline-flex';
+            }
+
+            function createDrumsControls() {
+                /* Create Drums specific controls */
+                document.querySelector('.wave-selector').style.display = 'none';
+                var controlBar = document.querySelector('.control-bar');
+                
+                /* Add Drums specific controls */
+                var drumsControls = document.createElement('div');
+                drumsControls.id = 'drums-controls';
+                drumsControls.style.display = 'inline-flex';
+                drumsControls.style.marginLeft = '10px';
+                
+                /* Drum Type control */
+                var typeGroup = document.createElement('div');
+                typeGroup.className = 'control-group';
+                typeGroup.style.marginRight = '10px';
+                
+                var typeLabel = document.createElement('label');
+                typeLabel.textContent = 'Drum Type';
+                typeLabel.style.marginBottom = '5px';
+                typeLabel.style.fontSize = '0.8em';
+                
+                var typeSelect = document.createElement('select');
+                typeSelect.id = 'drums-type';
+                typeSelect.style.width = '120px';
+                
+                var kickOption = document.createElement('option');
+                kickOption.value = 'kick';
+                kickOption.textContent = 'Kick';
+                typeSelect.appendChild(kickOption);
+                
+                var snareOption = document.createElement('option');
+                snareOption.value = 'snare';
+                snareOption.textContent = 'Snare';
+                typeSelect.appendChild(snareOption);
+                
+                var tomOption = document.createElement('option');
+                tomOption.value = 'tom';
+                tomOption.textContent = 'Tom';
+                typeSelect.appendChild(tomOption);
+                
+                var cymbalOption = document.createElement('option');
+                cymbalOption.value = 'cymbal';
+                cymbalOption.textContent = 'Cymbal';
+                typeSelect.appendChild(cymbalOption);
+                
+                typeGroup.appendChild(typeLabel);
+                typeGroup.appendChild(typeSelect);
+                
+                /* Pitch control */
+                var pitchGroup = document.createElement('div');
+                pitchGroup.className = 'control-group';
+                pitchGroup.style.marginRight = '10px';
+                
+                var pitchLabel = document.createElement('label');
+                pitchLabel.textContent = 'Pitch';
+                pitchLabel.id = 'drums-pitch-label';
+                pitchLabel.style.marginBottom = '5px';
+                pitchLabel.style.fontSize = '0.8em';
+                
+                var pitchSlider = document.createElement('input');
+                pitchSlider.type = 'range';
+                pitchSlider.id = 'drums-pitch';
+                pitchSlider.min = '0.5';
+                pitchSlider.max = '2';
+                pitchSlider.step = '0.1';
+                pitchSlider.value = '1';
+                pitchSlider.style.width = '100px';
+                
+                pitchSlider.addEventListener('input', function() {
+                    document.getElementById('drums-pitch-label').textContent = 'Pitch';
+                });
+                
+                pitchGroup.appendChild(pitchLabel);
+                pitchGroup.appendChild(pitchSlider);
+                
+                /* Tone control */
+                var toneGroup = document.createElement('div');
+                toneGroup.className = 'control-group';
+                toneGroup.style.marginRight = '10px';
+                
+                /* Decay control */
+                var decayGroup = document.createElement('div');
+                decayGroup.className = 'control-group';
+                
+                var decayLabel = document.createElement('label');
+                decayLabel.textContent = 'Decay';
+                decayLabel.id = 'drums-decay-label';
+                decayLabel.style.marginBottom = '5px';
+                decayLabel.style.fontSize = '0.8em';
+                
+                var decaySlider = document.createElement('input');
+                decaySlider.type = 'range';
+                decaySlider.id = 'drums-decay';
+                decaySlider.min = '0.1';
+                decaySlider.max = '2';
+                decaySlider.step = '0.1';
+                decaySlider.value = '0.5';
+                decaySlider.style.width = '100px';
+                
+                decaySlider.addEventListener('input', function() {
+                    document.getElementById('drums-decay-label').textContent = 'Decay';
+                });
+                
+                decayGroup.appendChild(decayLabel);
+                decayGroup.appendChild(decaySlider);
+                
+                drumsControls.appendChild(typeGroup);
+                drumsControls.appendChild(pitchGroup);
+                drumsControls.appendChild(toneGroup);
+                drumsControls.appendChild(decayGroup);
+                
+                controlBar.appendChild(drumsControls);
+            }
+
+            function removeDrumsControls() {
+                var drumsControls = document.getElementById('drums-controls');
+                if (drumsControls) {
+                    drumsControls.parentNode.removeChild(drumsControls);
                 }
                 
                 document.querySelector('.wave-selector').style.display = 'inline-flex';
@@ -2113,6 +2264,142 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     console.error("Error playing SNES note:", e);
                 }
             }
+
+            function playDrumNote(note, freq) {
+                try {
+                    var now = audioContext.currentTime;
+                    var gainValue = 0.5;
+
+                    /* Get Drums specific parameters */
+                    var typeSelect = document.getElementById('drums-type');
+                    var pitchSlider = document.getElementById('drums-pitch');
+                    var decaySlider = document.getElementById('drums-decay');
+                    
+                    var drumType = typeSelect ? typeSelect.value : 'kick';
+                    var pitch = pitchSlider ? parseFloat(pitchSlider.value) : 1;
+                    var decayTime = decaySlider ? parseFloat(decaySlider.value) : 0.5;
+
+                    var noiseBuffer = audioContext.createBufferSource();
+                    var noiseGain = audioContext.createGain();
+                    var noiseFilter = audioContext.createBiquadFilter();
+                    
+                    /* Create noise buffer */
+                    var bufferSize = audioContext.sampleRate * 2;
+                    var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                    var output = buffer.getChannelData(0);
+                    
+                    for (var i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    noiseBuffer.buffer = buffer;
+                    noiseBuffer.loop = true;
+
+                    var oscillator = audioContext.createOscillator();
+                    var oscillatorGain = audioContext.createGain();
+                    
+                    /* Configure based on drum type */
+                    if (drumType === 'kick') {
+                        oscillator.type = 'sine';
+                        // Use the provided frequency instead of fixed 150
+                        oscillator.frequency.setValueAtTime(freq * pitch, now);
+                        oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
+                        oscillatorGain.gain.setValueAtTime(gainValue, now);
+                        oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
+                        
+                        oscillator.connect(oscillatorGain);
+                        oscillatorGain.connect(mainGainNode);
+                        oscillator.start(now);
+                        oscillator.stop(now + decayTime);
+                        
+                        activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain };
+                    } else if (drumType === 'snare') {
+                        /* Tone component */
+                        oscillator.type = 'triangle';
+                        // Use the provided frequency instead of fixed 200
+                        oscillator.frequency.setValueAtTime(freq * pitch, now);
+                        oscillatorGain.gain.setValueAtTime(gainValue * 0.5, now);
+                        oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
+                        
+                        /* Noise component */
+                        noiseFilter.type = 'highpass';
+                        // Map frequency to filter range (higher notes = higher filter)
+                        noiseFilter.frequency.value = 1000 + (freq / 100);
+                        noiseGain.gain.setValueAtTime(gainValue * 0.5, now);
+                        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
+                        
+                        oscillator.connect(oscillatorGain);
+                        noiseBuffer.connect(noiseFilter);
+                        noiseFilter.connect(noiseGain);
+                        
+                        oscillatorGain.connect(mainGainNode);
+                        noiseGain.connect(mainGainNode);
+                        
+                        oscillator.start(now);
+                        noiseBuffer.start(now);
+                        
+                        activeOscillators[note] = { 
+                            oscillator: oscillator, 
+                            gainNode: oscillatorGain,
+                            noiseBuffer: noiseBuffer,
+                            noiseGain: noiseGain
+                        };
+                    } else if (drumType === 'tom') {
+                        oscillator.type = 'sine';
+                        // Use the provided frequency instead of fixed 150
+                        oscillator.frequency.setValueAtTime(freq * pitch, now);
+                        oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
+                        oscillatorGain.gain.setValueAtTime(gainValue, now);
+                        oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
+                        
+                        oscillator.connect(oscillatorGain);
+                        oscillatorGain.connect(mainGainNode);
+                        oscillator.start(now);
+                        oscillator.stop(now + decayTime);
+                        
+                        activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain };
+                    } else if (drumType === 'hihat') {
+                        noiseFilter.type = 'highpass';
+                        // Map frequency to filter range (higher notes = higher filter)
+                        noiseFilter.frequency.value = 5000 + (freq / 10);
+                        noiseGain.gain.setValueAtTime(gainValue * 0.3, now);
+                        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 0.3);
+                        
+                        noiseBuffer.connect(noiseFilter);
+                        noiseFilter.connect(noiseGain);
+                        noiseGain.connect(mainGainNode);
+                        
+                        noiseBuffer.start(now);
+                        
+                        activeOscillators[note] = { 
+                            noiseBuffer: noiseBuffer,
+                            noiseGain: noiseGain
+                        };
+                    } else if (drumType === 'cymbal') {
+                        noiseFilter.type = 'highpass';
+                        // Map frequency to filter range (higher notes = higher filter)
+                        noiseFilter.frequency.value = 3000 + (freq / 15);
+                        noiseGain.gain.setValueAtTime(gainValue * 0.4, now);
+                        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 2);
+                        
+                        noiseBuffer.connect(noiseFilter);
+                        noiseFilter.connect(noiseGain);
+                        noiseGain.connect(mainGainNode);
+                        
+                        noiseBuffer.start(now);
+                        
+                        activeOscillators[note] = { 
+                            noiseBuffer: noiseBuffer,
+                            noiseGain: noiseGain
+                        };
+                    }
+                    
+                    if(DEBUG) {
+                        console.log("Drum Note started:", note, "Type:", drumType, "Frequency:", freq);
+                    }
+                } catch (e) {
+                    console.error("Error playing drum note:", e);
+                }
+            }
             
             function stopNote(note) {
                 if (!audioSupported || !audioContext) return;
@@ -2386,6 +2673,64 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     }
                 } catch (e) {
                     console.error("Error stopping SNES note:", e);
+                    /* Still remove from active oscillators even if stopping failed */
+                    delete activeOscillators[note];
+                }
+            }
+
+            function stopDrumNote(note) {
+                var oscillatorData = activeOscillators[note];
+                
+                if (!oscillatorData) {
+                    if(DEBUG) {
+                        console.log("Drum note data missing:", note, oscillatorData);
+                    }
+                    delete activeOscillators[note];
+                    return;
+                }
+                
+                try {
+                    var now = audioContext.currentTime;
+                    var releaseTime = 0.05; /* Very short release for drums */
+                    
+                    /* Stop all components */
+                    if (oscillatorData.oscillator) {
+                        try {
+                            oscillatorData.oscillator.stop(now + releaseTime);
+                        } catch (e) {
+                            /* Ignore errors */
+                        }
+                    }
+                    
+                    if (oscillatorData.noiseBuffer) {
+                        try {
+                            oscillatorData.noiseBuffer.stop(now + releaseTime);
+                        } catch (e) {
+                            /* Ignore errors */
+                        }
+                    }
+                    
+                    /* Fade out gains */
+                    if (oscillatorData.gainNode) {
+                        oscillatorData.gainNode.gain.cancelScheduledValues(now);
+                        oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
+                        oscillatorData.gainNode.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
+                    }
+                    
+                    if (oscillatorData.noiseGain) {
+                        oscillatorData.noiseGain.gain.cancelScheduledValues(now);
+                        oscillatorData.noiseGain.gain.setValueAtTime(oscillatorData.noiseGain.gain.value, now);
+                        oscillatorData.noiseGain.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
+                    }
+                    
+                    /* Remove from active oscillators immediately */
+                    delete activeOscillators[note];
+                    
+                    if(DEBUG) {
+                        console.log("Drum Note stopped:", note);
+                    }
+                } catch (e) {
+                    console.error("Error stopping drum note:", e);
                     /* Still remove from active oscillators even if stopping failed */
                     delete activeOscillators[note];
                 }
@@ -3318,6 +3663,10 @@ function findNearestNote(frequency) {
                     } else if (currentInstrument === 'snes') {
                         /* For SNES, we'll use triangle as a base */
                         waveType = 'triangle';
+                    } else if (currentInstrument === 'drums') {
+                        /* For drums, WAV export is not trivial. We'll skip it for now. */
+                        alert("WAV export is not supported for the Drums instrument yet.");
+                        return;
                     } else {
                         var selectedWave = document.querySelector('.wave-option.selected');
                         waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
