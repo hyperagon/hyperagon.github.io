@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hexano 4.3</title>
+    <title>Hexano 4.4</title>
     <style type="text/css">
         /* --- Basic Setup & Theme --- */
         html, body {
@@ -1462,13 +1462,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 tomOption.textContent = 'Tom';
                 typeSelect.appendChild(tomOption);
                 
+                // Added hi-hat option
+                var hiHatOption = document.createElement('option');
+                hiHatOption.value = 'hihat';
+                hiHatOption.textContent = 'Hi-Hat';
+                typeSelect.appendChild(hiHatOption);
+                
+                typeGroup.appendChild(typeLabel);
+                typeGroup.appendChild(typeSelect);
+                
                 var cymbalOption = document.createElement('option');
                 cymbalOption.value = 'cymbal';
                 cymbalOption.textContent = 'Cymbal';
                 typeSelect.appendChild(cymbalOption);
-                
-                typeGroup.appendChild(typeLabel);
-                typeGroup.appendChild(typeSelect);
                 
                 /* Pitch control */
                 var pitchGroup = document.createElement('div');
@@ -1530,7 +1536,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 drumsControls.appendChild(typeGroup);
                 drumsControls.appendChild(pitchGroup);
-                drumsControls.appendChild(toneGroup);
                 drumsControls.appendChild(decayGroup);
                 
                 controlBar.appendChild(drumsControls);
@@ -2344,7 +2349,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             noiseGain: noiseGain
                         };
                     } else if (drumType === 'tom') {
-                        oscillator.type = 'sine';
+                        oscillator.type = 'square';
                         // Use the provided frequency instead of fixed 150
                         oscillator.frequency.setValueAtTime(freq * pitch, now);
                         oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
@@ -2358,21 +2363,79 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         
                         activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain };
                     } else if (drumType === 'hihat') {
+                        oscillator.type = 'square';
+                        // Create a new buffer source for noise
+                        const noiseSource = audioContext.createBufferSource();
+                        
+                        // Create noise buffer if it doesn't exist
+                        if (!window.noiseBuffer) {
+                            const bufferSize = audioContext.sampleRate * 0.5; // 0.5 seconds of noise
+                            window.noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                            const output = window.noiseBuffer.getChannelData(0);
+                            
+                            for (let i = 0; i < bufferSize; i++) {
+                                output[i] = Math.random() * 2 - 1; // Generate white noise
+                            }
+                        }
+                        
+                        noiseSource.buffer = window.noiseBuffer;
+                        
+                        // Create an oscillator for the pitched component
+                        const hihatOsc = audioContext.createOscillator();
+                        hihatOsc.type = 'square'; // Square wave for metallic sound
+                        
+                        // *** KEY FIX: Use the 'pitch' variable from the slider ***
+                        // This follows the same pattern as your working 'tom' drum
+                        const targetFreq = freq * pitch;
+                        hihatOsc.frequency.value = targetFreq;
+                        
+                        // Create a bandpass filter for the oscillator
+                        const oscFilter = audioContext.createBiquadFilter();
+                        oscFilter.type = 'bandpass';
+                        // Use the same target frequency for the filter to track the pitch
+                        oscFilter.frequency.value = targetFreq;
+                        oscFilter.Q.value = 10; // High Q for resonance
+                        
+                        // Create a highpass filter for noise
+                        const noiseFilter = audioContext.createBiquadFilter();
                         noiseFilter.type = 'highpass';
-                        // Map frequency to filter range (higher notes = higher filter)
-                        noiseFilter.frequency.value = 5000 + (freq / 10);
-                        noiseGain.gain.setValueAtTime(gainValue * 0.3, now);
-                        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 0.3);
+                        noiseFilter.frequency.value = 8000; // Fixed high frequency for noise
                         
-                        noiseBuffer.connect(noiseFilter);
+                        // Create gain nodes for both sources
+                        const noiseGain = audioContext.createGain();
+                        const oscGain = audioContext.createGain();
+                        const hihatGain = audioContext.createGain();
+                        
+                        // Set gain values
+                        noiseGain.gain.value = 0.3; // Noise component
+                        oscGain.gain.value = 0.2; // Oscillator component
+                        
+                        hihatGain.gain.setValueAtTime(gainValue * 0.5, now);
+                        hihatGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 0.2);
+                        
+                        // Connect noise path
+                        noiseSource.connect(noiseFilter);
                         noiseFilter.connect(noiseGain);
-                        noiseGain.connect(mainGainNode);
+                        noiseGain.connect(hihatGain);
                         
-                        noiseBuffer.start(now);
+                        // Connect oscillator path
+                        hihatOsc.connect(oscFilter);
+                        oscFilter.connect(oscGain);
+                        oscGain.connect(hihatGain);
+                        
+                        // Connect to main output
+                        hihatGain.connect(mainGainNode);
+                        
+                        // Start and stop sources
+                        noiseSource.start(now);
+                        hihatOsc.start(now);
+                        noiseSource.stop(now + decayTime * 0.3);
+                        hihatOsc.stop(now + decayTime * 0.3);
                         
                         activeOscillators[note] = { 
-                            noiseBuffer: noiseBuffer,
-                            noiseGain: noiseGain
+                            noiseSource: noiseSource,
+                            oscillator: hihatOsc,
+                            gain: hihatGain
                         };
                     } else if (drumType === 'cymbal') {
                         noiseFilter.type = 'highpass';
