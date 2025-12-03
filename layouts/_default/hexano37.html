@@ -3305,59 +3305,50 @@ function findNearestNote(frequency) {
             function generateWav() {
                 if (recordedMelody.length === 0 || !audioSupported) return;
 
-                var totalMs = Math.max.apply(Math, recordedMelody.map(function(note) { 
-                    return note.time + note.duration; 
+                var totalMs = Math.max.apply(Math, recordedMelody.map(function(note) {
+                    return note.time + note.duration;
                 }));
-                var durationSec = (totalMs / 1000) + 0.5;
-                
+                var durationSec = (totalMs / 1000) + 0.5; // Add a little tail
+
                 try {
-                    var offlineContext = new OfflineAudioContext(1, Math.ceil(44100 * durationSec), 44100);
-                    var offlineGainNode = offlineContext.createGain();
-                    offlineGainNode.gain.value = volumeSlider.value;
-                    offlineGainNode.connect(offlineContext.destination);
+                    // Use a stereo offline context for better compatibility
+                    var offlineContext = new OfflineAudioContext(2, Math.ceil(44100 * durationSec), 44100);
+                    var masterGainNode = offlineContext.createGain();
+                    masterGainNode.gain.value = 0.7; // Set a reasonable master volume
 
-                    // Get wave type based on current instrument
-                    var waveType;
-                    if (currentInstrument === '8bit') {
-                        var waveformSelect = document.getElementById('gameboy-wave');
-                        waveType = waveformSelect ? waveformSelect.value : 'square';
-                    } else if (currentInstrument === 'guitar') {
-                        // For guitar, we'll use sawtooth as a base
-                        waveType = 'sawtooth';
-                    } else if (currentInstrument === 'snes') {
-                        // For SNES, we'll use triangle as a base
-                        waveType = 'triangle';
-                    } else {
-                        var selectedWave = document.querySelector('.wave-option.selected');
-                        waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
-                    }
+                    // Create a limiter to prevent clipping
+                    var limiter = offlineContext.createDynamicsCompressor();
+                    limiter.threshold.value = -10;
+                    limiter.knee.value = 0;
+                    limiter.ratio.value = 20;
+                    limiter.attack.value = 0.001;
+                    limiter.release.value = 0.1;
 
+                    masterGainNode.connect(limiter);
+                    limiter.connect(offlineContext.destination);
+
+                    // Process each note based on the current instrument
                     for (var i = 0; i < recordedMelody.length; i++) {
                         var note = recordedMelody[i];
                         var startTime = note.time / 1000;
                         var noteDuration = note.duration / 1000;
                         if (noteDuration <= 0.01) continue;
 
-                        var attackTime = 0.02;
-                        var releaseTime = Math.min(noteDuration * 0.5, 0.2);
-
-                        var oscillator = offlineContext.createOscillator();
-                        var gainNode = offlineContext.createGain();
-                        
-                        oscillator.type = waveType;
-                        // Round frequency to 3 decimal places
-                        var roundedFreq = Math.round(note.freq * 1000) / 1000;
-                        oscillator.frequency.value = roundedFreq;
-
-                        gainNode.gain.setValueAtTime(0, startTime);
-                        gainNode.gain.linearRampToValueAtTime(0.7, startTime + attackTime);
-                        gainNode.gain.linearRampToValueAtTime(0, startTime + noteDuration);
-
-                        oscillator.connect(gainNode);
-                        gainNode.connect(offlineGainNode);
-                        oscillator.start(startTime);
-                        oscillator.stop(startTime + noteDuration + 0.05);
+                        // Pass the master gain node as the destination for all sounds
+                        if (currentInstrument === '8bit') {
+                            create8BitNoteForWav(offlineContext, note, startTime, noteDuration, masterGainNode);
+                        } else if (currentInstrument === 'guitar') {
+                            createGuitarNoteForWav(offlineContext, note, startTime, noteDuration, masterGainNode);
+                        } else if (currentInstrument === 'snes') {
+                            createSNESNoteForWav(offlineContext, note, startTime, noteDuration, masterGainNode);
+                        } else {
+                            // Default instrument
+                            createDefaultNoteForWav(offlineContext, note, startTime, noteDuration, masterGainNode);
+                        }
                     }
+
+                    progressText.textContent = 'Rendering audio file...';
+                    progressFill.style.width = '90%';
 
                     offlineContext.startRendering().then(function(renderedBuffer) {
                         var wavBlob = bufferToWave(renderedBuffer);
@@ -3370,6 +3361,198 @@ function findNearestNote(frequency) {
                     console.error("Error generating WAV:", e);
                     alert("Sorry, there was an error creating the audio file.");
                 }
+            }
+
+            // --- HELPER FUNCTIONS FOR WAV GENERATION ---
+            function createDefaultNoteForWav(context, note, startTime, duration, destination) {
+                var oscillator = context.createOscillator();
+                var gainNode = context.createGain();
+
+                var selectedWave = document.querySelector('.wave-option.selected');
+                oscillator.type = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
+                oscillator.frequency.value = note.freq;
+
+                // Default envelope for simple synth
+                var attackTime = 0.02;
+                var releaseTime = 0.1;
+                var sustainLevel = 0.7;
+
+                // --- CORRECTED ENVELOPE LOGIC ---
+                // This creates a precise timeline to ensure the release ramp works correctly.
+                gainNode.gain.setValueAtTime(0, startTime); // Start at silence
+                gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime); // Attack
+                gainNode.gain.setValueAtTime(sustainLevel, startTime + duration); // Hold sustain level until note ends
+                gainNode.gain.linearRampToValueAtTime(0, startTime + duration + releaseTime); // Release fade-out
+
+                oscillator.connect(gainNode);
+                gainNode.connect(destination);
+
+                // The oscillator must run for the full duration plus the release tail.
+                oscillator.start(startTime);
+                oscillator.stop(startTime + duration + releaseTime);
+            }
+
+            function create8BitNoteForWav(context, note, startTime, duration, destination) {
+                var waveformSelect = document.getElementById('gameboy-wave');
+                var noiseSelect = document.getElementById('gameboy-noise');
+                var attackSlider = document.getElementById('gameboy-attack');
+                var releaseSlider = document.getElementById('gameboy-release');
+
+                var waveformType = waveformSelect ? waveformSelect.value : 'square';
+                var noiseType = noiseSelect ? noiseSelect.value : 'white';
+                var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.0;
+                var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.3;
+                var sustainLevel = 0.7;
+
+                var oscillator = context.createOscillator();
+                var gainNode = context.createGain();
+                var noiseBuffer = context.createBufferSource();
+                var noiseGain = context.createGain();
+
+                var bufferSize = context.sampleRate * 0.5;
+                var buffer = context.createBuffer(1, bufferSize, context.sampleRate);
+                var output = buffer.getChannelData(0);
+                for (var i = 0; i < bufferSize; i++) {
+                    output[i] = (Math.random() * 2 - 1) * (noiseType === 'white' ? 1 : i / bufferSize);
+                }
+                noiseBuffer.buffer = buffer;
+
+                oscillator.type = waveformType;
+                oscillator.frequency.value = note.freq;
+                noiseGain.gain.value = 0.02;
+
+                // --- CORRECTED ENVELOPE LOGIC ---
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime);
+                gainNode.gain.setValueAtTime(sustainLevel, startTime + duration);
+                gainNode.gain.linearRampToValueAtTime(0, startTime + duration + releaseTime);
+
+                oscillator.connect(gainNode);
+                noiseBuffer.connect(noiseGain);
+                gainNode.connect(destination);
+                noiseGain.connect(destination);
+
+                // Extend the stop time for both oscillator and noise to allow for the release tail.
+                oscillator.start(startTime);
+                noiseBuffer.start(startTime);
+                oscillator.stop(startTime + duration + releaseTime);
+                noiseBuffer.stop(startTime + duration + releaseTime);
+            }
+
+            function createSNESNoteForWav(context, note, startTime, duration, destination) {
+                var instrumentSelect = document.getElementById('snes-instrument');
+                var attackSlider = document.getElementById('snes-attack');
+                var releaseSlider = document.getElementById('snes-release');
+
+                var instrumentType = instrumentSelect ? instrumentSelect.value : 'piano';
+                var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.05;
+                var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.5;
+                var sustainLevel = 0.7;
+
+                var oscillator = context.createOscillator();
+                var gainNode = context.createGain();
+                var filter = context.createBiquadFilter();
+
+                // Simplified SNES instrument simulation
+                if (instrumentType === 'piano') {
+                    oscillator.type = 'triangle';
+                    filter.type = 'lowpass';
+                    filter.frequency.value = note.freq * 4;
+                } else if (instrumentType === 'strings') {
+                    oscillator.type = 'sawtooth';
+                    filter.type = 'lowpass';
+                    filter.frequency.value = note.freq * 3;
+                } else { // Default to a generic sound
+                    oscillator.type = 'square';
+                    filter.type = 'lowpass';
+                    filter.frequency.value = note.freq * 2.5;
+                }
+
+                oscillator.frequency.value = note.freq;
+
+                // --- CORRECTED ENVELOPE LOGIC ---
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime);
+                gainNode.gain.setValueAtTime(sustainLevel, startTime + duration);
+                gainNode.gain.linearRampToValueAtTime(0, startTime + duration + releaseTime);
+
+                oscillator.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(destination);
+
+                // Extend the stop time to allow for the release tail.
+                oscillator.start(startTime);
+                oscillator.stop(startTime + duration + releaseTime);
+            }
+            
+            function createGuitarNoteForWav(context, note, startTime, duration, destination) {
+                var typeSelect = document.getElementById('guitar-type');
+                var dampingSlider = document.getElementById('guitar-damping');
+                var bodySlider = document.getElementById('guitar-body');
+                
+                var guitarType = typeSelect ? typeSelect.value : 'acoustic';
+                var bodyResonance = bodySlider ? parseFloat(bodySlider.value) : 0.3;
+
+                var oscillator = context.createOscillator();
+                var gainNode = context.createGain();
+                var filter = context.createBiquadFilter();
+                
+                // Create a pluck noise for attack
+                var pluckNoise = context.createBufferSource();
+                var pluckBuffer = context.createBuffer(1, context.sampleRate * 0.05, context.sampleRate);
+                var pluckData = pluckBuffer.getChannelData(0);
+                for (var i = 0; i < pluckBuffer.length; i++) {
+                    pluckData[i] = (Math.random() * 2 - 1) * 0.2;
+                }
+                pluckNoise.buffer = pluckBuffer;
+                var pluckGain = context.createGain();
+                
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.value = note.freq;
+                
+                // Configure filter based on guitar type
+                if (guitarType === 'acoustic') {
+                    filter.type = 'lowpass';
+                    filter.frequency.value = note.freq * 2.5;
+                    filter.Q.value = 1;
+                } else if (guitarType === 'electric') {
+                    filter.type = 'lowpass';
+                    filter.frequency.value = note.freq * 4;
+                    filter.Q.value = 2;
+                } else if (guitarType === 'bass') {
+                    filter.type = 'lowpass';
+                    filter.frequency.value = note.freq * 1.5;
+                    filter.Q.value = 0.8;
+                }
+                
+                // --- CORRECTED AUDIO ROUTING ---
+                // Connect to the passed-in destination, not context.destination
+                oscillator.connect(gainNode);
+                gainNode.connect(filter);
+                filter.connect(destination);
+
+                // Connect pluck noise for attack
+                pluckNoise.connect(pluckGain);
+                pluckGain.connect(filter);
+                
+                // --- CORRECTED ENVELOPE LOGIC ---
+                var attackTime = 0.001;
+                var releaseTime = Math.min(duration * 0.4, 0.5);
+                var sustainLevel = 0.7;
+
+                pluckGain.gain.setValueAtTime(0.1, startTime);
+                pluckGain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.05);
+
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime);
+                gainNode.gain.setValueAtTime(sustainLevel, startTime + duration);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration + releaseTime);
+                
+                // Start the sound
+                oscillator.start(startTime);
+                pluckNoise.start(startTime);
+                oscillator.stop(startTime + duration + releaseTime);
+                pluckNoise.stop(startTime + 0.05);
             }
 
             function downloadBlob(blob, filename) {
@@ -3386,34 +3569,54 @@ function findNearestNote(frequency) {
 
             function bufferToWave(abuffer) {
                 var numOfChan = abuffer.numberOfChannels,
-                    len = abuffer.length * numOfChan * 2 + 44,
-                    buffer = new ArrayBuffer(len),
+                    length = abuffer.length * numOfChan * 2 + 44,
+                    buffer = new ArrayBuffer(length),
                     view = new DataView(buffer),
                     channels = [],
                     i, sample, offset = 0, pos = 0;
-                
-                // Write WAVE header
-                setUint32(0x46464952); // "RIFF"
-                setUint32(len - 8); // file length - 8
-                setUint32(0x45564157); // "WAVE"
-                setUint32(0x20746d66); // "fmt " chunk
-                setUint32(16); // length = 16
-                setUint16(1); // PCM
+
+                // write WAVE header
+                var setUint16 = function(data) {
+                    view.setUint16(pos, data, true);
+                    pos += 2;
+                };
+                var setUint32 = function(data) {
+                    view.setUint32(pos, data, true);
+                    pos += 4;
+                };
+
+                // RIFF identifier
+                setUint32(0x46464952);
+                // file length
+                setUint32(length - 8);
+                // WAVE identifier
+                setUint32(0x45564157);
+                // fmt chunk identifier
+                setUint32(0x20746d66);
+                // chunk length
+                setUint32(16);
+                // sample format (PCM)
+                setUint16(1);
+                // channel count
                 setUint16(numOfChan);
+                // sample rate
                 setUint32(abuffer.sampleRate);
-                setUint32(abuffer.sampleRate * 4); // avg. bytes/sec
-                setUint16(4); // block-align
-                setUint16(16); // 16-bit
-                
-                // Write data chunk
-                setUint32(0x61746164); // "data" - chunk
-                setUint32(len - pos - 4); // chunk length
-                
-                // Write interleaved data
+                // byte rate
+                setUint32(abuffer.sampleRate * 2 * numOfChan);
+                // block align
+                setUint16(numOfChan * 2);
+                // bits per sample
+                setUint16(16);
+                // data chunk identifier
+                setUint32(0x61746164);
+                // data chunk length
+                setUint32(length - pos - 4);
+
+                // write interleaved data
                 for (i = 0; i < abuffer.numberOfChannels; i++)
                     channels.push(abuffer.getChannelData(i));
-                
-                while (pos < len - 44) {
+
+                while (pos < length) {
                     for (i = 0; i < numOfChan; i++) {
                         sample = Math.max(-1, Math.min(1, channels[i][offset]));
                         sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
@@ -3422,18 +3625,10 @@ function findNearestNote(frequency) {
                     }
                     offset++;
                 }
-                
-                return new Blob([buffer], { type: "audio/wav" });
-                
-                function setUint16(data) {
-                    view.setUint16(pos, data, true);
-                    pos += 2;
-                }
-                
-                function setUint32(data) {
-                    view.setUint32(pos, data, true);
-                    pos += 4;
-                }
+
+                return new Blob([buffer], {
+                    type: "audio/wav"
+                });
             }
 
             init();
@@ -3517,7 +3712,7 @@ function findNearestNote(frequency) {
             </div>
             <div class="panel-buttons">
                 <button id="export-button" class="panel-button">Export JSON</button>
-                <button id="import-audio-button" class="panel-button">Import Audio</button>
+                <button id="import-audio-button" class="panel-button">Import Audio</button>ff
                 <button id="import-button" class="panel-button">Import JSON</button>
                 <input type="file" id="file-input" accept=".json" style="display: none;">
                 <input type="file" id="audio-file-input" accept="audio/*" style="display: none;">
