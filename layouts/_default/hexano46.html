@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hexano 4.5</title>
+    <title>Hexano 4.6</title>
     <style type="text/css">
         /* --- Basic Setup & Theme --- */
         html, body {
@@ -2663,81 +2663,83 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     if(DEBUG) {
                         console.log("SNES note data missing:", note, oscillatorData);
                     }
-                    delete activeOscillators[note];
+                    // Nothing to stop, so just ensure the visual is cleared
+                    hideKeyPress(note);
                     return;
                 }
                 
+                // *** THE FIX: Add a flag to prevent double cleanup ***
+                if (oscillatorData.isStopping) {
+                    // This note is already in the process of stopping, so do nothing.
+                    return;
+                }
+                oscillatorData.isStopping = true;
+
                 try {
                     var now = audioContext.currentTime;
-                    /* Use the release time that was stored when the note was played */
+                    // Use the release time that was stored when the note was played
                     var releaseTime = oscillatorData.releaseTime || 0.5;
                     
-                    /* Stop all components */
+                    // Stop all components with the proper release time
                     if (oscillatorData.oscillator) {
-                        try {
-                            oscillatorData.oscillator.stop(now + releaseTime);
-                        } catch (e) {
-                            /* Ignore errors */
-                        }
+                        oscillatorData.oscillator.stop(now + releaseTime);
                     }
-                    
                     if (oscillatorData.harmonic1) {
-                        try {
-                            oscillatorData.harmonic1.stop(now + releaseTime);
-                        } catch (e) {
-                            /* Ignore errors */
-                        }
+                        oscillatorData.harmonic1.stop(now + releaseTime);
                     }
-                    
                     if (oscillatorData.harmonic2) {
-                        try {
-                            oscillatorData.harmonic2.stop(now + releaseTime);
-                        } catch (e) {
-                            /* Ignore errors */
-                        }
+                        oscillatorData.harmonic2.stop(now + releaseTime);
                     }
                     
-                    /* Fade out gains */
+                    // Schedule the gain ramps for fade out
                     if (oscillatorData.gainNode) {
                         oscillatorData.gainNode.gain.cancelScheduledValues(now);
                         oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
                         oscillatorData.gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
                     }
-                    
                     if (oscillatorData.harmonicGain1) {
                         oscillatorData.harmonicGain1.gain.cancelScheduledValues(now);
                         oscillatorData.harmonicGain1.gain.setValueAtTime(oscillatorData.harmonicGain1.gain.value, now);
                         oscillatorData.harmonicGain1.gain.linearRampToValueAtTime(0, now + releaseTime);
                     }
-                    
                     if (oscillatorData.harmonicGain2) {
                         oscillatorData.harmonicGain2.gain.cancelScheduledValues(now);
                         oscillatorData.harmonicGain2.gain.setValueAtTime(oscillatorData.harmonicGain2.gain.value, now);
                         oscillatorData.harmonicGain2.gain.linearRampToValueAtTime(0, now + releaseTime);
                     }
-                    
                     if (oscillatorData.reverbGain) {
                         oscillatorData.reverbGain.gain.cancelScheduledValues(now);
                         oscillatorData.reverbGain.gain.setValueAtTime(oscillatorData.reverbGain.gain.value, now);
                         oscillatorData.reverbGain.gain.linearRampToValueAtTime(0, now + releaseTime);
                     }
-                    
                     if (oscillatorData.dryGain) {
                         oscillatorData.dryGain.gain.cancelScheduledValues(now);
                         oscillatorData.dryGain.gain.setValueAtTime(oscillatorData.dryGain.gain.value, now);
                         oscillatorData.dryGain.gain.linearRampToValueAtTime(0, now + releaseTime);
                     }
                     
-                    /* Remove from active oscillators immediately */
-                    delete activeOscillators[note];
-                    
+                    // Schedule the cleanup and visual feedback to happen AFTER the audio has finished.
+                    setTimeout(function() {
+                        // Check if the note still exists and hasn't been force-stopped
+                        if (activeOscillators[note] && activeOscillators[note].isStopping) {
+                            // Now that the audio has faded, we can safely clean up.
+                            delete activeOscillators[note];
+                            hideKeyPress(note); // Hide the visual feedback now
+
+                            if(DEBUG) {
+                                console.log("SNES Note fully stopped and cleaned up:", note);
+                            }
+                        }
+                    }, releaseTime * 1000);
+
                     if(DEBUG) {
-                        console.log("SNES Note stopped:", note, "Release time:", releaseTime);
+                        console.log("SNES Note stop scheduled:", note, "Release time:", releaseTime);
                     }
                 } catch (e) {
                     console.error("Error stopping SNES note:", e);
-                    /* Still remove from active oscillators even if stopping failed */
+                    // If there's an error, force cleanup immediately to prevent getting stuck
                     delete activeOscillators[note];
+                    hideKeyPress(note);
                 }
             }
 
@@ -3886,7 +3888,7 @@ function findNearestNote(frequency) {
                 oscillator.stop(startTime + duration + releaseTime);
             }
             
-                        function createGuitarNoteForWav(context, note, startTime, duration, destination) {
+            function createGuitarNoteForWav(context, note, startTime, duration, destination) {
                 var typeSelect = document.getElementById('guitar-type');
                 var dampingSlider = document.getElementById('guitar-damping');
                 var bodySlider = document.getElementById('guitar-body');
