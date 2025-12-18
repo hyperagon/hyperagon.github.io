@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hexano 4.6</title>
+    <title>Hexano 4.7</title>
     <style type="text/css">
         /* --- Basic Setup & Theme --- */
         html, body {
@@ -3255,6 +3255,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             progressText.textContent = 'Analyzing frequencies...';
                             progressFill.style.width = '30%';
                             
+                            /* Check for short audio duration */
+                            var duration = buffer.duration;
+                            
                             /* Analyze the audio buffer */
                             analyzeAudioBuffer(buffer)
                                 .then(function(melody) {
@@ -3298,12 +3301,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             }, 3000);
                         });
                 };
-                
+
                 reader.readAsArrayBuffer(file);
                 
                 /* Reset the file input value to allow selecting the same file again */
                 event.target.value = '';
             }
+
             
             /* Add this function alongside other functions like init(), playNote(), etc. */
             function analyzeAudioBuffer(buffer) {
