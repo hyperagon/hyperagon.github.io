@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 <!--
 Copyright (c) 2025 Hyperagon
 
@@ -9,6 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -564,14 +564,2535 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             margin-bottom: 5px;
         }
     </style>
-    <script type="text/javascript" src="hexano54/instrument.js"></script>
-    <script type="text/javascript" src="hexano54/default.js"></script>
-    <script type="text/javascript" src="hexano54/gameboy.js"></script>
-    <script type="text/javascript" src="hexano54/snes.js"></script>
-    <script type="text/javascript" src="hexano54/guitar.js"></script>
-    <script type="text/javascript" src="hexano54/drums.js"></script>
-    <script type="text/javascript" src="hexano54/bell.js"></script>
-    <script type="text/javascript" src="hexano54/flute.js"></script>
+    <script type="text/javascript">
+        // Base Instrument class
+        class Instrument {
+            constructor(name) {
+                this.name = name;
+            }
+            
+            init() {
+                // Default implementation
+            }
+            
+            playNote(note, freq) {
+                // To be implemented by subclasses
+            }
+            
+            stopNote(note) {
+                // To be implemented by subclasses
+            }
+            
+            export(context, note, startTime, duration, destination) {
+                // To be implemented by subclasses
+            }
+            
+            cleanup() {
+                // Default implementation
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        class Default extends Instrument {
+        constructor() {
+            super('Default');
+        }
+        
+        playNote(note, freq) {
+            if (!window.audioContext) return;
+            
+            try {
+                var now = window.audioContext.currentTime;
+                var gainValue = 0.15;
+
+                var oscillator = window.audioContext.createOscillator();
+                var gainNode = window.audioContext.createGain();
+
+                /* Get wave type from the selected wave option */
+                var selectedWave = document.querySelector('.wave-option.selected');
+                if (selectedWave) {
+                    oscillator.type = selectedWave.getAttribute('data-wave-type');
+                } else {
+                    /* Default to sine if nothing is selected */
+                    oscillator.type = 'sine';
+                }
+                
+                /* Round frequency to 3 decimal places */
+                var roundedFreq = Math.round(freq * 1000) / 1000;
+                oscillator.frequency.setValueAtTime(roundedFreq, now);
+                
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(gainValue, now + 0.02);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(window.mainGainNode);
+                oscillator.start(now);
+
+                window.activeOscillators[note] = { 
+                    oscillator: oscillator, 
+                    gainNode: gainNode
+                };
+                
+                if(DEBUG) {
+                    console.log("Note started:", note, "Frequency:", roundedFreq);
+                }
+            } catch (e) {
+                console.error("Error playing note:", e);
+            }
+        }
+        
+        stopNote(note) {
+            var oscillatorData = window.activeOscillators[note];
+            
+            if (!oscillatorData) {
+                // Note might have already been stopped or was never started
+                return;
+            }
+
+            try {
+                var oscillator = oscillatorData.oscillator;
+                var gainNode = oscillatorData.gainNode;
+                var now = window.audioContext.currentTime;
+                var releaseTime = 0.1; /* Shorter release time for immediate stop */
+                
+                gainNode.gain.cancelScheduledValues(now);
+                gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+                gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+
+                oscillator.stop(now + releaseTime + 0.01);
+                
+                /* Immediately remove from active oscillators */
+                delete window.activeOscillators[note];
+                
+                if(DEBUG) {
+                    console.log("Note stopped:", note);
+                }
+            } catch (e) {
+                console.error("Error stopping note:", e);
+                /* Still remove from active oscillators even if stopping failed */
+                delete window.activeOscillators[note];
+            }
+        }
+        
+        export(context, note, startTime, duration, destination) {
+            var oscillator = context.createOscillator();
+            var gainNode = context.createGain();
+
+            var selectedWave = document.querySelector('.wave-option.selected');
+            oscillator.type = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
+            oscillator.frequency.value = note.freq;
+
+            // Default envelope for simple synth
+            var attackTime = 0.02;
+            var releaseTime = 0.1;
+            var sustainLevel = 0.7;
+
+            // --- CORRECTED ENVELOPE LOGIC ---
+            // This creates a precise timeline to ensure the release ramp works correctly.
+            gainNode.gain.setValueAtTime(0, startTime); // Start at silence
+            gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime); // Attack
+            gainNode.gain.setValueAtTime(sustainLevel, startTime + duration); // Hold sustain level until note ends
+            gainNode.gain.linearRampToValueAtTime(0, startTime + duration + releaseTime); // Release fade-out
+
+            oscillator.connect(gainNode);
+            gainNode.connect(destination);
+
+            // The oscillator must run for the full duration plus the release tail.
+            oscillator.start(startTime);
+            oscillator.stop(startTime + duration + releaseTime);
+        }
+        
+        switch() {
+            const selector = document.querySelector('.wave-selector');
+            if (selector) {
+                selector.style.display = 'inline-flex';
+            }
+        }
+        
+        remove() {
+            const selector = document.querySelector('.wave-selector');
+            if (selector) {
+                selector.style.display = 'none';
+            }
+        }
+    }
+    </script>
+    <script type="text/javascript">
+        class GameBoy extends Instrument {
+        constructor() {
+            super('Game Boy');
+        }
+        
+        init() {
+            this.createGameBoyControls();
+            // Instead of adding a class, set the background color directly.
+            document.body.style.backgroundColor = '#9bbc0f';
+        }
+        
+        createGameBoyControls() {
+            /* Create Game Boy specific controls if needed */
+            document.querySelector('.wave-selector').style.display = 'none';
+            var controlBar = document.querySelector('.control-bar');
+            
+            /* Add Game Boy specific controls */
+            var gameboyControls = document.createElement('div');
+            gameboyControls.id = 'gameboy-controls';
+            gameboyControls.style.display = 'inline-flex';
+            gameboyControls.style.marginLeft = '10px';
+            
+            /* Wave Channel control */
+            var waveGroup = document.createElement('div');
+            waveGroup.className = 'control-group';
+            waveGroup.style.marginRight = '10px';
+            
+            var waveLabel = document.createElement('label');
+            waveLabel.textContent = 'Wave';
+            waveLabel.style.marginBottom = '5px';
+            waveLabel.style.fontSize = '0.8em';
+            
+            var waveSelect = document.createElement('select');
+            waveSelect.id = 'gameboy-wave';
+            waveSelect.style.width = '120px';
+            
+            var squareOption = document.createElement('option');
+            squareOption.value = 'square';
+            squareOption.textContent = 'Pulse (50%)';
+            waveSelect.appendChild(squareOption);
+            
+            var sawtoothOption = document.createElement('option');
+            sawtoothOption.value = 'sawtooth';
+            sawtoothOption.textContent = 'Pulse (25%)';
+            waveSelect.appendChild(sawtoothOption);
+            
+            var triangleOption = document.createElement('option');
+            triangleOption.value = 'triangle';
+            triangleOption.textContent = 'Triangle';
+            waveSelect.appendChild(triangleOption);
+            
+            waveGroup.appendChild(waveLabel);
+            waveGroup.appendChild(waveSelect);
+            
+            /* Noise Channel control */
+            var noiseGroup = document.createElement('div');
+            noiseGroup.className = 'control-group';
+            noiseGroup.style.marginRight = '10px';
+            
+            var noiseLabel = document.createElement('label');
+            noiseLabel.textContent = 'Noise';
+            noiseLabel.style.marginBottom = '5px';
+            noiseLabel.style.fontSize = '0.8em';
+            
+            var noiseSelect = document.createElement('select');
+            noiseSelect.id = 'gameboy-noise';
+            noiseSelect.style.width = '120px';
+            
+            var whiteOption = document.createElement('option');
+            whiteOption.value = 'white';
+            whiteOption.textContent = 'White Noise';
+            noiseSelect.appendChild(whiteOption);
+            
+            var pinkOption = document.createElement('option');
+            pinkOption.value = 'pink';
+            pinkOption.textContent = 'Pink Noise';
+            noiseSelect.appendChild(pinkOption);
+            
+            noiseGroup.appendChild(noiseLabel);
+            noiseGroup.appendChild(noiseSelect);
+            
+            /* Attack control */
+            var attackGroup = document.createElement('div');
+            attackGroup.className = 'control-group';
+            attackGroup.style.marginRight = '10px';
+            
+            var attackLabel = document.createElement('label');
+            attackLabel.textContent = 'Attack';
+            attackLabel.id = 'gameboy-attack-label';
+            attackLabel.style.marginBottom = '5px';
+            attackLabel.style.fontSize = '0.8em';
+            
+            var attackSlider = document.createElement('input');
+            attackSlider.type = 'range';
+            attackSlider.id = 'gameboy-attack';
+            attackSlider.min = '0';
+            attackSlider.max = '0.5';
+            attackSlider.step = '0.01';
+            attackSlider.value = '0';
+            attackSlider.style.width = '100px';
+            attackSlider.title = 'Attack: Off'; // Tooltip instead of label
+            
+            attackSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'Attack: ' + val;
+            });
+            
+            attackSlider.addEventListener('input', function() {
+                document.getElementById('gameboy-attack-label').textContent = 'Attack';
+            });
+            
+            attackGroup.appendChild(attackLabel);
+            attackGroup.appendChild(attackSlider);
+            
+            /* Release control */
+            var releaseGroup = document.createElement('div');
+            releaseGroup.className = 'control-group';
+            
+            var releaseLabel = document.createElement('label');
+            releaseLabel.textContent = 'Release';
+            releaseLabel.id = 'gameboy-release-label';
+            releaseLabel.style.marginBottom = '5px';
+            releaseLabel.style.fontSize = '0.8em';
+            
+            var releaseSlider = document.createElement('input');
+            releaseSlider.type = 'range';
+            releaseSlider.id = 'gameboy-release';
+            releaseSlider.min = '0';
+            releaseSlider.max = '1';
+            releaseSlider.step = '0.01';
+            releaseSlider.value = '0.3';
+            releaseSlider.style.width = '100px';
+            releaseSlider.title = 'Release: 0.3'; // Tooltip instead of label
+            
+            releaseSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'Release: ' + val;
+            });
+            
+            releaseSlider.addEventListener('input', function() {
+                document.getElementById('gameboy-release-label').textContent = 'Release';
+            });
+            
+            releaseGroup.appendChild(releaseLabel);
+            releaseGroup.appendChild(releaseSlider);
+            
+            gameboyControls.appendChild(waveGroup);
+            gameboyControls.appendChild(noiseGroup);
+            gameboyControls.appendChild(attackGroup);
+            gameboyControls.appendChild(releaseGroup);
+            
+            controlBar.appendChild(gameboyControls);
+        }
+        
+        removeGameBoyControls() {
+            var gameboyControls = document.getElementById('gameboy-controls');
+            if (gameboyControls) {
+                gameboyControls.parentNode.removeChild(gameboyControls);
+            }
+            
+            document.querySelector('.wave-selector').style.display = 'inline-flex';
+        }
+        
+        playNote(note, freq) {
+            // FIX: Check if window.audioContext exists before using it
+            if (!window.audioContext) {
+                console.error("AudioContext not initialized");
+                return;
+            }
+            
+            try {
+                var now = window.audioContext.currentTime;
+                var gainValue = 0.12;
+
+                /* Get Game Boy specific parameters */
+                var waveformSelect = document.getElementById('gameboy-wave');
+                var noiseSelect = document.getElementById('gameboy-noise');
+                var attackSlider = document.getElementById('gameboy-attack');
+                var releaseSlider = document.getElementById('gameboy-release');
+                
+                var waveformType = waveformSelect ? waveformSelect.value : 'square';
+                var noiseType = noiseSelect ? noiseSelect.value : 'white';
+                var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.0;
+                var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.3;
+
+                /* Create main oscillator for the note */
+                var oscillator = window.audioContext.createOscillator();
+                var gainNode = window.audioContext.createGain();
+                
+                /* Create noise buffer for Game Boy style */
+                var noiseBuffer = window.audioContext.createBufferSource();
+                var noiseGain = window.audioContext.createGain();
+                
+                /* Create noise buffer */
+                var bufferSize = window.audioContext.sampleRate * 2; /* 2 seconds of noise */
+                var buffer = window.audioContext.createBuffer(1, bufferSize, window.audioContext.sampleRate);
+                var output = buffer.getChannelData(0);
+                
+                for (var i = 0; i < bufferSize; i++) {
+                    if (noiseType === 'white') {
+                        output[i] = Math.random() * 2 - 1;
+                    } else { /* Pink noise is more complex, we'll fake it with a simple filter */
+                        output[i] = (Math.random() * 2 - 1) * (i / bufferSize); /* A simple lo-fi sweep */
+                    }
+                }
+                noiseBuffer.buffer = buffer;
+                noiseBuffer.loop = true;
+                
+                /* Configure oscillator */
+                oscillator.type = waveformType;
+                var roundedFreq = Math.round(freq * 1000) / 1000;
+                oscillator.frequency.setValueAtTime(roundedFreq, now);
+                
+                /* Much lower noise volume */
+                noiseGain.gain.value = 0.005; /* Further reduced */
+                
+                /* Connect the audio graph */
+                oscillator.connect(gainNode);
+                noiseBuffer.connect(noiseGain);
+                gainNode.connect(window.mainGainNode);
+                noiseGain.connect(window.mainGainNode);
+                
+                /* --- ADSR Envelope --- */
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(gainValue, now + attackTime);
+                
+                /* Start the sound */
+                oscillator.start(now);
+                noiseBuffer.start(now);
+                
+                window.activeOscillators[note] = { 
+                    oscillator: oscillator, 
+                    gainNode: gainNode,
+                    noiseBuffer: noiseBuffer,
+                    noiseGain: noiseGain,
+                    releaseTime: releaseTime
+                };
+                
+                if(DEBUG) {
+                    console.log("8-bit Note started:", note, "Frequency:", roundedFreq);
+                }
+            } catch (e) {
+                console.error("Error playing 8-bit note:", e);
+            }
+        }
+        
+        stopNote(note) {
+            // FIX: Check if window.audioContext exists before using it
+            if (!window.audioContext) {
+                console.error("AudioContext not initialized");
+                return;
+            }
+            
+            var oscillatorData = window.activeOscillators[note];
+            
+            if (!oscillatorData) {
+                if(DEBUG) {
+                    console.log("8-bit note data missing:", note, oscillatorData);
+                }
+                delete window.activeOscillators[note];
+                return;
+            }
+            
+            try {
+                var now = window.audioContext.currentTime;
+                /* FIX: Use the release time that was stored when the note was played */
+                var releaseTime = oscillatorData.releaseTime || 0.3;
+                
+                /* Stop all components */
+                if (oscillatorData.oscillator) {
+                    try {
+                        oscillatorData.oscillator.stop(now + releaseTime);
+                    } catch (e) {
+                        /* Ignore errors */
+                    }
+                }
+                
+                if (oscillatorData.noiseBuffer) {
+                    try {
+                        oscillatorData.noiseBuffer.stop(now + 0.01); /* Stop noise immediately */
+                    } catch (e) {
+                        /* Ignore errors */
+                    }
+                }
+                
+                /* Fade out gains */
+                if (oscillatorData.gainNode) {
+                    oscillatorData.gainNode.gain.cancelScheduledValues(now);
+                    oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
+                    oscillatorData.gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+                }
+                
+                if (oscillatorData.noiseGain) {
+                    oscillatorData.noiseGain.gain.cancelScheduledValues(now);
+                    oscillatorData.noiseGain.gain.setValueAtTime(oscillatorData.noiseGain.gain.value, now);
+                    oscillatorData.noiseGain.gain.linearRampToValueAtTime(0, now + 0.01);
+                }
+                
+                /* Remove from active oscillators immediately */
+                delete window.activeOscillators[note];
+                
+                if(DEBUG) {
+                    console.log("8-bit Note stopped:", note, "Release time:", releaseTime);
+                }
+            } catch (e) {
+                console.error("Error stopping 8-bit note:", e);
+                /* Still remove from active oscillators even if stopping failed */
+                delete window.activeOscillators[note];
+            }
+        }
+        
+        export(context, note, startTime, duration, destination) {
+            var waveformSelect = document.getElementById('gameboy-wave');
+            var noiseSelect = document.getElementById('gameboy-noise');
+            var attackSlider = document.getElementById('gameboy-attack');
+            var releaseSlider = document.getElementById('gameboy-release');
+
+            var waveformType = waveformSelect ? waveformSelect.value : 'square';
+            var noiseType = noiseSelect ? noiseSelect.value : 'white';
+            var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.0;
+            var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.3;
+            var sustainLevel = 0.7;
+
+            var oscillator = context.createOscillator();
+            var gainNode = context.createGain();
+            var noiseBuffer = context.createBufferSource();
+            var noiseGain = context.createGain();
+
+            var bufferSize = context.sampleRate * 0.5;
+            var buffer = context.createBuffer(1, bufferSize, context.sampleRate);
+            var output = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                output[i] = (Math.random() * 2 - 1) * (noiseType === 'white' ? 1 : i / bufferSize);
+            }
+            noiseBuffer.buffer = buffer;
+
+            oscillator.type = waveformType;
+            oscillator.frequency.value = note.freq;
+            noiseGain.gain.value = 0.02;
+
+            // --- CORRECTED ENVELOPE LOGIC ---
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime);
+            gainNode.gain.setValueAtTime(sustainLevel, startTime + duration);
+            gainNode.gain.linearRampToValueAtTime(0, startTime + duration + releaseTime);
+
+            oscillator.connect(gainNode);
+            noiseBuffer.connect(noiseGain);
+            gainNode.connect(destination);
+            noiseGain.connect(destination);
+
+            // Extend the stop time for both oscillator and noise to allow for the release tail.
+            oscillator.start(startTime);
+            noiseBuffer.start(startTime);
+            oscillator.stop(startTime + duration + releaseTime);
+            noiseBuffer.stop(startTime + duration + releaseTime);
+        }
+        
+        cleanup() {
+            this.removeGameBoyControls();
+            // Revert the background color to its default state.
+            document.body.style.backgroundColor = '';
+        }
+    }
+    </script>
+    <script type="text/javascript">
+        class SNES extends Instrument {
+        constructor() {
+            super('SNES');
+        }
+        
+        init() {
+            this.createSNESControls();
+            // Instead of adding a class, set the background color directly.
+            document.body.style.backgroundColor = '#5D4E37';
+        }
+        
+        createSNESControls() {
+            /* Create SNES specific controls */
+            document.querySelector('.wave-selector').style.display = 'none';
+            var controlBar = document.querySelector('.control-bar');
+            
+            /* Add SNES specific controls */
+            var snesControls = document.createElement('div');
+            snesControls.id = 'snes-controls';
+            snesControls.style.display = 'inline-flex';
+            snesControls.style.marginLeft = '10px';
+            
+            /* Instrument Type control */
+            var typeGroup = document.createElement('div');
+            typeGroup.className = 'control-group';
+            typeGroup.style.marginRight = '10px';
+            
+            var typeLabel = document.createElement('label');
+            typeLabel.textContent = 'Instrument';
+            typeLabel.style.marginBottom = '5px';
+            typeLabel.style.fontSize = '0.8em';
+            
+            var typeSelect = document.createElement('select');
+            typeSelect.id = 'snes-instrument';
+            typeSelect.style.width = '120px';
+            
+            var pianoOption = document.createElement('option');
+            pianoOption.value = 'piano';
+            pianoOption.textContent = 'Piano';
+            typeSelect.appendChild(pianoOption);
+            
+            var stringsOption = document.createElement('option');
+            stringsOption.value = 'strings';
+            stringsOption.textContent = 'Strings';
+            typeSelect.appendChild(stringsOption);
+            
+            var brassOption = document.createElement('option');
+            brassOption.value = 'brass';
+            brassOption.textContent = 'Brass';
+            typeSelect.appendChild(brassOption);
+            
+            var woodwindOption = document.createElement('option');
+            woodwindOption.value = 'woodwind';
+            woodwindOption.textContent = 'Woodwind';
+            typeSelect.appendChild(woodwindOption);
+            
+            var percussionOption = document.createElement('option');
+            percussionOption.value = 'percussion';
+            percussionOption.textContent = 'Percussion';
+            typeSelect.appendChild(percussionOption);
+            
+            typeGroup.appendChild(typeLabel);
+            typeGroup.appendChild(typeSelect);
+            
+            /* Reverb control */
+            var reverbGroup = document.createElement('div');
+            reverbGroup.className = 'control-group';
+            reverbGroup.style.marginRight = '10px';
+            
+            var reverbLabel = document.createElement('label');
+            reverbLabel.textContent = 'Reverb';
+            reverbLabel.id = 'snes-reverb-label';
+            reverbLabel.style.marginBottom = '5px';
+            reverbLabel.style.fontSize = '0.8em';
+            
+            var reverbSlider = document.createElement('input');
+            reverbSlider.type = 'range';
+            reverbSlider.id = 'snes-reverb';
+            reverbSlider.min = '0';
+            reverbSlider.max = '1';
+            reverbSlider.step = '0.05';
+            reverbSlider.value = '0.3';
+            reverbSlider.style.width = '100px';
+            reverbSlider.title = 'Reverb: 0.3'; // Tooltip instead of label
+            
+            reverbSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'reverbSlider: ' + val;
+            });
+            
+            reverbSlider.addEventListener('input', function() {
+                document.getElementById('snes-reverb-label').textContent = 'Reverb';
+            });
+            
+            reverbGroup.appendChild(reverbLabel);
+            reverbGroup.appendChild(reverbSlider);
+            
+            /* Attack control */
+            var attackGroup = document.createElement('div');
+            attackGroup.className = 'control-group';
+            attackGroup.style.marginRight = '10px';
+            
+            var attackLabel = document.createElement('label');
+            attackLabel.textContent = 'Attack';
+            attackLabel.id = 'snes-attack-label';
+            attackLabel.style.marginBottom = '5px';
+            attackLabel.style.fontSize = '0.8em';
+            
+            var attackSlider = document.createElement('input');
+            attackSlider.type = 'range';
+            attackSlider.id = 'snes-attack';
+            attackSlider.min = '0';
+            attackSlider.max = '0.5';
+            attackSlider.step = '0.01';
+            attackSlider.value = '0.05';
+            attackSlider.style.width = '100px';
+            attackSlider.title = 'Attack: 0.05'; // Tooltip instead of label
+            
+            attackSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'Attack: ' + val;
+            });
+            
+            attackSlider.addEventListener('input', function() {
+                document.getElementById('snes-attack-label').textContent = 'Attack';
+            });
+            
+            attackGroup.appendChild(attackLabel);
+            attackGroup.appendChild(attackSlider);
+            
+            /* Release control */
+            var releaseGroup = document.createElement('div');
+            releaseGroup.className = 'control-group';
+            
+            var releaseLabel = document.createElement('label');
+            releaseLabel.textContent = 'Release';
+            releaseLabel.id = 'snes-release-label';
+            releaseLabel.style.marginBottom = '5px';
+            releaseLabel.style.fontSize = '0.8em';
+            
+            var releaseSlider = document.createElement('input');
+            releaseSlider.type = 'range';
+            releaseSlider.id = 'snes-release';
+            releaseSlider.min = '0';
+            releaseSlider.max = '2';
+            releaseSlider.step = '0.05';
+            releaseSlider.value = '0.5';
+            releaseSlider.style.width = '100px';
+            releaseSlider.title = 'Release: 0.5'; // Tooltip instead of label
+            
+            attackSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'Release: ' + val;
+            });
+            
+            releaseSlider.addEventListener('input', function() {
+                document.getElementById('snes-release-label').textContent = 'Release';
+            });
+            
+            releaseGroup.appendChild(releaseLabel);
+            releaseGroup.appendChild(releaseSlider);
+            
+            snesControls.appendChild(typeGroup);
+            snesControls.appendChild(reverbGroup);
+            snesControls.appendChild(attackGroup);
+            snesControls.appendChild(releaseGroup);
+            
+            controlBar.appendChild(snesControls);
+        }
+
+        removeSNESControls() {
+            var snesControls = document.getElementById('snes-controls');
+            if (snesControls) {
+                snesControls.parentNode.removeChild(snesControls);
+            }
+            
+            document.querySelector('.wave-selector').style.display = 'inline-flex';
+        }
+        
+        playNote(note, freq) {
+            if (!window.audioContext) return;
+            
+            try {
+                var now = window.audioContext.currentTime;
+                var gainValue = 0.15;
+
+                /* Get SNES specific parameters */
+                var instrumentSelect = document.getElementById('snes-instrument');
+                var reverbSlider = document.getElementById('snes-reverb');
+                var attackSlider = document.getElementById('snes-attack');
+                var releaseSlider = document.getElementById('snes-release');
+                
+                var instrumentType = instrumentSelect ? instrumentSelect.value : 'piano';
+                var reverbAmount = reverbSlider ? parseFloat(reverbSlider.value) : 0.3;
+                var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.05;
+                var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.5;
+
+                /* Create main oscillator for the note */
+                var oscillator = window.audioContext.createOscillator();
+                var gainNode = window.audioContext.createGain();
+                
+                /* Create additional oscillators for harmonics to simulate sample-based instruments */
+                var harmonic1 = window.audioContext.createOscillator();
+                var harmonic2 = window.audioContext.createOscillator();
+                var harmonicGain1 = window.audioContext.createGain();
+                var harmonicGain2 = window.audioContext.createGain();
+                
+                /* Create filters for SNES sound */
+                var filter = window.audioContext.createBiquadFilter();
+                var filter2 = window.audioContext.createBiquadFilter();
+                
+                /* Create reverb using convolver node */
+                var convolver = window.audioContext.createConvolver();
+                var reverbGain = window.audioContext.createGain();
+                var dryGain = window.audioContext.createGain();
+                
+                /* Create reverb impulse response */
+                var length = window.audioContext.sampleRate * reverbAmount * 2;
+                var impulse = window.audioContext.createBuffer(2, length, window.audioContext.sampleRate);
+                
+                for (var channel = 0; channel < 2; channel++) {
+                    var channelData = impulse.getChannelData(channel);
+                    for (var i = 0; i < length; i++) {
+                        channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2);
+                    }
+                }
+                
+                convolver.buffer = impulse;
+                
+                /* Configure oscillator based on instrument type */
+                if (instrumentType === 'piano') {
+                    oscillator.type = 'triangle';
+                    harmonic1.type = 'sine';
+                    harmonic2.type = 'sine';
+                    harmonic1.frequency.value = freq * 2;
+                    harmonic2.frequency.value = freq * 3;
+                    harmonicGain1.gain.value = 0.2;
+                    harmonicGain2.gain.value = 0.1;
+                    
+                    filter.type = 'lowpass';
+                    filter.frequency.value = freq * 4;
+                    filter.Q.value = 1;
+                    
+                    filter2.type = 'highpass';
+                    filter2.frequency.value = freq * 0.5;
+                    filter2.Q.value = 0.5;
+                } else if (instrumentType === 'strings') {
+                    oscillator.type = 'sawtooth';
+                    harmonic1.type = 'sawtooth';
+                    harmonic2.type = 'sine';
+                    harmonic1.frequency.value = freq * 2;
+                    harmonic2.frequency.value = freq * 3;
+                    harmonicGain1.gain.value = 0.3;
+                    harmonicGain2.gain.value = 0.2;
+                    
+                    filter.type = 'lowpass';
+                    filter.frequency.value = freq * 3;
+                    filter.Q.value = 0.8;
+                    
+                    filter2.type = 'highpass';
+                    filter2.frequency.value = freq * 0.4;
+                    filter2.Q.value = 0.5;
+                } else if (instrumentType === 'brass') {
+                    oscillator.type = 'square';
+                    harmonic1.type = 'square';
+                    harmonic2.type = 'sine';
+                    harmonic1.frequency.value = freq * 2;
+                    harmonic2.frequency.value = freq * 1.5;
+                    harmonicGain1.gain.value = 0.4;
+                    harmonicGain2.gain.value = 0.3;
+                    
+                    filter.type = 'lowpass';
+                    filter.frequency.value = freq * 2.5;
+                    filter.Q.value = 1.5;
+                    
+                    filter2.type = 'highpass';
+                    filter2.frequency.value = freq * 0.6;
+                    filter2.Q.value = 0.7;
+                } else if (instrumentType === 'woodwind') {
+                    oscillator.type = 'triangle';
+                    harmonic1.type = 'sine';
+                    harmonic2.type = 'sine';
+                    harmonic1.frequency.value = freq * 2.5;
+                    harmonic2.frequency.value = freq * 3.5;
+                    harmonicGain1.gain.value = 0.25;
+                    harmonicGain2.gain.value = 0.15;
+                    
+                    filter.type = 'lowpass';
+                    filter.frequency.value = freq * 3.5;
+                    filter.Q.value = 1.2;
+                    
+                    filter2.type = 'highpass';
+                    filter2.frequency.value = freq * 0.5;
+                    filter2.Q.value = 0.6;
+                } else if (instrumentType === 'percussion') {
+                    oscillator.type = 'square';
+                    harmonic1.type = 'square';
+                    harmonic2.type = 'triangle';
+                    harmonic1.frequency.value = freq * 1.5;
+                    harmonic2.frequency.value = freq * 0.5;
+                    harmonicGain1.gain.value = 0.3;
+                    harmonicGain2.gain.value = 0.2;
+                    
+                    filter.type = 'bandpass';
+                    filter.frequency.value = freq * 1.2;
+                    filter.Q.value = 2;
+                    
+                    filter2.type = 'highpass';
+                    filter2.frequency.value = freq * 0.3;
+                    filter2.Q.value = 0.8;
+                }
+                
+                /* Set main oscillator frequency */
+                var roundedFreq = Math.round(freq * 1000) / 1000;
+                oscillator.frequency.setValueAtTime(roundedFreq, now);
+                
+                /* Set reverb gains */
+                reverbGain.gain.value = reverbAmount * 0.5;
+                dryGain.gain.value = 1 - reverbAmount * 0.3;
+                
+                /* Connect audio graph */
+                oscillator.connect(gainNode);
+                harmonic1.connect(harmonicGain1);
+                harmonic2.connect(harmonicGain2);
+                harmonicGain1.connect(gainNode);
+                harmonicGain2.connect(gainNode);
+                
+                /* Connect to filters */
+                gainNode.connect(filter);
+                filter.connect(filter2);
+                
+                /* Connect to dry/wet mix */
+                filter2.connect(dryGain);
+                filter2.connect(reverbGain);
+                
+                dryGain.connect(window.mainGainNode);
+                reverbGain.connect(convolver);
+                convolver.connect(window.mainGainNode);
+                
+                /* --- ADSR Envelope --- */
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(gainValue, now + attackTime);
+                
+                /* Start the sound */
+                oscillator.start(now);
+                harmonic1.start(now);
+                harmonic2.start(now);
+                
+                window.activeOscillators[note] = { 
+                    oscillator: oscillator, 
+                    gainNode: gainNode,
+                    harmonic1: harmonic1,
+                    harmonic2: harmonic2,
+                    harmonicGain1: harmonicGain1,
+                    harmonicGain2: harmonicGain2,
+                    filter: filter,
+                    filter2: filter2,
+                    convolver: convolver,
+                    reverbGain: reverbGain,
+                    dryGain: dryGain,
+                    releaseTime: releaseTime
+                };
+                
+                if(DEBUG) {
+                    console.log("SNES Note started:", note, "Frequency:", roundedFreq);
+                }
+            } catch (e) {
+                console.error("Error playing SNES note:", e);
+            }
+        }
+        
+        stopNote(note) {
+            var oscillatorData = window.activeOscillators[note];
+            
+            if (!oscillatorData) {
+                if(DEBUG) {
+                    console.log("SNES note data missing:", note, oscillatorData);
+                }
+                return;
+            }
+            
+            // *** THE FIX: Add a flag to prevent double cleanup ***
+            if (oscillatorData.isStopping) {
+                // This note is already in the process of stopping, so do nothing.
+                return;
+            }
+            oscillatorData.isStopping = true;
+
+            try {
+                var now = window.audioContext.currentTime;
+                // Use the release time that was stored when the note was played
+                var releaseTime = oscillatorData.releaseTime || 0.5;
+                
+                // Stop all components with the proper release time
+                if (oscillatorData.oscillator) {
+                    oscillatorData.oscillator.stop(now + releaseTime);
+                }
+                if (oscillatorData.harmonic1) {
+                    oscillatorData.harmonic1.stop(now + releaseTime);
+                }
+                if (oscillatorData.harmonic2) {
+                    oscillatorData.harmonic2.stop(now + releaseTime);
+                }
+                
+                // Schedule the gain ramps for fade out
+                if (oscillatorData.gainNode) {
+                    oscillatorData.gainNode.gain.cancelScheduledValues(now);
+                    oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
+                    oscillatorData.gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+                }
+                if (oscillatorData.harmonicGain1) {
+                    oscillatorData.harmonicGain1.gain.cancelScheduledValues(now);
+                    oscillatorData.harmonicGain1.gain.setValueAtTime(oscillatorData.harmonicGain1.gain.value, now);
+                    oscillatorData.harmonicGain1.gain.linearRampToValueAtTime(0, now + releaseTime);
+                }
+                if (oscillatorData.harmonicGain2) {
+                    oscillatorData.harmonicGain2.gain.cancelScheduledValues(now);
+                    oscillatorData.harmonicGain2.gain.setValueAtTime(oscillatorData.harmonicGain2.gain.value, now);
+                    oscillatorData.harmonicGain2.gain.linearRampToValueAtTime(0, now + releaseTime);
+                }
+                if (oscillatorData.reverbGain) {
+                    oscillatorData.reverbGain.gain.cancelScheduledValues(now);
+                    oscillatorData.reverbGain.gain.setValueAtTime(oscillatorData.reverbGain.gain.value, now);
+                    oscillatorData.reverbGain.gain.linearRampToValueAtTime(0, now + releaseTime);
+                }
+                if (oscillatorData.dryGain) {
+                    oscillatorData.dryGain.gain.cancelScheduledValues(now);
+                    oscillatorData.dryGain.gain.setValueAtTime(oscillatorData.dryGain.gain.value, now);
+                    oscillatorData.dryGain.gain.linearRampToValueAtTime(0, now + releaseTime);
+                }
+                
+                // Schedule the cleanup and visual feedback to happen AFTER the audio has finished.
+                setTimeout(function() {
+                    // Check if the note still exists and hasn't been force-stopped
+                    if (window.activeOscillators[note] && window.activeOscillators[note].isStopping) {
+                        // Now that the audio has faded, we can safely clean up.
+                        delete window.activeOscillators[note];
+
+                        if(DEBUG) {
+                            console.log("SNES Note fully stopped and cleaned up:", note);
+                        }
+                    }
+                }, releaseTime * 1000);
+
+                if(DEBUG) {
+                    console.log("SNES Note stop scheduled:", note, "Release time:", releaseTime);
+                }
+            } catch (e) {
+                console.error("Error stopping SNES note:", e);
+                // If there's an error, force cleanup immediately to prevent getting stuck
+                delete window.activeOscillators[note];
+            }
+        }
+        
+        export(context, note, startTime, duration, destination) {
+            var instrumentSelect = document.getElementById('snes-instrument');
+            var attackSlider = document.getElementById('snes-attack');
+            var releaseSlider = document.getElementById('snes-release');
+
+            var instrumentType = instrumentSelect ? instrumentSelect.value : 'piano';
+            var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.05;
+            var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.5;
+            var sustainLevel = 0.7;
+
+            var oscillator = context.createOscillator();
+            var gainNode = context.createGain();
+            var filter = context.createBiquadFilter();
+
+            // Simplified SNES instrument simulation
+            if (instrumentType === 'piano') {
+                oscillator.type = 'triangle';
+                filter.type = 'lowpass';
+                filter.frequency.value = note.freq * 4;
+            } else if (instrumentType === 'strings') {
+                oscillator.type = 'sawtooth';
+                filter.type = 'lowpass';
+                filter.frequency.value = note.freq * 3;
+            } else { // Default to a generic sound
+                oscillator.type = 'square';
+                filter.type = 'lowpass';
+                filter.frequency.value = note.freq * 2.5;
+            }
+
+            oscillator.frequency.value = note.freq;
+
+            // --- CORRECTED ENVELOPE LOGIC ---
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime);
+            gainNode.gain.setValueAtTime(sustainLevel, startTime + duration);
+            gainNode.gain.linearRampToValueAtTime(0, startTime + duration + releaseTime);
+
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(destination);
+
+            // Extend the stop time to allow for the release tail.
+            oscillator.start(startTime);
+            oscillator.stop(startTime + duration + releaseTime);
+        }
+        
+        cleanup() {
+            this.removeSNESControls();
+            // Revert the background color to its default state.
+            document.body.style.backgroundColor = '';
+        }
+    }
+    </script>
+    <script type="text/javascript">
+        class Guitar extends Instrument {
+        constructor() {
+            super('Guitar');
+        }
+        
+        init() {
+            this.createGuitarControls();
+            // Wood texture background
+            document.body.style.backgroundColor = '#5D4037';
+        }
+        
+        createGuitarControls() {
+            /* Create Guitar specific controls */
+            document.querySelector('.wave-selector').style.display = 'none';
+            var controlBar = document.querySelector('.control-bar');
+            
+            /* Add Guitar specific controls */
+            var guitarControls = document.createElement('div');
+            guitarControls.id = 'guitar-controls';
+            guitarControls.style.display = 'inline-flex';
+            guitarControls.style.marginLeft = '10px';
+            
+            /* Guitar Type control */
+            var typeGroup = document.createElement('div');
+            typeGroup.className = 'control-group';
+            typeGroup.style.marginRight = '10px';
+            
+            var typeLabel = document.createElement('label');
+            typeLabel.textContent = 'Type';
+            typeLabel.style.marginBottom = '5px';
+            typeLabel.style.fontSize = '0.8em';
+            typeLabel.style.color = '#fff'; // Better contrast on dark bg
+            
+            var typeSelect = document.createElement('select');
+            typeSelect.id = 'guitar-type';
+            typeSelect.style.width = '120px';
+            
+            var acousticOption = document.createElement('option');
+            acousticOption.value = 'acoustic';
+            acousticOption.textContent = 'Acoustic';
+            typeSelect.appendChild(acousticOption);
+            
+            var electricOption = document.createElement('option');
+            electricOption.value = 'electric';
+            electricOption.textContent = 'Electric';
+            typeSelect.appendChild(electricOption);
+            
+            var bassOption = document.createElement('option');
+            bassOption.value = 'bass';
+            bassOption.textContent = 'Bass';
+            typeSelect.appendChild(bassOption);
+            
+            typeGroup.appendChild(typeLabel);
+            typeGroup.appendChild(typeSelect);
+            
+            /* Damping control */
+            var dampingGroup = document.createElement('div');
+            dampingGroup.className = 'control-group';
+            dampingGroup.style.marginRight = '10px';
+            
+            var dampingLabel = document.createElement('label');
+            dampingLabel.textContent = 'Decay';
+            dampingLabel.id = 'guitar-damping-label';
+            dampingLabel.style.marginBottom = '5px';
+            dampingLabel.style.fontSize = '0.8em';
+            dampingLabel.style.color = '#fff';
+            
+            var dampingSlider = document.createElement('input');
+            dampingSlider.type = 'range';
+            dampingSlider.id = 'guitar-damping';
+            dampingSlider.min = '0.1';
+            dampingSlider.max = '2.0';
+            dampingSlider.step = '0.1';
+            dampingSlider.value = '1.0';
+            dampingSlider.style.width = '100px';
+            dampingSlider.title = 'Damping: 1.0'; // Tooltip instead of label
+            
+            dampingSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'Damping: ' + val;
+            });
+            
+            dampingSlider.addEventListener('input', function() {
+                document.getElementById('guitar-damping-label').textContent = 'Decay';
+            });
+            
+            dampingGroup.appendChild(dampingLabel);
+            dampingGroup.appendChild(dampingSlider);
+            
+            /* Body Resonance control */
+            var resonanceGroup = document.createElement('div');
+            resonanceGroup.className = 'control-group';
+            
+            var resonanceLabel = document.createElement('label');
+            resonanceLabel.textContent = 'Body';
+            resonanceLabel.id = 'guitar-body-label';
+            resonanceLabel.style.marginBottom = '5px';
+            resonanceLabel.style.fontSize = '0.8em';
+            resonanceLabel.style.color = '#fff';
+            
+            var resonanceSlider = document.createElement('input');
+            resonanceSlider.type = 'range';
+            resonanceSlider.id = 'guitar-body';
+            resonanceSlider.min = '0';
+            resonanceSlider.max = '10';
+            resonanceSlider.step = '0.5';
+            resonanceSlider.value = '5';
+            resonanceSlider.style.width = '100px';
+            resonanceSlider.title = 'Body: 5'; // Tooltip instead of label
+            
+            resonanceSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'Body: ' + val;
+            });
+            
+            resonanceSlider.addEventListener('input', function() {
+                document.getElementById('guitar-body-label').textContent = 'Body';
+            });
+            
+            resonanceGroup.appendChild(resonanceLabel);
+            resonanceGroup.appendChild(resonanceSlider);
+            
+            guitarControls.appendChild(typeGroup);
+            guitarControls.appendChild(dampingGroup);
+            guitarControls.appendChild(resonanceGroup);
+            
+            controlBar.appendChild(guitarControls);
+        }
+
+        removeGuitarControls() {
+            var guitarControls = document.getElementById('guitar-controls');
+            if (guitarControls) {
+                guitarControls.parentNode.removeChild(guitarControls);
+            }
+            
+            document.querySelector('.wave-selector').style.display = 'inline-flex';
+        }
+        
+        // Helper to create distortion curve for electric guitar
+        makeDistortionCurve(amount) {
+            var k = typeof amount === 'number' ? amount : 50;
+            var n_samples = 44100;
+            var curve = new Float32Array(n_samples);
+            var deg = Math.PI / 180;
+            for (var i = 0; i < n_samples; ++i) {
+                var x = i * 2 / n_samples - 1;
+                curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+            }
+            return curve;
+        }
+
+        playNote(note, freq) {
+            if (!window.audioContext) return;
+            
+            try {
+                var now = window.audioContext.currentTime;
+                
+                /* Parameters */
+                var typeSelect = document.getElementById('guitar-type');
+                var dampingSlider = document.getElementById('guitar-damping');
+                var bodySlider = document.getElementById('guitar-body');
+                
+                var guitarType = typeSelect ? typeSelect.value : 'acoustic';
+                var decayMult = dampingSlider ? parseFloat(dampingSlider.value) : 1.0;
+                var bodyGain = bodySlider ? parseFloat(bodySlider.value) : 5;
+                
+                var roundedFreq = Math.round(freq * 1000) / 1000;
+
+                // --- 1. Sources ---
+                
+                // Main Oscillator (Sawtooth is rich in harmonics)
+                var osc1 = window.audioContext.createOscillator();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(roundedFreq, now);
+                
+                // Secondary Oscillator (Detuned for "Chorus" width)
+                var osc2 = window.audioContext.createOscillator();
+                osc2.type = 'sawtooth';
+                osc2.detune.setValueAtTime(10, now); // Detune by 10 cents
+                osc2.frequency.setValueAtTime(roundedFreq, now);
+                
+                // "Twang" Oscillator (High freq sine that dies fast)
+                var twang = window.audioContext.createOscillator();
+                twang.type = 'triangle';
+                twang.frequency.setValueAtTime(roundedFreq * 4, now); // 2 octaves up
+                
+                // Pluck Noise (Bandpassed noise for pick attack)
+                var bufferSize = window.audioContext.sampleRate * 0.05; // 50ms
+                var buffer = window.audioContext.createBuffer(1, bufferSize, window.audioContext.sampleRate);
+                var data = buffer.getChannelData(0);
+                for (var i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                var noise = window.audioContext.createBufferSource();
+                noise.buffer = buffer;
+                var noiseFilter = window.audioContext.createBiquadFilter();
+                noiseFilter.type = 'bandpass';
+                noiseFilter.frequency.value = guitarType === 'bass' ? 1000 : 2500; // Brightness of pick
+                
+                // --- 2. Gains (Envelopes) ---
+                
+                var masterGain = window.audioContext.createGain();
+                var oscGain = window.audioContext.createGain();
+                var twangGain = window.audioContext.createGain();
+                var noiseGain = window.audioContext.createGain();
+                
+                // --- 3. Filters (Tone Shaping) ---
+                
+                var filter = window.audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                // Initial filter frequency (Open for attack)
+                var startFreq = guitarType === 'acoustic' ? roundedFreq * 6 : roundedFreq * 8;
+                filter.frequency.setValueAtTime(startFreq, now);
+                
+                // Body Resonance (Simulates wood cavity)
+                var bodyFilter = window.audioContext.createBiquadFilter();
+                bodyFilter.type = 'peaking';
+                bodyFilter.frequency.value = guitarType === 'bass' ? 120 : 100; // The "boom"
+                bodyFilter.Q.value = 1.0;
+                bodyFilter.gain.value = bodyGain; 
+                // Bypass body filter if gain is 0
+                if(bodyGain <= 0.1) bodyFilter.gain.value = 0;
+
+                // Distortion (Electric only)
+                var shaper = null;
+                if (guitarType === 'electric') {
+                    shaper = window.audioContext.createWaveShaper();
+                    shaper.curve = this.makeDistortionCurve(100);
+                    shaper.oversample = '4x';
+                }
+
+                // --- 4. Routing ---
+                
+                osc1.connect(oscGain);
+                osc2.connect(oscGain);
+                twang.connect(twangGain);
+                
+                noise.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                
+                // Combine sources
+                oscGain.connect(masterGain);
+                twangGain.connect(masterGain);
+                noiseGain.connect(masterGain);
+                
+                // Filter Chain: Main -> Filter -> Body -> [Distortion] -> Out
+                masterGain.connect(filter);
+                filter.connect(bodyFilter);
+                
+                if (shaper) {
+                    bodyFilter.connect(shaper);
+                    shaper.connect(window.mainGainNode);
+                } else {
+                    bodyFilter.connect(window.mainGainNode);
+                }
+                
+                // --- 5. Envelope Logic ---
+                
+                var sustainLevel = guitarType === 'electric' ? 0.4 : 0.3;
+                var attackTime = 0.005;
+                
+                // Master Volume Envelope
+                masterGain.gain.setValueAtTime(0, now);
+                masterGain.gain.linearRampToValueAtTime(0.3, now + attackTime); // Attack
+                masterGain.gain.exponentialRampToValueAtTime(sustainLevel, now + (0.5 * decayMult)); // Initial Decay
+                
+                // Filter Envelope (The "Pluck")
+                // Filter closes as the string settles
+                filter.frequency.exponentialRampToValueAtTime(
+                    guitarType === 'bass' ? roundedFreq * 1.5 : roundedFreq * 2.5, 
+                    now + (0.4 * decayMult)
+                );
+
+                // Twang Envelope (Decays very fast)
+                twangGain.gain.setValueAtTime(0.15, now);
+                twangGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                
+                // Noise Envelope (Decays instantly)
+                noiseGain.gain.setValueAtTime(0.2, now);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+                
+                // --- 6. Start ---
+                osc1.start(now);
+                osc2.start(now);
+                twang.start(now);
+                noise.start(now);
+                
+                // Store references for stopping
+                window.activeOscillators[note] = { 
+                    osc1: osc1, 
+                    osc2: osc2,
+                    twang: twang,
+                    noise: noise,
+                    masterGain: masterGain,
+                    filter: filter,
+                    shaper: shaper
+                };
+                
+            } catch (e) {
+                console.error("Error playing guitar note:", e);
+            }
+        }
+        
+        stopNote(note) {
+            var oscData = window.activeOscillators[note];
+            if (!oscData) return;
+            
+            try {
+                var now = window.audioContext.currentTime;
+                var releaseTime = 0.2; // Fast release for guitar
+                
+                // Mute the noise immediately
+                if(oscData.noise) try { oscData.noise.stop(now + 0.01); } catch(e){}
+
+                // Fade out master gain
+                if (oscData.masterGain) {
+                    oscData.masterGain.gain.cancelScheduledValues(now);
+                    oscData.masterGain.gain.setValueAtTime(oscData.masterGain.gain.value, now);
+                    oscData.masterGain.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
+                }
+                
+                // Close the filter quickly (simulates muting with palm/hand)
+                if (oscData.filter) {
+                    oscData.filter.frequency.cancelScheduledValues(now);
+                    oscData.filter.frequency.setValueAtTime(oscData.filter.frequency.value, now);
+                    oscData.filter.frequency.exponentialRampToValueAtTime(100, now + releaseTime);
+                }
+                
+                // Stop oscillators after release
+                [oscData.osc1, oscData.osc2, oscData.twang].forEach(function(osc) {
+                    if (osc) {
+                        try { osc.stop(now + releaseTime + 0.1); } catch(e){}
+                    }
+                });
+                
+                delete window.activeOscillators[note];
+                
+            } catch (e) {
+                console.error("Error stopping guitar note:", e);
+                delete window.activeOscillators[note];
+            }
+        }
+        
+        export(context, note, startTime, duration, destination) {
+            // Logic mirrors playNote but for offline rendering
+            var typeSelect = document.getElementById('guitar-type');
+            var dampingSlider = document.getElementById('guitar-damping');
+            var bodySlider = document.getElementById('guitar-body');
+            
+            var guitarType = typeSelect ? typeSelect.value : 'acoustic';
+            var decayMult = dampingSlider ? parseFloat(dampingSlider.value) : 1.0;
+            var bodyGain = bodySlider ? parseFloat(bodySlider.value) : 5;
+            
+            var freq = note.freq;
+
+            // 1. Create Nodes
+            var osc1 = context.createOscillator();
+            osc1.type = 'sawtooth';
+            osc1.frequency.value = freq;
+
+            var osc2 = context.createOscillator();
+            osc2.type = 'sawtooth';
+            osc2.detune.value = 10;
+            osc2.frequency.value = freq;
+
+            var twang = context.createOscillator();
+            twang.type = 'triangle';
+            twang.frequency.value = freq * 4;
+
+            // Noise
+            var noiseBuffer = context.createBuffer(1, context.sampleRate * 0.05, context.sampleRate);
+            var noiseData = noiseBuffer.getChannelData(0);
+            for (var i = 0; i < noiseBuffer.length; i++) noiseData[i] = Math.random() * 2 - 1;
+            var noise = context.createBufferSource();
+            noise.buffer = noiseBuffer;
+            var noiseFilter = context.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.value = guitarType === 'bass' ? 1000 : 2500;
+
+            // Gains
+            var masterGain = context.createGain();
+            var oscGain = context.createGain();
+            var twangGain = context.createGain();
+            var noiseGain = context.createGain();
+
+            // Filters
+            var filter = context.createBiquadFilter();
+            filter.type = 'lowpass';
+            var startFreq = guitarType === 'acoustic' ? freq * 6 : freq * 8;
+            filter.frequency.setValueAtTime(startFreq, startTime);
+
+            var bodyFilter = context.createBiquadFilter();
+            bodyFilter.type = 'peaking';
+            bodyFilter.frequency.value = guitarType === 'bass' ? 120 : 100;
+            bodyFilter.Q.value = 1.0;
+            bodyFilter.gain.value = bodyGain;
+            if(bodyGain <= 0.1) bodyFilter.gain.value = 0;
+
+            var shaper = null;
+            if (guitarType === 'electric') {
+                shaper = context.createWaveShaper();
+                shaper.curve = this.makeDistortionCurve(100);
+                shaper.oversample = '4x';
+            }
+
+            // 2. Connect
+            osc1.connect(oscGain);
+            osc2.connect(oscGain);
+            twang.connect(twangGain);
+            oscGain.connect(masterGain);
+            twangGain.connect(masterGain);
+
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(masterGain);
+
+            masterGain.connect(filter);
+            filter.connect(bodyFilter);
+
+            if (shaper) {
+                bodyFilter.connect(shaper);
+                shaper.connect(destination);
+            } else {
+                bodyFilter.connect(destination);
+            }
+
+            // 3. Envelopes
+            var sustainLevel = guitarType === 'electric' ? 0.4 : 0.3;
+            var releaseTime = Math.min(duration * 0.3, 0.5);
+            var noteEndTime = startTime + duration;
+
+            masterGain.gain.setValueAtTime(0, startTime);
+            masterGain.gain.linearRampToValueAtTime(0.3, startTime + 0.005);
+            masterGain.gain.exponentialRampToValueAtTime(sustainLevel, startTime + (0.5 * decayMult));
+            // Release
+            masterGain.gain.setValueAtTime(sustainLevel, noteEndTime);
+            masterGain.gain.exponentialRampToValueAtTime(0.001, noteEndTime + releaseTime);
+
+            filter.frequency.exponentialRampToValueAtTime(
+                guitarType === 'bass' ? freq * 1.5 : freq * 2.5, 
+                startTime + (0.4 * decayMult)
+            );
+            // Close filter on release
+            filter.frequency.setValueAtTime(filter.frequency.value, noteEndTime);
+            filter.frequency.exponentialRampToValueAtTime(100, noteEndTime + releaseTime);
+
+            twangGain.gain.setValueAtTime(0.15, startTime);
+            twangGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.1);
+
+            noiseGain.gain.setValueAtTime(0.2, startTime);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.03);
+
+            // 4. Start/Stop
+            osc1.start(startTime);
+            osc2.start(startTime);
+            twang.start(startTime);
+            noise.start(startTime);
+            
+            osc1.stop(noteEndTime + releaseTime + 0.1);
+            osc2.stop(noteEndTime + releaseTime + 0.1);
+            twang.stop(noteEndTime + releaseTime + 0.1);
+            noise.stop(startTime + 0.1);
+        }
+        
+        cleanup() {
+            this.removeGuitarControls();
+            document.body.style.backgroundColor = '';
+        }
+    }
+    </script>
+    <script type="text/javascript">
+        class Drums extends Instrument {
+        constructor() {
+            super('Drums & Percussion');
+        }
+        
+        init() {
+            this.createDrumsControls();
+            // Instead of adding a class, set the background color directly.
+            document.body.style.backgroundColor = '#3a3a3a';
+        }
+        
+        createDrumsControls() {
+            /* Create Drums specific controls */
+            document.querySelector('.wave-selector').style.display = 'none';
+            var controlBar = document.querySelector('.control-bar');
+            
+            /* Add Drums specific controls */
+            var drumsControls = document.createElement('div');
+            drumsControls.id = 'drums-controls';
+            drumsControls.style.display = 'inline-flex';
+            drumsControls.style.marginLeft = '10px';
+            
+            /* Drum Type control */
+            var typeGroup = document.createElement('div');
+            typeGroup.className = 'control-group';
+            typeGroup.style.marginRight = '10px';
+            
+            var typeLabel = document.createElement('label');
+            typeLabel.textContent = 'Drum Type';
+            typeLabel.style.marginBottom = '5px';
+            typeLabel.style.fontSize = '0.8em';
+            
+            var typeSelect = document.createElement('select');
+            typeSelect.id = 'drums-type';
+            typeSelect.style.width = '120px';
+            
+            var kickOption = document.createElement('option');
+            kickOption.value = 'kick';
+            kickOption.textContent = 'Kick';
+            typeSelect.appendChild(kickOption);
+            
+            var snareOption = document.createElement('option');
+            snareOption.value = 'snare';
+            snareOption.textContent = 'Snare';
+            typeSelect.appendChild(snareOption);
+            
+            var tomOption = document.createElement('option');
+            tomOption.value = 'tom';
+            tomOption.textContent = 'Tom';
+            typeSelect.appendChild(tomOption);
+            
+            // Added hi-hat option
+            var hiHatOption = document.createElement('option');
+            hiHatOption.value = 'hihat';
+            hiHatOption.textContent = 'Hi-Hat';
+            typeSelect.appendChild(hiHatOption);
+            
+            typeGroup.appendChild(typeLabel);
+            typeGroup.appendChild(typeSelect);
+            
+            var cymbalOption = document.createElement('option');
+            cymbalOption.value = 'cymbal';
+            cymbalOption.textContent = 'Cymbal';
+            typeSelect.appendChild(cymbalOption);
+            
+            /* Pitch control */
+            var pitchGroup = document.createElement('div');
+            pitchGroup.className = 'control-group';
+            pitchGroup.style.marginRight = '10px';
+            
+            var pitchLabel = document.createElement('label');
+            pitchLabel.textContent = 'Pitch';
+            pitchLabel.id = 'drums-pitch-label';
+            pitchLabel.style.marginBottom = '5px';
+            pitchLabel.style.fontSize = '0.8em';
+            
+            var pitchSlider = document.createElement('input');
+            pitchSlider.type = 'range';
+            pitchSlider.id = 'drums-pitch';
+            pitchSlider.min = '0.5';
+            pitchSlider.max = '2';
+            pitchSlider.step = '0.1';
+            pitchSlider.value = '1';
+            pitchSlider.style.width = '100px';
+            pitchSlider.title = 'Pitch: 1'; // Tooltip instead of label
+            
+            pitchSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'Pitch: ' + val;
+            });
+            
+            pitchSlider.addEventListener('input', function() {
+                document.getElementById('drums-pitch-label').textContent = 'Pitch';
+            });
+            
+            pitchGroup.appendChild(pitchLabel);
+            pitchGroup.appendChild(pitchSlider);
+            
+            /* Tone control */
+            var toneGroup = document.createElement('div');
+            toneGroup.className = 'control-group';
+            toneGroup.style.marginRight = '10px';
+            
+            /* Decay control */
+            var decayGroup = document.createElement('div');
+            decayGroup.className = 'control-group';
+            
+            var decayLabel = document.createElement('label');
+            decayLabel.textContent = 'Decay';
+            decayLabel.id = 'drums-decay-label';
+            decayLabel.style.marginBottom = '5px';
+            decayLabel.style.fontSize = '0.8em';
+            
+            var decaySlider = document.createElement('input');
+            decaySlider.type = 'range';
+            decaySlider.id = 'drums-decay';
+            decaySlider.min = '0.1';
+            decaySlider.max = '2';
+            decaySlider.step = '0.1';
+            decaySlider.value = '0.5';
+            decaySlider.style.width = '100px';
+            decaySlider.title = 'Decay: 0.5'; // Tooltip instead of label
+            
+            decaySlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value;
+                this.title = 'Decay: ' + val;
+            });
+            
+            decaySlider.addEventListener('input', function() {
+                document.getElementById('drums-decay-label').textContent = 'Decay';
+            });
+            
+            decayGroup.appendChild(decayLabel);
+            decayGroup.appendChild(decaySlider);
+            
+            drumsControls.appendChild(typeGroup);
+            drumsControls.appendChild(pitchGroup);
+            drumsControls.appendChild(decayGroup);
+            
+            controlBar.appendChild(drumsControls);
+        }
+        
+        removeDrumsControls() {
+            var drumsControls = document.getElementById('drums-controls');
+            if (drumsControls) {
+                drumsControls.parentNode.removeChild(drumsControls);
+            }
+            
+            document.querySelector('.wave-selector').style.display = 'inline-flex';
+        }
+        
+        playNote(note, freq) {
+            if (!window.audioContext) return;
+            
+            try {
+                var now = window.audioContext.currentTime;
+                var gainValue = 0.5;
+
+                /* Get Drums specific parameters */
+                var typeSelect = document.getElementById('drums-type');
+                var pitchSlider = document.getElementById('drums-pitch');
+                var decaySlider = document.getElementById('drums-decay');
+                
+                var drumType = typeSelect ? typeSelect.value : 'kick';
+                var pitch = pitchSlider ? parseFloat(pitchSlider.value) : 1;
+                var decayTime = decaySlider ? parseFloat(decaySlider.value) : 0.5;
+
+                var noiseBuffer = window.audioContext.createBufferSource();
+                var noiseGain = window.audioContext.createGain();
+                var noiseFilter = window.audioContext.createBiquadFilter();
+                
+                /* Create noise buffer */
+                var bufferSize = window.audioContext.sampleRate * 2;
+                var buffer = window.audioContext.createBuffer(1, bufferSize, window.audioContext.sampleRate);
+                var output = buffer.getChannelData(0);
+                
+                for (var i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+                noiseBuffer.buffer = buffer;
+                noiseBuffer.loop = true;
+
+                var oscillator = window.audioContext.createOscillator();
+                var oscillatorGain = window.audioContext.createGain();
+                
+                /* Configure based on drum type */
+                if (drumType === 'kick') {
+                    oscillator.type = 'sine';
+                    // Use the provided frequency instead of fixed 150
+                    oscillator.frequency.setValueAtTime(freq * pitch, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
+                    oscillatorGain.gain.setValueAtTime(gainValue, now);
+                    oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
+                    
+                    oscillator.connect(oscillatorGain);
+                    oscillatorGain.connect(window.mainGainNode);
+                    oscillator.start(now);
+                    oscillator.stop(now + decayTime);
+                    
+                    window.activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain };
+                } else if (drumType === 'snare') {
+                    /* Tone component */
+                    oscillator.type = 'triangle';
+                    // Use the provided frequency instead of fixed 200
+                    oscillator.frequency.setValueAtTime(freq * pitch, now);
+                    oscillatorGain.gain.setValueAtTime(gainValue * 0.5, now);
+                    oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
+                    
+                    /* Noise component */
+                    noiseFilter.type = 'highpass';
+                    // Map frequency to filter range (higher notes = higher filter)
+                    noiseFilter.frequency.value = 1000 + (freq / 100);
+                    noiseGain.gain.setValueAtTime(gainValue * 0.5, now);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
+                    
+                    oscillator.connect(oscillatorGain);
+                    noiseBuffer.connect(noiseFilter);
+                    noiseFilter.connect(noiseGain);
+                    
+                    oscillatorGain.connect(window.mainGainNode);
+                    noiseGain.connect(window.mainGainNode);
+                    
+                    oscillator.start(now);
+                    noiseBuffer.start(now);
+                    
+                    window.activeOscillators[note] = { 
+                        oscillator: oscillator, 
+                        gainNode: oscillatorGain,
+                        noiseBuffer: noiseBuffer,
+                        noiseGain: noiseGain
+                    };
+                } else if (drumType === 'tom') {
+                    oscillator.type = 'square';
+                    // Use the provided frequency instead of fixed 150
+                    oscillator.frequency.setValueAtTime(freq * pitch, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
+                    oscillatorGain.gain.setValueAtTime(gainValue, now);
+                    oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
+                    
+                    oscillator.connect(oscillatorGain);
+                    oscillatorGain.connect(window.mainGainNode);
+                    oscillator.start(now);
+                    oscillator.stop(now + decayTime);
+                    
+                    window.activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain };
+                } else if (drumType === 'hihat') {
+                    oscillator.type = 'square';
+                    // Create a new buffer source for noise
+                    const noiseSource = window.audioContext.createBufferSource();
+                    
+                    // Create noise buffer if it doesn't exist
+                    if (!window.noiseBuffer) {
+                        const bufferSize = window.audioContext.sampleRate * 0.5; // 0.5 seconds of noise
+                        window.noiseBuffer = window.audioContext.createBuffer(1, bufferSize, window.audioContext.sampleRate);
+                        const output = window.noiseBuffer.getChannelData(0);
+                        
+                        for (let i = 0; i < bufferSize; i++) {
+                            output[i] = Math.random() * 2 - 1; // Generate white noise
+                        }
+                    }
+                    
+                    noiseSource.buffer = window.noiseBuffer;
+                    
+                    // Create an oscillator for the pitched component
+                    const hihatOsc = window.audioContext.createOscillator();
+                    hihatOsc.type = 'square'; // Square wave for metallic sound
+                    
+                    // *** KEY FIX: Use the 'pitch' variable from the slider ***
+                    // This follows the same pattern as your working 'tom' drum
+                    const targetFreq = freq * pitch;
+                    hihatOsc.frequency.value = targetFreq;
+                    
+                    // Create a bandpass filter for the oscillator
+                    const oscFilter = window.audioContext.createBiquadFilter();
+                    oscFilter.type = 'bandpass';
+                    // Use the same target frequency for the filter to track the pitch
+                    oscFilter.frequency.value = targetFreq;
+                    oscFilter.Q.value = 10; // High Q for resonance
+                    
+                    // Create a highpass filter for noise
+                    const noiseFilter = window.audioContext.createBiquadFilter();
+                    noiseFilter.type = 'highpass';
+                    noiseFilter.frequency.value = 8000; // Fixed high frequency for noise
+                    
+                    // Create gain nodes for both sources
+                    const noiseGain = window.audioContext.createGain();
+                    const oscGain = window.audioContext.createGain();
+                    const hihatGain = window.audioContext.createGain();
+                    
+                    // Set gain values
+                    noiseGain.gain.value = 0.3; // Noise component
+                    oscGain.gain.value = 0.2; // Oscillator component
+                    
+                    hihatGain.gain.setValueAtTime(gainValue * 0.5, now);
+                    hihatGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 0.2);
+                    
+                    // Connect noise path
+                    noiseSource.connect(noiseFilter);
+                    noiseFilter.connect(noiseGain);
+                    noiseGain.connect(hihatGain);
+                    
+                    // Connect oscillator path
+                    hihatOsc.connect(oscFilter);
+                    oscFilter.connect(oscGain);
+                    oscGain.connect(hihatGain);
+                    
+                    // Connect to main output
+                    hihatGain.connect(window.mainGainNode);
+                    
+                    // Start and stop sources
+                    noiseSource.start(now);
+                    hihatOsc.start(now);
+                    noiseSource.stop(now + decayTime * 0.3);
+                    hihatOsc.stop(now + decayTime * 0.3);
+                    
+                    window.activeOscillators[note] = { 
+                        noiseSource: noiseSource,
+                        oscillator: hihatOsc,
+                        gain: hihatGain
+                    };
+                } else if (drumType === 'cymbal') {
+                    noiseFilter.type = 'highpass';
+                    // Map frequency to filter range (higher notes = higher filter)
+                    noiseFilter.frequency.value = 3000 + (freq / 15);
+                    noiseGain.gain.setValueAtTime(gainValue * 0.4, now);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 2);
+                    
+                    noiseBuffer.connect(noiseFilter);
+                    noiseFilter.connect(noiseGain);
+                    noiseGain.connect(window.mainGainNode);
+                    
+                    noiseBuffer.start(now);
+                    
+                    window.activeOscillators[note] = { 
+                        noiseBuffer: noiseBuffer,
+                        noiseGain: noiseGain
+                    };
+                }
+                
+                if(DEBUG) {
+                    console.log("Drum Note started:", note, "Type:", drumType, "Frequency:", freq);
+                }
+            } catch (e) {
+                console.error("Error playing drum note:", e);
+            }
+        }
+        
+        stopNote(note) {
+            var oscillatorData = window.activeOscillators[note];
+            
+            if (!oscillatorData) {
+                if(DEBUG) {
+                    console.log("Drum note data missing:", note, oscillatorData);
+                }
+                delete window.activeOscillators[note];
+                return;
+            }
+            
+            try {
+                var now = window.audioContext.currentTime;
+                var releaseTime = 0.05; /* Very short release for drums */
+                
+                /* Stop all components */
+                if (oscillatorData.oscillator) {
+                    try {
+                        oscillatorData.oscillator.stop(now + releaseTime);
+                    } catch (e) {
+                        /* Ignore errors */
+                    }
+                }
+                
+                if (oscillatorData.noiseBuffer) {
+                    try {
+                        oscillatorData.noiseBuffer.stop(now + releaseTime);
+                    } catch (e) {
+                        /* Ignore errors */
+                    }
+                }
+                
+                /* Fade out gains */
+                if (oscillatorData.gainNode) {
+                    oscillatorData.gainNode.gain.cancelScheduledValues(now);
+                    oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
+                    oscillatorData.gainNode.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
+                }
+                
+                if (oscillatorData.noiseGain) {
+                    oscillatorData.noiseGain.gain.cancelScheduledValues(now);
+                    oscillatorData.noiseGain.gain.setValueAtTime(oscillatorData.noiseGain.gain.value, now);
+                    oscillatorData.noiseGain.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
+                }
+                
+                /* Remove from active oscillators immediately */
+                delete window.activeOscillators[note];
+                
+                if(DEBUG) {
+                    console.log("Drum Note stopped:", note);
+                }
+            } catch (e) {
+                console.error("Error stopping drum note:", e);
+                /* Still remove from active oscillators even if stopping failed */
+                delete window.activeOscillators[note];
+            }
+        }
+        
+        export(context, note, startTime, duration, destination) {
+            var typeSelect = document.getElementById('drums-type');
+            var pitchSlider = document.getElementById('drums-pitch');
+            var decaySlider = document.getElementById('drums-decay');
+            
+            var drumType = typeSelect ? typeSelect.value : 'kick';
+            var pitch = pitchSlider ? parseFloat(pitchSlider.value) : 1;
+            var decayTime = decaySlider ? parseFloat(decaySlider.value) : 0.5;
+
+            var oscillator = context.createOscillator();
+            var oscillatorGain = context.createGain();
+            var noiseBuffer = context.createBufferSource();
+            var noiseGain = context.createGain();
+            var noiseFilter = context.createBiquadFilter();
+            
+            // Create noise buffer
+            var bufferSize = context.sampleRate * 2;
+            var buffer = context.createBuffer(1, bufferSize, context.sampleRate);
+            var output = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            noiseBuffer.buffer = buffer;
+            noiseBuffer.loop = true;
+
+            // --- CORRECTED AUDIO ROUTING & ENVELOPE LOGIC ---
+            if (drumType === 'kick') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(note.freq * pitch, startTime);
+                oscillator.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                
+                oscillatorGain.gain.setValueAtTime(0.7, startTime);
+                oscillatorGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                
+                oscillator.connect(oscillatorGain);
+                oscillatorGain.connect(destination);
+                oscillator.start(startTime);
+                oscillator.stop(startTime + decayTime);
+            } else if (drumType === 'snare') {
+                oscillator.type = 'triangle';
+                oscillator.frequency.value = note.freq * pitch;
+                
+                noiseFilter.type = 'highpass';
+                noiseFilter.frequency.value = 5000;
+                
+                oscillatorGain.gain.setValueAtTime(0.5, startTime);
+                noiseGain.gain.setValueAtTime(0.5, startTime);
+                
+                oscillatorGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                noiseGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+
+                oscillator.connect(oscillatorGain);
+                noiseBuffer.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                
+                oscillatorGain.connect(destination);
+                noiseGain.connect(destination);
+                
+                oscillator.start(startTime);
+                noiseBuffer.start(startTime);
+                oscillator.stop(startTime + decayTime);
+                noiseBuffer.stop(startTime + decayTime);
+            } else { // Default to a tom-like sound for other types
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(note.freq * pitch, startTime);
+                oscillator.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                
+                oscillatorGain.gain.setValueAtTime(0.7, startTime);
+                oscillatorGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                
+                oscillator.connect(oscillatorGain);
+                oscillatorGain.connect(destination);
+                oscillator.start(startTime);
+                oscillator.stop(startTime + decayTime);
+            }
+        }
+        
+        cleanup() {
+            this.removeDrumsControls();
+            // Revert the background color to its default state.
+            document.body.style.backgroundColor = '';
+        }
+    }
+    </script>
+    <script type="text/javascript">
+        class Bell extends Instrument {
+        constructor() {
+            super('Bell');
+        }
+        
+        init() {
+            this.createBellControls();
+        }
+        
+        createBellControls() {
+            // We keep the standard wave selector visible
+            var controlBar = document.querySelector('.control-bar');
+            if (!controlBar) return; 
+
+            /* Container for Bell controls */
+            var bellControls = document.createElement('div');
+            bellControls.id = 'bell-controls';
+            bellControls.style.display = 'inline-flex';
+            bellControls.style.marginLeft = '15px';
+            bellControls.style.alignItems = 'center';
+            // Seamless styling maintained
+            bellControls.style.padding = '0 10px';
+            
+            /* --- 1. Decay (Ring Time) Slider --- */
+            var decayGroup = document.createElement('div');
+            decayGroup.className = 'control-group';
+            decayGroup.style.marginRight = '15px';
+            
+            var decayLabel = document.createElement('label');
+            decayLabel.textContent = 'Decay';
+            decayLabel.id = 'bell-decay-label';
+            decayLabel.style.marginBottom = '5px';
+            decayLabel.style.fontSize = '0.8em';
+            
+            decayGroup.appendChild(decayLabel);
+            
+            var decaySlider = document.createElement('input');
+            decaySlider.type = 'range';
+            decaySlider.id = 'bell-decay';
+            decaySlider.min = '0.1';
+            decaySlider.max = '5.0';
+            decaySlider.step = '0.1';
+            decaySlider.value = '1.5';
+            decaySlider.style.width = '80px';
+            decaySlider.title = 'Decay: 1.5s'; // Tooltip instead of label
+            
+            decaySlider.addEventListener('input', function() {
+                this.title = 'Decay: ' + this.value + 's';
+            });
+            
+            decayGroup.appendChild(decaySlider);
+            
+            /* --- 2. Harmonics (Brightness) Slider --- */
+            var harmGroup = document.createElement('div');
+            harmGroup.className = 'control-group';
+            
+            var brightnessLabel = document.createElement('label');
+            brightnessLabel.textContent = 'Brightness';
+            brightnessLabel.id = 'bell-brightness-label';
+            brightnessLabel.style.marginBottom = '5px';
+            brightnessLabel.style.fontSize = '0.8em';
+            
+            harmGroup.appendChild(brightnessLabel);
+            
+            var harmSlider = document.createElement('input');
+            harmSlider.type = 'range';
+            harmSlider.id = 'bell-harmonics';
+            harmSlider.min = '0';
+            harmSlider.max = '1.0';
+            harmSlider.step = '0.1';
+            harmSlider.value = '1.0';
+            harmSlider.style.width = '80px';
+            harmSlider.title = 'Brightness: 1.0'; // Tooltip instead of label
+
+            harmSlider.addEventListener('input', function() {
+                this.title = 'Brightness: ' + this.value;
+            });
+
+            // FIXED: Appending the slider to the group
+            harmGroup.appendChild(harmSlider);
+
+            /* Assemble Controls */
+            bellControls.appendChild(decayGroup);
+            bellControls.appendChild(harmGroup);
+            
+            controlBar.appendChild(bellControls);
+        }
+        
+        removeBellControls() {
+            var bellControls = document.getElementById('bell-controls');
+            if (bellControls) {
+                bellControls.parentNode.removeChild(bellControls);
+            }
+        }
+        
+        playNote(note, freq) {
+            if (!window.audioContext) return;
+            
+            try {
+                var now = window.audioContext.currentTime;
+                
+                /* --- Read Options --- */
+                var selectedWave = document.querySelector('.wave-option.selected');
+                var waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
+
+                var decaySlider = document.getElementById('bell-decay');
+                var harmSlider = document.getElementById('bell-harmonics');
+                
+                var decayTime = decaySlider ? parseFloat(decaySlider.value) : 1.5;
+                var harmonicMix = harmSlider ? parseFloat(harmSlider.value) : 1.0;
+
+                var masterGainNode = window.audioContext.createGain();
+                masterGainNode.connect(window.mainGainNode);
+                
+                masterGainNode.gain.setValueAtTime(0, now);
+                masterGainNode.gain.linearRampToValueAtTime(0.25, now + 0.005);
+
+                var oscillators = [];
+                
+                /* --- FIXED Additive Synthesis Logic --- */
+                const addPartial = function(ratio, volBase) {
+                    var osc = window.audioContext.createOscillator();
+                    var pGain = window.audioContext.createGain();
+                    
+                    osc.type = waveType;
+                    osc.frequency.setValueAtTime(freq * ratio, now);
+                    
+                    /* 
+                       FIX: Only apply harmonicMix to the overtones (ratio > 1.0).
+                       The Fundamental (ratio 1.0) keeps its full volume regardless 
+                       of the brightness setting.
+                    */
+                    var volume = volBase;
+                    if (ratio > 1.0) {
+                        volume = volBase * harmonicMix;
+                    }
+
+                    pGain.gain.value = volume;
+                    
+                    osc.connect(pGain);
+                    pGain.connect(masterGainNode);
+                    
+                    osc.start(now);
+                    oscillators.push(osc);
+                };
+
+                /* Partial Stack */
+                addPartial(1.0, 1.0);      // Fundamental (Always full volume)
+                addPartial(2.0, 0.6);      // Octave (Affected by Brightness)
+                addPartial(2.4, 0.4);      // Metallic (Affected by Brightness)
+                addPartial(4.2, 0.25);     // High Shimmer (Affected by Brightness)
+                addPartial(6.7, 0.2);      // Brightness (Affected by Brightness)
+                
+                window.activeOscillators[note] = { 
+                    gainNode: masterGainNode,
+                    oscillators: oscillators,
+                    releaseTime: decayTime
+                };
+                
+            } catch (e) {
+                console.error("Error playing bell note:", e);
+            }
+        }
+        
+        stopNote(note) {
+            var oscillatorData = window.activeOscillators[note];
+            if (!oscillatorData) return;
+
+            try {
+                var masterGain = oscillatorData.gainNode;
+                var oscs = oscillatorData.oscillators;
+                var now = window.audioContext.currentTime;
+                var releaseTime = oscillatorData.releaseTime || 1.5;
+                
+                masterGain.gain.cancelScheduledValues(now);
+                masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+                masterGain.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
+
+                oscs.forEach(function(osc) {
+                    osc.stop(now + releaseTime + 0.1);
+                });
+
+                delete window.activeOscillators[note];
+                
+            } catch (e) {
+                console.error("Error stopping bell note:", e);
+                delete window.activeOscillators[note];
+            }
+        }
+        
+        export(context, note, startTime, duration, destination) {
+            /* --- Read Options --- */
+            var selectedWave = document.querySelector('.wave-option.selected');
+            var waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
+
+            var decaySlider = document.getElementById('bell-decay');
+            var harmSlider = document.getElementById('bell-harmonics');
+            
+            var decayTime = decaySlider ? parseFloat(decaySlider.value) : 1.5;
+            var harmonicMix = harmSlider ? parseFloat(harmSlider.value) : 1.0;
+            
+            var masterGain = context.createGain();
+            masterGain.connect(destination);
+
+            masterGain.gain.setValueAtTime(0, startTime);
+            masterGain.gain.linearRampToValueAtTime(0.25, startTime + 0.005);
+            masterGain.gain.setValueAtTime(0.25, startTime + duration);
+            masterGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration + decayTime);
+
+            /* --- FIXED Export Logic --- */
+            var createPartial = function(ratio, volBase) {
+                var osc = context.createOscillator();
+                var pGain = context.createGain();
+                osc.type = waveType;
+                osc.frequency.value = note.freq * ratio;
+                
+                /* Apply brightness logic to export as well */
+                var volume = volBase;
+                if (ratio > 1.0) {
+                    volume = volBase * harmonicMix;
+                }
+
+                pGain.gain.value = volume;
+                
+                osc.connect(pGain);
+                pGain.connect(masterGain);
+                osc.start(startTime);
+                osc.stop(startTime + duration + decayTime + 0.1);
+            };
+
+            createPartial(1.0, 1.0);
+            createPartial(2.0, 0.6);
+            createPartial(2.4, 0.4);
+            createPartial(4.2, 0.25);
+            createPartial(6.7, 0.2);
+        }
+        
+        cleanup() {
+            this.removeBellControls();
+        }
+    }
+    </script>
+    <script type="text/javascript">
+        class Flute extends Instrument {
+        constructor() {
+            super('Flute');
+        }
+        
+        init() {
+            this.createFluteControls();
+        }
+        
+        createFluteControls() {
+            var controlBar = document.querySelector('.control-bar');
+            if (!controlBar) return; 
+
+            /* Container for Flute controls */
+            var fluteControls = document.createElement('div');
+            fluteControls.id = 'flute-controls';
+            fluteControls.style.display = 'inline-flex';
+            fluteControls.style.marginLeft = '15px';
+            fluteControls.style.alignItems = 'center';
+            // Seamless styling maintained
+            fluteControls.style.padding = '0 10px';
+            
+            /* --- 1. Vibrato Speed Slider --- */
+            var vibGroup = document.createElement('div');
+            vibGroup.className = 'control-group';
+            vibGroup.style.marginRight = '15px';
+            
+            var vibspeedLabel = document.createElement('label');
+            vibspeedLabel.textContent = 'Vib. Speed';
+            vibspeedLabel.id = 'flute-vibspeed-label';
+            vibspeedLabel.style.marginBottom = '5px';
+            vibspeedLabel.style.fontSize = '0.8em';
+            
+            vibGroup.appendChild(vibspeedLabel);
+            
+            var vibSlider = document.createElement('input');
+            vibSlider.type = 'range';
+            vibSlider.id = 'flute-vib';
+            vibSlider.min = '0';
+            vibSlider.max = '12';
+            vibSlider.step = '0.5';
+            vibSlider.value = '5';
+            vibSlider.style.width = '80px';
+            vibSlider.title = 'Vib Speed: 5Hz'; // Tooltip instead of label
+            
+            vibSlider.addEventListener('input', function() {
+                var val = this.value == 0 ? 'Off' : this.value + 'Hz';
+                this.title = 'Vib Speed: ' + val;
+            });
+            
+            vibGroup.appendChild(vibSlider);
+            
+            /* --- 2. Breath Noise (Airiness) Slider --- */
+            var breathGroup = document.createElement('div');
+            breathGroup.className = 'control-group';
+            
+            var breathLabel = document.createElement('label');
+            breathLabel.textContent = 'Breath';
+            breathLabel.id = 'flute-breath-label';
+            breathLabel.style.marginBottom = '5px';
+            breathLabel.style.fontSize = '0.8em';
+            
+            breathGroup.appendChild(breathLabel);
+            
+            var breathSlider = document.createElement('input');
+            breathSlider.type = 'range';
+            breathSlider.id = 'flute-breath';
+            breathSlider.min = '0';
+            breathSlider.max = '1.0';
+            breathSlider.step = '0.1';
+            breathSlider.value = '0.4';
+            breathSlider.style.width = '80px';
+            breathSlider.title = 'Breath: 0.4'; // Tooltip instead of label
+
+            breathSlider.addEventListener('input', function() {
+                this.title = 'Breath: ' + this.value;
+            });
+            
+            // FIXED: Appending the slider to the group
+            breathGroup.appendChild(breathSlider);
+
+            /* Assemble Controls */
+            fluteControls.appendChild(vibGroup);
+            fluteControls.appendChild(breathGroup);
+            
+            controlBar.appendChild(fluteControls);
+        }
+        
+        removeFluteControls() {
+            var fluteControls = document.getElementById('flute-controls');
+            if (fluteControls) {
+                fluteControls.parentNode.removeChild(fluteControls);
+            }
+        }
+        
+        createNoiseBuffer(context) {
+            var bufferSize = context.sampleRate * 2; 
+            var buffer = context.createBuffer(1, bufferSize, context.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            return buffer;
+        }
+        
+        playNote(note, freq) {
+            if (!window.audioContext) return;
+            
+            try {
+                var now = window.audioContext.currentTime;
+                
+                var selectedWave = document.querySelector('.wave-option.selected');
+                var waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'triangle';
+
+                var vibSlider = document.getElementById('flute-vib');
+                var breathSlider = document.getElementById('flute-breath');
+                
+                var vibSpeed = vibSlider ? parseFloat(vibSlider.value) : 5;
+                var breathAmt = breathSlider ? parseFloat(breathSlider.value) : 0.4;
+
+                var masterGainNode = window.audioContext.createGain();
+                masterGainNode.connect(window.mainGainNode);
+                masterGainNode.gain.setValueAtTime(0, now);
+                masterGainNode.gain.linearRampToValueAtTime(0.3, now + 0.1);
+                
+                var osc = window.audioContext.createOscillator();
+                osc.type = waveType;
+                osc.frequency.setValueAtTime(freq, now);
+                
+                var oscGain = window.audioContext.createGain();
+                oscGain.gain.value = 1.0;
+                
+                osc.connect(oscGain);
+                oscGain.connect(masterGainNode);
+                
+                var vibratoOsc = null;
+                var vibratoGain = null;
+                
+                if (vibSpeed > 0) {
+                    vibratoOsc = window.audioContext.createOscillator();
+                    vibratoOsc.type = 'sine';
+                    vibratoOsc.frequency.value = vibSpeed;
+                    
+                    vibratoGain = window.audioContext.createGain();
+                    vibratoGain.gain.value = (freq * 0.01); 
+
+                    vibratoOsc.connect(vibratoGain);
+                    vibratoGain.connect(osc.frequency);
+                    
+                    vibratoOsc.start(now);
+                }
+                
+                osc.start(now);
+                
+                var noiseNode = null;
+                var noiseFilter = null;
+                var noiseGain = null;
+                
+                if (breathAmt > 0) {
+                    var noiseBuffer = this.createNoiseBuffer(window.audioContext);
+                    noiseNode = window.audioContext.createBufferSource();
+                    noiseNode.buffer = noiseBuffer;
+                    noiseNode.loop = true;
+                    
+                    noiseFilter = window.audioContext.createBiquadFilter();
+                    noiseFilter.type = 'lowpass';
+                    noiseFilter.frequency.value = 1200;
+                    
+                    noiseGain = window.audioContext.createGain();
+                    noiseGain.gain.value = breathAmt * 0.8; 
+                    
+                    noiseNode.connect(noiseFilter);
+                    noiseFilter.connect(noiseGain);
+                    noiseGain.connect(masterGainNode);
+                    
+                    noiseNode.start(now);
+                }
+
+                window.activeOscillators[note] = { 
+                    masterGain: masterGainNode,
+                    nodes: [osc, vibratoOsc, noiseNode],
+                    releaseTime: 0.3 
+                };
+                
+            } catch (e) {
+                console.error("Error playing flute note:", e);
+            }
+        }
+        
+        stopNote(note) {
+            var oscillatorData = window.activeOscillators[note];
+            if (!oscillatorData) return;
+
+            try {
+                var masterGain = oscillatorData.masterGain;
+                var nodes = oscillatorData.nodes;
+                var now = window.audioContext.currentTime;
+                var releaseTime = oscillatorData.releaseTime || 0.3;
+                
+                masterGain.gain.cancelScheduledValues(now);
+                masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+                masterGain.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
+
+                nodes.forEach(function(node) {
+                    if (node) {
+                        node.stop(now + releaseTime + 0.1);
+                    }
+                });
+
+                delete window.activeOscillators[note];
+                
+            } catch (e) {
+                console.error("Error stopping flute note:", e);
+                delete window.activeOscillators[note];
+            }
+        }
+        
+        export(context, note, startTime, duration, destination) {
+            var selectedWave = document.querySelector('.wave-option.selected');
+            var waveType = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'triangle';
+
+            var vibSlider = document.getElementById('flute-vib');
+            var breathSlider = document.getElementById('flute-breath');
+            
+            var vibSpeed = vibSlider ? parseFloat(vibSlider.value) : 5;
+            var breathAmt = breathSlider ? parseFloat(breathSlider.value) : 0.4;
+            
+            var masterGain = context.createGain();
+            masterGain.connect(destination);
+
+            masterGain.gain.setValueAtTime(0, startTime);
+            masterGain.gain.linearRampToValueAtTime(0.3, startTime + 0.1);
+            masterGain.gain.setValueAtTime(0.3, startTime + duration);
+            masterGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration + 0.3);
+
+            var osc = context.createOscillator();
+            osc.type = waveType;
+            osc.frequency.value = note.freq;
+            
+            var oscGain = context.createGain();
+            oscGain.gain.value = 1.0;
+            
+            osc.connect(oscGain);
+            oscGain.connect(masterGain);
+            osc.start(startTime);
+            osc.stop(startTime + duration + 0.4);
+
+            if (vibSpeed > 0) {
+                var vibratoOsc = context.createOscillator();
+                vibratoOsc.type = 'sine';
+                vibratoOsc.frequency.value = vibSpeed;
+                
+                var vibratoGain = context.createGain();
+                vibratoGain.gain.value = (note.freq * 0.01);
+
+                vibratoOsc.connect(vibratoGain);
+                vibratoGain.connect(osc.frequency);
+                
+                vibratoOsc.start(startTime);
+                vibratoOsc.stop(startTime + duration + 0.4);
+            }
+            
+            if (breathAmt > 0) {
+                var noiseBuffer = this.createNoiseBuffer(context);
+                var noiseNode = context.createBufferSource();
+                noiseNode.buffer = noiseBuffer;
+                noiseNode.loop = true;
+                
+                var noiseFilter = context.createBiquadFilter();
+                noiseFilter.type = 'lowpass';
+                noiseFilter.frequency.value = 1200;
+                
+                var noiseGain = context.createGain();
+                noiseGain.gain.value = breathAmt * 0.8;
+                
+                noiseNode.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(masterGain);
+                
+                noiseNode.start(startTime);
+                noiseNode.stop(startTime + duration + 0.4);
+            }
+        }
+        
+        cleanup() {
+            this.removeFluteControls();
+        }
+    }
+            
+            var brightnessLabel = document.createElement('label');
+            brightnessLabel.textContent = 'Brightness';
+            brightnessLabel.id = 'bell-brightness-label';
+            brightnessLabel.style.marginBottom = '5px';
+            brightnessLabel.style.fontSize = '0.8em';
+            
+            harmGroup.appendChild(brightnessLabel);
+    </script>
     <script type="text/javascript">
         var DEBUG = false;
         document.addEventListener('DOMContentLoaded', function() {
