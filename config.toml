@@ -61,3 +61,5 @@ Wizard by Night"""
 #    url = "search/"
 #    weight = 15
 
+[build]
+  minify = false
