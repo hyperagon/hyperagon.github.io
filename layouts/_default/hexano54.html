@@ -565,30 +565,30 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         }
     </style>
     <script type="text/javascript">
-        // Base Instrument class
+        /* Base Instrument class */
         class Instrument {
             constructor(name) {
                 this.name = name;
             }
             
             init() {
-                // Default implementation
+                /* Default implementation */
             }
             
             playNote(note, freq) {
-                // To be implemented by subclasses
+                /* To be implemented by subclasses */
             }
             
             stopNote(note) {
-                // To be implemented by subclasses
+                /* To be implemented by subclasses */
             }
             
             export(context, note, startTime, duration, destination) {
-                // To be implemented by subclasses
+                /* To be implemented by subclasses */
             }
             
             cleanup() {
-                // Default implementation
+                /* Default implementation */
             }
         }
     </script>
@@ -645,7 +645,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var oscillatorData = window.activeOscillators[note];
             
             if (!oscillatorData) {
-                // Note might have already been stopped or was never started
+                /* Note might have already been stopped or was never started */
                 return;
             }
 
@@ -682,22 +682,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             oscillator.type = selectedWave ? selectedWave.getAttribute('data-wave-type') : 'sine';
             oscillator.frequency.value = note.freq;
 
-            // Default envelope for simple synth
+            /* Default envelope for simple synth */
             var attackTime = 0.02;
             var releaseTime = 0.1;
             var sustainLevel = 0.7;
 
-            // --- CORRECTED ENVELOPE LOGIC ---
-            // This creates a precise timeline to ensure the release ramp works correctly.
-            gainNode.gain.setValueAtTime(0, startTime); // Start at silence
-            gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime); // Attack
-            gainNode.gain.setValueAtTime(sustainLevel, startTime + duration); // Hold sustain level until note ends
-            gainNode.gain.linearRampToValueAtTime(0, startTime + duration + releaseTime); // Release fade-out
+            /* --- CORRECTED ENVELOPE LOGIC --- */
+            /* This creates a precise timeline to ensure the release ramp works correctly. */
+            gainNode.gain.setValueAtTime(0, startTime); /* Start at silence */
+            gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime); /* Attack */
+            gainNode.gain.setValueAtTime(sustainLevel, startTime + duration); /* Hold sustain level until note ends */
+            gainNode.gain.linearRampToValueAtTime(0, startTime + duration + releaseTime); /* Release fade-out */
 
             oscillator.connect(gainNode);
             gainNode.connect(destination);
 
-            // The oscillator must run for the full duration plus the release tail.
+            /* The oscillator must run for the full duration plus the release tail. */
             oscillator.start(startTime);
             oscillator.stop(startTime + duration + releaseTime);
         }
@@ -725,7 +725,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         
         init() {
             this.createGameBoyControls();
-            // Instead of adding a class, set the background color directly.
+            /* Instead of adding a class, set the background color directly. */
             document.body.style.backgroundColor = '#9bbc0f';
         }
         
@@ -818,7 +818,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             attackSlider.step = '0.01';
             attackSlider.value = '0';
             attackSlider.style.width = '100px';
-            attackSlider.title = 'Attack: Off'; // Tooltip instead of label
+            attackSlider.title = 'Attack: Off'; /* Tooltip instead of label */
             
             attackSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -850,7 +850,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             releaseSlider.step = '0.01';
             releaseSlider.value = '0.3';
             releaseSlider.style.width = '100px';
-            releaseSlider.title = 'Release: 0.3'; // Tooltip instead of label
+            releaseSlider.title = 'Release: 0.3'; /* Tooltip instead of label */
             
             releaseSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -882,7 +882,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         }
         
         playNote(note, freq) {
-            // FIX: Check if window.audioContext exists before using it
+            /* FIX: Check if window.audioContext exists before using it */
             if (!window.audioContext) {
                 console.error("AudioContext not initialized");
                 return;
@@ -965,7 +965,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         }
         
         stopNote(note) {
-            // FIX: Check if window.audioContext exists before using it
+            /* FIX: Check if window.audioContext exists before using it */
             if (!window.audioContext) {
                 console.error("AudioContext not initialized");
                 return;
@@ -1058,7 +1058,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             oscillator.frequency.value = note.freq;
             noiseGain.gain.value = 0.02;
 
-            // --- CORRECTED ENVELOPE LOGIC ---
+            /* --- CORRECTED ENVELOPE LOGIC --- */
             gainNode.gain.setValueAtTime(0, startTime);
             gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime);
             gainNode.gain.setValueAtTime(sustainLevel, startTime + duration);
@@ -1069,7 +1069,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             gainNode.connect(destination);
             noiseGain.connect(destination);
 
-            // Extend the stop time for both oscillator and noise to allow for the release tail.
+            /* Extend the stop time for both oscillator and noise to allow for the release tail. */
             oscillator.start(startTime);
             noiseBuffer.start(startTime);
             oscillator.stop(startTime + duration + releaseTime);
@@ -1078,7 +1078,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         
         cleanup() {
             this.removeGameBoyControls();
-            // Revert the background color to its default state.
+            /* Revert the background color to its default state. */
             document.body.style.backgroundColor = '';
         }
     }
@@ -1091,7 +1091,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         
         init() {
             this.createSNESControls();
-            // Instead of adding a class, set the background color directly.
+            /* Instead of adding a class, set the background color directly. */
             document.body.style.backgroundColor = '#5D4E37';
         }
         
@@ -1167,7 +1167,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             reverbSlider.step = '0.05';
             reverbSlider.value = '0.3';
             reverbSlider.style.width = '100px';
-            reverbSlider.title = 'Reverb: 0.3'; // Tooltip instead of label
+            reverbSlider.title = 'Reverb: 0.3'; /* Tooltip instead of label */
             
             reverbSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -1200,7 +1200,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             attackSlider.step = '0.01';
             attackSlider.value = '0.05';
             attackSlider.style.width = '100px';
-            attackSlider.title = 'Attack: 0.05'; // Tooltip instead of label
+            attackSlider.title = 'Attack: 0.05'; /* Tooltip instead of label */
             
             attackSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -1232,7 +1232,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             releaseSlider.step = '0.05';
             releaseSlider.value = '0.5';
             releaseSlider.style.width = '100px';
-            releaseSlider.title = 'Release: 0.5'; // Tooltip instead of label
+            releaseSlider.title = 'Release: 0.5'; /* Tooltip instead of label */
             
             attackSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -1465,19 +1465,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 return;
             }
             
-            // *** THE FIX: Add a flag to prevent double cleanup ***
+            /* *** THE FIX: Add a flag to prevent double cleanup *** */
             if (oscillatorData.isStopping) {
-                // This note is already in the process of stopping, so do nothing.
+                /* This note is already in the process of stopping, so do nothing. */
                 return;
             }
             oscillatorData.isStopping = true;
 
             try {
                 var now = window.audioContext.currentTime;
-                // Use the release time that was stored when the note was played
+                /* Use the release time that was stored when the note was played */
                 var releaseTime = oscillatorData.releaseTime || 0.5;
                 
-                // Stop all components with the proper release time
+                /* Stop all components with the proper release time */
                 if (oscillatorData.oscillator) {
                     oscillatorData.oscillator.stop(now + releaseTime);
                 }
@@ -1488,7 +1488,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     oscillatorData.harmonic2.stop(now + releaseTime);
                 }
                 
-                // Schedule the gain ramps for fade out
+                /* Schedule the gain ramps for fade out */
                 if (oscillatorData.gainNode) {
                     oscillatorData.gainNode.gain.cancelScheduledValues(now);
                     oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
@@ -1515,11 +1515,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     oscillatorData.dryGain.gain.linearRampToValueAtTime(0, now + releaseTime);
                 }
                 
-                // Schedule the cleanup and visual feedback to happen AFTER the audio has finished.
+                /* Schedule the cleanup and visual feedback to happen AFTER the audio has finished. */
                 setTimeout(function() {
-                    // Check if the note still exists and hasn't been force-stopped
+                    /* Check if the note still exists and hasn't been force-stopped */
                     if (window.activeOscillators[note] && window.activeOscillators[note].isStopping) {
-                        // Now that the audio has faded, we can safely clean up.
+                        /* Now that the audio has faded, we can safely clean up. */
                         delete window.activeOscillators[note];
 
                         if(DEBUG) {
@@ -1533,7 +1533,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
             } catch (e) {
                 console.error("Error stopping SNES note:", e);
-                // If there's an error, force cleanup immediately to prevent getting stuck
+                /* If there's an error, force cleanup immediately to prevent getting stuck */
                 delete window.activeOscillators[note];
             }
         }
@@ -1552,7 +1552,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var gainNode = context.createGain();
             var filter = context.createBiquadFilter();
 
-            // Simplified SNES instrument simulation
+            /* Simplified SNES instrument simulation */
             if (instrumentType === 'piano') {
                 oscillator.type = 'triangle';
                 filter.type = 'lowpass';
@@ -1561,7 +1561,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 oscillator.type = 'sawtooth';
                 filter.type = 'lowpass';
                 filter.frequency.value = note.freq * 3;
-            } else { // Default to a generic sound
+            } else { /* Default to a generic sound */
                 oscillator.type = 'square';
                 filter.type = 'lowpass';
                 filter.frequency.value = note.freq * 2.5;
@@ -1569,7 +1569,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
             oscillator.frequency.value = note.freq;
 
-            // --- CORRECTED ENVELOPE LOGIC ---
+            /* --- CORRECTED ENVELOPE LOGIC --- */
             gainNode.gain.setValueAtTime(0, startTime);
             gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime);
             gainNode.gain.setValueAtTime(sustainLevel, startTime + duration);
@@ -1579,14 +1579,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             filter.connect(gainNode);
             gainNode.connect(destination);
 
-            // Extend the stop time to allow for the release tail.
+            /* Extend the stop time to allow for the release tail. */
             oscillator.start(startTime);
             oscillator.stop(startTime + duration + releaseTime);
         }
         
         cleanup() {
             this.removeSNESControls();
-            // Revert the background color to its default state.
+            /* Revert the background color to its default state. */
             document.body.style.backgroundColor = '';
         }
     }
@@ -1599,7 +1599,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         
         init() {
             this.createGuitarControls();
-            // Wood texture background
+            /* Wood texture background */
             document.body.style.backgroundColor = '#5D4037';
         }
         
@@ -1623,7 +1623,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             typeLabel.textContent = 'Type';
             typeLabel.style.marginBottom = '5px';
             typeLabel.style.fontSize = '0.8em';
-            typeLabel.style.color = '#fff'; // Better contrast on dark bg
+            typeLabel.style.color = '#fff'; /* Better contrast on dark bg */
             
             var typeSelect = document.createElement('select');
             typeSelect.id = 'guitar-type';
@@ -1667,7 +1667,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             dampingSlider.step = '0.1';
             dampingSlider.value = '1.0';
             dampingSlider.style.width = '100px';
-            dampingSlider.title = 'Damping: 1.0'; // Tooltip instead of label
+            dampingSlider.title = 'Damping: 1.0'; /* Tooltip instead of label */
             
             dampingSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -1700,7 +1700,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             resonanceSlider.step = '0.5';
             resonanceSlider.value = '5';
             resonanceSlider.style.width = '100px';
-            resonanceSlider.title = 'Body: 5'; // Tooltip instead of label
+            resonanceSlider.title = 'Body: 5'; /* Tooltip instead of label */
             
             resonanceSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -1730,7 +1730,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             document.querySelector('.wave-selector').style.display = 'inline-flex';
         }
         
-        // Helper to create distortion curve for electric guitar
+        /* Helper to create distortion curve for electric guitar */
         makeDistortionCurve(amount) {
             var k = typeof amount === 'number' ? amount : 50;
             var n_samples = 44100;
@@ -1760,26 +1760,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 
                 var roundedFreq = Math.round(freq * 1000) / 1000;
 
-                // --- 1. Sources ---
+                /* --- 1. Sources --- */
                 
-                // Main Oscillator (Sawtooth is rich in harmonics)
+                /* Main Oscillator (Sawtooth is rich in harmonics) */
                 var osc1 = window.audioContext.createOscillator();
                 osc1.type = 'sawtooth';
                 osc1.frequency.setValueAtTime(roundedFreq, now);
                 
-                // Secondary Oscillator (Detuned for "Chorus" width)
+                /* Secondary Oscillator (Detuned for "Chorus" width) */
                 var osc2 = window.audioContext.createOscillator();
                 osc2.type = 'sawtooth';
-                osc2.detune.setValueAtTime(10, now); // Detune by 10 cents
+                osc2.detune.setValueAtTime(10, now); /* Detune by 10 cents */
                 osc2.frequency.setValueAtTime(roundedFreq, now);
                 
-                // "Twang" Oscillator (High freq sine that dies fast)
+                /* "Twang" Oscillator (High freq sine that dies fast) */
                 var twang = window.audioContext.createOscillator();
                 twang.type = 'triangle';
-                twang.frequency.setValueAtTime(roundedFreq * 4, now); // 2 octaves up
+                twang.frequency.setValueAtTime(roundedFreq * 4, now); /* 2 octaves up */
                 
-                // Pluck Noise (Bandpassed noise for pick attack)
-                var bufferSize = window.audioContext.sampleRate * 0.05; // 50ms
+                /* Pluck Noise (Bandpassed noise for pick attack) */
+                var bufferSize = window.audioContext.sampleRate * 0.05; /* 50ms */
                 var buffer = window.audioContext.createBuffer(1, bufferSize, window.audioContext.sampleRate);
                 var data = buffer.getChannelData(0);
                 for (var i = 0; i < bufferSize; i++) {
@@ -1789,33 +1789,33 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 noise.buffer = buffer;
                 var noiseFilter = window.audioContext.createBiquadFilter();
                 noiseFilter.type = 'bandpass';
-                noiseFilter.frequency.value = guitarType === 'bass' ? 1000 : 2500; // Brightness of pick
+                noiseFilter.frequency.value = guitarType === 'bass' ? 1000 : 2500; /* Brightness of pick */
                 
-                // --- 2. Gains (Envelopes) ---
+                /* --- 2. Gains (Envelopes) --- */
                 
                 var masterGain = window.audioContext.createGain();
                 var oscGain = window.audioContext.createGain();
                 var twangGain = window.audioContext.createGain();
                 var noiseGain = window.audioContext.createGain();
                 
-                // --- 3. Filters (Tone Shaping) ---
+                /* --- 3. Filters (Tone Shaping) --- */
                 
                 var filter = window.audioContext.createBiquadFilter();
                 filter.type = 'lowpass';
-                // Initial filter frequency (Open for attack)
+                /* Initial filter frequency (Open for attack) */
                 var startFreq = guitarType === 'acoustic' ? roundedFreq * 6 : roundedFreq * 8;
                 filter.frequency.setValueAtTime(startFreq, now);
                 
-                // Body Resonance (Simulates wood cavity)
+                /* Body Resonance (Simulates wood cavity) */
                 var bodyFilter = window.audioContext.createBiquadFilter();
                 bodyFilter.type = 'peaking';
-                bodyFilter.frequency.value = guitarType === 'bass' ? 120 : 100; // The "boom"
+                bodyFilter.frequency.value = guitarType === 'bass' ? 120 : 100; /* The "boom" */
                 bodyFilter.Q.value = 1.0;
                 bodyFilter.gain.value = bodyGain; 
-                // Bypass body filter if gain is 0
+                /* Bypass body filter if gain is 0 */
                 if(bodyGain <= 0.1) bodyFilter.gain.value = 0;
 
-                // Distortion (Electric only)
+                /* Distortion (Electric only) */
                 var shaper = null;
                 if (guitarType === 'electric') {
                     shaper = window.audioContext.createWaveShaper();
@@ -1823,7 +1823,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     shaper.oversample = '4x';
                 }
 
-                // --- 4. Routing ---
+                /* --- 4. Routing --- */
                 
                 osc1.connect(oscGain);
                 osc2.connect(oscGain);
@@ -1832,12 +1832,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 noise.connect(noiseFilter);
                 noiseFilter.connect(noiseGain);
                 
-                // Combine sources
+                /* Combine sources */
                 oscGain.connect(masterGain);
                 twangGain.connect(masterGain);
                 noiseGain.connect(masterGain);
                 
-                // Filter Chain: Main -> Filter -> Body -> [Distortion] -> Out
+                /* Filter Chain: Main -> Filter -> Body -> [Distortion] -> Out */
                 masterGain.connect(filter);
                 filter.connect(bodyFilter);
                 
@@ -1848,38 +1848,38 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     bodyFilter.connect(window.mainGainNode);
                 }
                 
-                // --- 5. Envelope Logic ---
+                /* --- 5. Envelope Logic --- */
                 
                 var sustainLevel = guitarType === 'electric' ? 0.4 : 0.3;
                 var attackTime = 0.005;
                 
-                // Master Volume Envelope
+                /* Master Volume Envelope */
                 masterGain.gain.setValueAtTime(0, now);
-                masterGain.gain.linearRampToValueAtTime(0.3, now + attackTime); // Attack
-                masterGain.gain.exponentialRampToValueAtTime(sustainLevel, now + (0.5 * decayMult)); // Initial Decay
+                masterGain.gain.linearRampToValueAtTime(0.3, now + attackTime); /* Attack */
+                masterGain.gain.exponentialRampToValueAtTime(sustainLevel, now + (0.5 * decayMult)); /* Initial Decay */
                 
-                // Filter Envelope (The "Pluck")
-                // Filter closes as the string settles
+                /* Filter Envelope (The "Pluck") */
+                /* Filter closes as the string settles */
                 filter.frequency.exponentialRampToValueAtTime(
                     guitarType === 'bass' ? roundedFreq * 1.5 : roundedFreq * 2.5, 
                     now + (0.4 * decayMult)
                 );
 
-                // Twang Envelope (Decays very fast)
+                /* Twang Envelope (Decays very fast) */
                 twangGain.gain.setValueAtTime(0.15, now);
                 twangGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
                 
-                // Noise Envelope (Decays instantly)
+                /* Noise Envelope (Decays instantly) */
                 noiseGain.gain.setValueAtTime(0.2, now);
                 noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
                 
-                // --- 6. Start ---
+                /* --- 6. Start --- */
                 osc1.start(now);
                 osc2.start(now);
                 twang.start(now);
                 noise.start(now);
                 
-                // Store references for stopping
+                /* Store references for stopping */
                 window.activeOscillators[note] = { 
                     osc1: osc1, 
                     osc2: osc2,
@@ -1901,26 +1901,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             
             try {
                 var now = window.audioContext.currentTime;
-                var releaseTime = 0.2; // Fast release for guitar
+                var releaseTime = 0.2; /* Fast release for guitar */
                 
-                // Mute the noise immediately
+                /* Mute the noise immediately */
                 if(oscData.noise) try { oscData.noise.stop(now + 0.01); } catch(e){}
 
-                // Fade out master gain
+                /* Fade out master gain */
                 if (oscData.masterGain) {
                     oscData.masterGain.gain.cancelScheduledValues(now);
                     oscData.masterGain.gain.setValueAtTime(oscData.masterGain.gain.value, now);
                     oscData.masterGain.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
                 }
                 
-                // Close the filter quickly (simulates muting with palm/hand)
+                /* Close the filter quickly (simulates muting with palm/hand) */
                 if (oscData.filter) {
                     oscData.filter.frequency.cancelScheduledValues(now);
                     oscData.filter.frequency.setValueAtTime(oscData.filter.frequency.value, now);
                     oscData.filter.frequency.exponentialRampToValueAtTime(100, now + releaseTime);
                 }
                 
-                // Stop oscillators after release
+                /* Stop oscillators after release */
                 [oscData.osc1, oscData.osc2, oscData.twang].forEach(function(osc) {
                     if (osc) {
                         try { osc.stop(now + releaseTime + 0.1); } catch(e){}
@@ -1936,7 +1936,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         }
         
         export(context, note, startTime, duration, destination) {
-            // Logic mirrors playNote but for offline rendering
+            /* Logic mirrors playNote but for offline rendering */
             var typeSelect = document.getElementById('guitar-type');
             var dampingSlider = document.getElementById('guitar-damping');
             var bodySlider = document.getElementById('guitar-body');
@@ -1947,7 +1947,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             
             var freq = note.freq;
 
-            // 1. Create Nodes
+            /* 1. Create Nodes */
             var osc1 = context.createOscillator();
             osc1.type = 'sawtooth';
             osc1.frequency.value = freq;
@@ -1961,7 +1961,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             twang.type = 'triangle';
             twang.frequency.value = freq * 4;
 
-            // Noise
+            /* Noise */
             var noiseBuffer = context.createBuffer(1, context.sampleRate * 0.05, context.sampleRate);
             var noiseData = noiseBuffer.getChannelData(0);
             for (var i = 0; i < noiseBuffer.length; i++) noiseData[i] = Math.random() * 2 - 1;
@@ -1971,13 +1971,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             noiseFilter.type = 'bandpass';
             noiseFilter.frequency.value = guitarType === 'bass' ? 1000 : 2500;
 
-            // Gains
+            /* Gains */
             var masterGain = context.createGain();
             var oscGain = context.createGain();
             var twangGain = context.createGain();
             var noiseGain = context.createGain();
 
-            // Filters
+            /* Filters */
             var filter = context.createBiquadFilter();
             filter.type = 'lowpass';
             var startFreq = guitarType === 'acoustic' ? freq * 6 : freq * 8;
@@ -1997,7 +1997,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 shaper.oversample = '4x';
             }
 
-            // 2. Connect
+            /* 2. Connect */
             osc1.connect(oscGain);
             osc2.connect(oscGain);
             twang.connect(twangGain);
@@ -2018,7 +2018,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 bodyFilter.connect(destination);
             }
 
-            // 3. Envelopes
+            /* 3. Envelopes */
             var sustainLevel = guitarType === 'electric' ? 0.4 : 0.3;
             var releaseTime = Math.min(duration * 0.3, 0.5);
             var noteEndTime = startTime + duration;
@@ -2026,7 +2026,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             masterGain.gain.setValueAtTime(0, startTime);
             masterGain.gain.linearRampToValueAtTime(0.3, startTime + 0.005);
             masterGain.gain.exponentialRampToValueAtTime(sustainLevel, startTime + (0.5 * decayMult));
-            // Release
+            /* Release */
             masterGain.gain.setValueAtTime(sustainLevel, noteEndTime);
             masterGain.gain.exponentialRampToValueAtTime(0.001, noteEndTime + releaseTime);
 
@@ -2034,7 +2034,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 guitarType === 'bass' ? freq * 1.5 : freq * 2.5, 
                 startTime + (0.4 * decayMult)
             );
-            // Close filter on release
+            /* Close filter on release */
             filter.frequency.setValueAtTime(filter.frequency.value, noteEndTime);
             filter.frequency.exponentialRampToValueAtTime(100, noteEndTime + releaseTime);
 
@@ -2044,7 +2044,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             noiseGain.gain.setValueAtTime(0.2, startTime);
             noiseGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.03);
 
-            // 4. Start/Stop
+            /* 4. Start/Stop */
             osc1.start(startTime);
             osc2.start(startTime);
             twang.start(startTime);
@@ -2070,7 +2070,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         
         init() {
             this.createDrumsControls();
-            // Instead of adding a class, set the background color directly.
+            /* Instead of adding a class, set the background color directly. */
             document.body.style.backgroundColor = '#3a3a3a';
         }
         
@@ -2114,7 +2114,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             tomOption.textContent = 'Tom';
             typeSelect.appendChild(tomOption);
             
-            // Added hi-hat option
+            /* Added hi-hat option */
             var hiHatOption = document.createElement('option');
             hiHatOption.value = 'hihat';
             hiHatOption.textContent = 'Hi-Hat';
@@ -2147,7 +2147,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             pitchSlider.step = '0.1';
             pitchSlider.value = '1';
             pitchSlider.style.width = '100px';
-            pitchSlider.title = 'Pitch: 1'; // Tooltip instead of label
+            pitchSlider.title = 'Pitch: 1'; /* Tooltip instead of label */
             
             pitchSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -2184,7 +2184,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             decaySlider.step = '0.1';
             decaySlider.value = '0.5';
             decaySlider.style.width = '100px';
-            decaySlider.title = 'Decay: 0.5'; // Tooltip instead of label
+            decaySlider.title = 'Decay: 0.5'; /* Tooltip instead of label */
             
             decaySlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value;
@@ -2251,7 +2251,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 /* Configure based on drum type */
                 if (drumType === 'kick') {
                     oscillator.type = 'sine';
-                    // Use the provided frequency instead of fixed 150
+                    /* Use the provided frequency instead of fixed 150 */
                     oscillator.frequency.setValueAtTime(freq * pitch, now);
                     oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
                     oscillatorGain.gain.setValueAtTime(gainValue, now);
@@ -2266,14 +2266,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 } else if (drumType === 'snare') {
                     /* Tone component */
                     oscillator.type = 'triangle';
-                    // Use the provided frequency instead of fixed 200
+                    /* Use the provided frequency instead of fixed 200 */
                     oscillator.frequency.setValueAtTime(freq * pitch, now);
                     oscillatorGain.gain.setValueAtTime(gainValue * 0.5, now);
                     oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
                     
                     /* Noise component */
                     noiseFilter.type = 'highpass';
-                    // Map frequency to filter range (higher notes = higher filter)
+                    /* Map frequency to filter range (higher notes = higher filter) */
                     noiseFilter.frequency.value = 1000 + (freq / 100);
                     noiseGain.gain.setValueAtTime(gainValue * 0.5, now);
                     noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
@@ -2296,7 +2296,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     };
                 } else if (drumType === 'tom') {
                     oscillator.type = 'square';
-                    // Use the provided frequency instead of fixed 150
+                    /* Use the provided frequency instead of fixed 150 */
                     oscillator.frequency.setValueAtTime(freq * pitch, now);
                     oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
                     oscillatorGain.gain.setValueAtTime(gainValue, now);
@@ -2310,69 +2310,69 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     window.activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain };
                 } else if (drumType === 'hihat') {
                     oscillator.type = 'square';
-                    // Create a new buffer source for noise
+                    /* Create a new buffer source for noise */
                     const noiseSource = window.audioContext.createBufferSource();
                     
-                    // Create noise buffer if it doesn't exist
+                    /* Create noise buffer if it doesn't exist */
                     if (!window.noiseBuffer) {
-                        const bufferSize = window.audioContext.sampleRate * 0.5; // 0.5 seconds of noise
+                        const bufferSize = window.audioContext.sampleRate * 0.5; /* 0.5 seconds of noise */
                         window.noiseBuffer = window.audioContext.createBuffer(1, bufferSize, window.audioContext.sampleRate);
                         const output = window.noiseBuffer.getChannelData(0);
                         
                         for (let i = 0; i < bufferSize; i++) {
-                            output[i] = Math.random() * 2 - 1; // Generate white noise
+                            output[i] = Math.random() * 2 - 1; /* Generate white noise */
                         }
                     }
                     
                     noiseSource.buffer = window.noiseBuffer;
                     
-                    // Create an oscillator for the pitched component
+                    /* Create an oscillator for the pitched component */
                     const hihatOsc = window.audioContext.createOscillator();
-                    hihatOsc.type = 'square'; // Square wave for metallic sound
+                    hihatOsc.type = 'square'; /* Square wave for metallic sound */
                     
-                    // *** KEY FIX: Use the 'pitch' variable from the slider ***
-                    // This follows the same pattern as your working 'tom' drum
+                    /* *** KEY FIX: Use the 'pitch' variable from the slider *** */
+                    /* This follows the same pattern as your working 'tom' drum */
                     const targetFreq = freq * pitch;
                     hihatOsc.frequency.value = targetFreq;
                     
-                    // Create a bandpass filter for the oscillator
+                    /* Create a bandpass filter for the oscillator */
                     const oscFilter = window.audioContext.createBiquadFilter();
                     oscFilter.type = 'bandpass';
-                    // Use the same target frequency for the filter to track the pitch
+                    /* Use the same target frequency for the filter to track the pitch */
                     oscFilter.frequency.value = targetFreq;
-                    oscFilter.Q.value = 10; // High Q for resonance
+                    oscFilter.Q.value = 10; /* High Q for resonance */
                     
-                    // Create a highpass filter for noise
+                    /* Create a highpass filter for noise */
                     const noiseFilter = window.audioContext.createBiquadFilter();
                     noiseFilter.type = 'highpass';
-                    noiseFilter.frequency.value = 8000; // Fixed high frequency for noise
+                    noiseFilter.frequency.value = 8000; /* Fixed high frequency for noise */
                     
-                    // Create gain nodes for both sources
+                    /* Create gain nodes for both sources */
                     const noiseGain = window.audioContext.createGain();
                     const oscGain = window.audioContext.createGain();
                     const hihatGain = window.audioContext.createGain();
                     
-                    // Set gain values
-                    noiseGain.gain.value = 0.3; // Noise component
-                    oscGain.gain.value = 0.2; // Oscillator component
+                    /* Set gain values */
+                    noiseGain.gain.value = 0.3; /* Noise component */
+                    oscGain.gain.value = 0.2; /* Oscillator component */
                     
                     hihatGain.gain.setValueAtTime(gainValue * 0.5, now);
                     hihatGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 0.2);
                     
-                    // Connect noise path
+                    /* Connect noise path */
                     noiseSource.connect(noiseFilter);
                     noiseFilter.connect(noiseGain);
                     noiseGain.connect(hihatGain);
                     
-                    // Connect oscillator path
+                    /* Connect oscillator path */
                     hihatOsc.connect(oscFilter);
                     oscFilter.connect(oscGain);
                     oscGain.connect(hihatGain);
                     
-                    // Connect to main output
+                    /* Connect to main output */
                     hihatGain.connect(window.mainGainNode);
                     
-                    // Start and stop sources
+                    /* Start and stop sources */
                     noiseSource.start(now);
                     hihatOsc.start(now);
                     noiseSource.stop(now + decayTime * 0.3);
@@ -2385,7 +2385,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     };
                 } else if (drumType === 'cymbal') {
                     noiseFilter.type = 'highpass';
-                    // Map frequency to filter range (higher notes = higher filter)
+                    /* Map frequency to filter range (higher notes = higher filter) */
                     noiseFilter.frequency.value = 3000 + (freq / 15);
                     noiseGain.gain.setValueAtTime(gainValue * 0.4, now);
                     noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 2);
@@ -2483,7 +2483,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var noiseGain = context.createGain();
             var noiseFilter = context.createBiquadFilter();
             
-            // Create noise buffer
+            /* Create noise buffer */
             var bufferSize = context.sampleRate * 2;
             var buffer = context.createBuffer(1, bufferSize, context.sampleRate);
             var output = buffer.getChannelData(0);
@@ -2493,7 +2493,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             noiseBuffer.buffer = buffer;
             noiseBuffer.loop = true;
 
-            // --- CORRECTED AUDIO ROUTING & ENVELOPE LOGIC ---
+            /* --- CORRECTED AUDIO ROUTING & ENVELOPE LOGIC --- */
             if (drumType === 'kick') {
                 oscillator.type = 'sine';
                 oscillator.frequency.setValueAtTime(note.freq * pitch, startTime);
@@ -2530,7 +2530,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 noiseBuffer.start(startTime);
                 oscillator.stop(startTime + decayTime);
                 noiseBuffer.stop(startTime + decayTime);
-            } else { // Default to a tom-like sound for other types
+            } else { /* Default to a tom-like sound for other types */
                 oscillator.type = 'square';
                 oscillator.frequency.setValueAtTime(note.freq * pitch, startTime);
                 oscillator.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
@@ -2547,7 +2547,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         
         cleanup() {
             this.removeDrumsControls();
-            // Revert the background color to its default state.
+            /* Revert the background color to its default state. */
             document.body.style.backgroundColor = '';
         }
     }
@@ -2563,7 +2563,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         }
         
         createBellControls() {
-            // We keep the standard wave selector visible
+            /* We keep the standard wave selector visible */
             var controlBar = document.querySelector('.control-bar');
             if (!controlBar) return; 
 
@@ -2573,7 +2573,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             bellControls.style.display = 'inline-flex';
             bellControls.style.marginLeft = '15px';
             bellControls.style.alignItems = 'center';
-            // Seamless styling maintained
+            /* Seamless styling maintained */
             bellControls.style.padding = '0 10px';
             
             /* --- 1. Decay (Ring Time) Slider --- */
@@ -2597,7 +2597,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             decaySlider.step = '0.1';
             decaySlider.value = '1.5';
             decaySlider.style.width = '80px';
-            decaySlider.title = 'Decay: 1.5s'; // Tooltip instead of label
+            decaySlider.title = 'Decay: 1.5s'; /* Tooltip instead of label */
             
             decaySlider.addEventListener('input', function() {
                 this.title = 'Decay: ' + this.value + 's';
@@ -2625,13 +2625,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             harmSlider.step = '0.1';
             harmSlider.value = '1.0';
             harmSlider.style.width = '80px';
-            harmSlider.title = 'Brightness: 1.0'; // Tooltip instead of label
+            harmSlider.title = 'Brightness: 1.0'; /* Tooltip instead of label */
 
             harmSlider.addEventListener('input', function() {
                 this.title = 'Brightness: ' + this.value;
             });
 
-            // FIXED: Appending the slider to the group
+            /* FIXED: Appending the slider to the group */
             harmGroup.appendChild(harmSlider);
 
             /* Assemble Controls */
@@ -2700,11 +2700,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 };
 
                 /* Partial Stack */
-                addPartial(1.0, 1.0);      // Fundamental (Always full volume)
-                addPartial(2.0, 0.6);      // Octave (Affected by Brightness)
-                addPartial(2.4, 0.4);      // Metallic (Affected by Brightness)
-                addPartial(4.2, 0.25);     // High Shimmer (Affected by Brightness)
-                addPartial(6.7, 0.2);      // Brightness (Affected by Brightness)
+                addPartial(1.0, 1.0);      /* Fundamental (Always full volume) */
+                addPartial(2.0, 0.6);      /* Octave (Affected by Brightness) */
+                addPartial(2.4, 0.4);      /* Metallic (Affected by Brightness) */
+                addPartial(4.2, 0.25);     /* High Shimmer (Affected by Brightness) */
+                addPartial(6.7, 0.2);      /* Brightness (Affected by Brightness) */
                 
                 window.activeOscillators[note] = { 
                     gainNode: masterGainNode,
@@ -2815,7 +2815,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             fluteControls.style.display = 'inline-flex';
             fluteControls.style.marginLeft = '15px';
             fluteControls.style.alignItems = 'center';
-            // Seamless styling maintained
+            /* Seamless styling maintained */
             fluteControls.style.padding = '0 10px';
             
             /* --- 1. Vibrato Speed Slider --- */
@@ -2839,7 +2839,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             vibSlider.step = '0.5';
             vibSlider.value = '5';
             vibSlider.style.width = '80px';
-            vibSlider.title = 'Vib Speed: 5Hz'; // Tooltip instead of label
+            vibSlider.title = 'Vib Speed: 5Hz'; /* Tooltip instead of label */
             
             vibSlider.addEventListener('input', function() {
                 var val = this.value == 0 ? 'Off' : this.value + 'Hz';
@@ -2868,13 +2868,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             breathSlider.step = '0.1';
             breathSlider.value = '0.4';
             breathSlider.style.width = '80px';
-            breathSlider.title = 'Breath: 0.4'; // Tooltip instead of label
+            breathSlider.title = 'Breath: 0.4'; /* Tooltip instead of label */
 
             breathSlider.addEventListener('input', function() {
                 this.title = 'Breath: ' + this.value;
             });
             
-            // FIXED: Appending the slider to the group
+            /* FIXED: Appending the slider to the group */
             breathGroup.appendChild(breathSlider);
 
             /* Assemble Controls */
@@ -3084,14 +3084,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             this.removeFluteControls();
         }
     }
-            
-            var brightnessLabel = document.createElement('label');
-            brightnessLabel.textContent = 'Brightness';
-            brightnessLabel.id = 'bell-brightness-label';
-            brightnessLabel.style.marginBottom = '5px';
-            brightnessLabel.style.fontSize = '0.8em';
-            
-            harmGroup.appendChild(brightnessLabel);
     </script>
     <script type="text/javascript">
         var DEBUG = false;
@@ -3165,10 +3157,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var currentInstrument = 'default';
             var instruments = {};
 
-            // Initialize instruments with error handling
+            /* Initialize instruments with error handling */
             function initializeInstruments() {
                 try {
-                    // Check if Default class exists before creating an instance
+                    /* Check if Default class exists before creating an instance */
                     if (typeof Default !== 'undefined') {
                         instruments['default'] = new Default();
                     } else {
@@ -3319,10 +3311,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             ];
             
             var SHORT = [
-                //noteLayout.slice(0, 6),    /* C1 to F1 */
-                //noteLayout.slice(6, 12),   /* F#1 to B1 */
-                //noteLayout.slice(12, 18),  /* C2 to F2 */
-                //noteLayout.slice(18, 24),  /* F#2 to B2 */
+                /*noteLayout.slice(0, 6),    /* C1 to F1 */
+                /*noteLayout.slice(6, 12),   /* F#1 to B1 */
+                /*noteLayout.slice(12, 18),  /* C2 to F2 */
+                /*noteLayout.slice(18, 24),  /* F#2 to B2 */
                 noteLayout.slice(24, 30),  /* C3 to F3 */
                 noteLayout.slice(30, 36),  /* F#3 to B3 */
                 noteLayout.slice(36, 42),  /* C4 to F4 */
@@ -3331,8 +3323,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 noteLayout.slice(54, 60),  /* F#5 to B5 */
                 noteLayout.slice(60, 66),  /* C6 to F6 */
                 noteLayout.slice(66, 72),  /* F#6 to B6 */
-                //noteLayout.slice(72, 78),  /* C7 to F7 */
-                //noteLayout.slice(78, 84)   /* F#7 to B7 */
+                /*noteLayout.slice(72, 78),  /* C7 to F7 */
+                /*noteLayout.slice(78, 84)   /* F#7 to B7 */
             ];
 
             var WIDE = [
@@ -3352,7 +3344,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
             /* --- INITIALIZATION --- */
             function init() {
-                // Initialize instruments with error handling
+                /* Initialize instruments with error handling */
                 initializeInstruments();
                 
                 createPiano();
@@ -3656,7 +3648,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
             
             function removePiano() {
-                // Loop backwards from the last index down to 0
+                /* Loop backwards from the last index down to 0 */
                 for (const child of hexboard.children) {
                     hexboard.removeChild(child);
                 }
@@ -4831,15 +4823,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 var totalMs = Math.max.apply(Math, recordedMelody.map(function(note) {
                     return note.time + note.duration;
                 }));
-                var durationSec = (totalMs / 1000) + 0.5; // Add a little tail
+                var durationSec = (totalMs / 1000) + 0.5; /* Add a little tail */
 
                 try {
-                    // Use a stereo offline context for better compatibility
+                    /* Use a stereo offline context for better compatibility */
                     var offlineContext = new OfflineAudioContext(2, Math.ceil(44100 * durationSec), 44100);
                     var masterGainNode = offlineContext.createGain();
-                    masterGainNode.gain.value = 0.7; // Set a reasonable master volume
+                    masterGainNode.gain.value = 0.7; /* Set a reasonable master volume */
 
-                    // Create a limiter to prevent clipping
+                    /* Create a limiter to prevent clipping */
                     var limiter = offlineContext.createDynamicsCompressor();
                     limiter.threshold.value = -10;
                     limiter.knee.value = 0;
@@ -4850,18 +4842,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     masterGainNode.connect(limiter);
                     limiter.connect(offlineContext.destination);
 
-                    // Process each note based on the current instrument
+                    /* Process each note based on the current instrument */
                     for (var i = 0; i < recordedMelody.length; i++) {
                         var note = recordedMelody[i];
                         var startTime = note.time / 1000;
                         var noteDuration = note.duration / 1000;
                         if (noteDuration <= 0.01) continue;
 
-                        // Pass the master gain node as the destination for all sounds
+                        /* Pass the master gain node as the destination for all sounds */
                         if (instruments[currentInstrument] && instruments[currentInstrument].export) {
                             instruments[currentInstrument].export(offlineContext, note, startTime, noteDuration, masterGainNode);
                         } else {
-                            // Default instrument
+                            /* Default instrument */
                             instruments['default'].export(offlineContext, note, startTime, noteDuration, masterGainNode);
                         }
                     }
@@ -4902,7 +4894,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     channels = [],
                     i, sample, offset = 0, pos = 0;
 
-                // write WAVE header
+                /* write WAVE header */
                 var setUint16 = function(data) {
                     view.setUint16(pos, data, true);
                     pos += 2;
@@ -4912,34 +4904,34 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     pos += 4;
                 };
 
-                // RIFF identifier
+                /* RIFF identifier */
                 setUint32(0x46464952);
-                // file length
+                /* file length */
                 setUint32(length - 8);
-                // WAVE identifier
+                /* WAVE identifier */
                 setUint32(0x45564157);
-                // fmt chunk identifier
+                /* fmt chunk identifier */
                 setUint32(0x20746d66);
-                // chunk length
+                /* chunk length */
                 setUint32(16);
-                // sample format (PCM)
+                /* sample format (PCM) */
                 setUint16(1);
-                // channel count
+                /* channel count */
                 setUint16(numOfChan);
-                // sample rate
+                /* sample rate */
                 setUint32(abuffer.sampleRate);
-                // byte rate
+                /* byte rate */
                 setUint32(abuffer.sampleRate * 2 * numOfChan);
-                // block align
+                /* block align */
                 setUint16(numOfChan * 2);
-                // bits per sample
+                /* bits per sample */
                 setUint16(16);
-                // data chunk identifier
+                /* data chunk identifier */
                 setUint32(0x61746164);
-                // data chunk length
+                /* data chunk length */
                 setUint32(length - pos - 4);
 
-                // write interleaved data
+                /* write interleaved data */
                 for (i = 0; i < abuffer.numberOfChannels; i++)
                     channels.push(abuffer.getChannelData(i));
 
@@ -4958,7 +4950,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 });
             }
 
-            // Initialize the application
+            /* Initialize the application */
             init();
         });
     </script>
