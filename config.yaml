@@ -39,6 +39,4 @@ menu:
       url: tags/
       weight: 10
       url: projects/
-build:
-  minify: false
 
