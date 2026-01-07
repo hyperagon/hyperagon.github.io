@@ -3759,7 +3759,7 @@ function findNearestNote(frequency) {
 
                     offlineContext.startRendering().then(function(renderedBuffer) {
                         var wavBlob = bufferToWave(renderedBuffer);
-                        downloadBlob(wavBlob, 'hexagon.wav');
+                        downloadBlob(wavBlob, 'hexano.wav');
                     }).catch(function(e) {
                         console.error("Failed to render WAV:", e);
                         alert("Sorry, there was an error creating the audio file.");
