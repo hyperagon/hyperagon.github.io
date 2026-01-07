@@ -1,3 +1,4 @@
+---
 88baseURL: https://hyperagon.github.io/
 languageCode: en-us
 title: Hyperag⬡n
@@ -38,5 +39,3 @@ menu:
     - name: Tags
       url: tags/
       weight: 10
-      url: projects/
-
