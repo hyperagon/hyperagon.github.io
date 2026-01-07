@@ -1,8 +1,7 @@
----
-title: 'Example'
-summary: 'Red One'
-date:  2024-02-01T20:00:13Z
-comments: false
+---«
+title: 'Hexano 68 (HTML5)'
+date:  2026-01-07T09:24:13Z
+layout: hexano68
 ---
 {{<rawhtml>}}
 <div class="not-found" style="color:red">One</div>
