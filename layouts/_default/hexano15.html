@@ -844,7 +844,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             try {
                 const renderedBuffer = await offlineContext.startRendering();
                 const wavBlob = bufferToWave(renderedBuffer);
-                downloadBlob(wavBlob, 'hexagon-melody.wav');
+                downloadBlob(wavBlob, 'hexano.wav');
             } catch (e) {
                 console.error("Failed to render WAV:", e);
                 alert("Sorry, there was an error creating the audio file.");
