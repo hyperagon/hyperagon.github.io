@@ -601,17 +601,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         // Global storage for active nodes, accessible to all instruments
         var activeOscillators = {};
 
-        // Base Factory for creating instrument objects
-        var InstrumentFactory = {
-            create: function(name) {
-                return {
-                    name: name,
-                    type: 'Instrument',
-                    activeNodes: activeOscillators // Reference global storage
-                };
-            }
-        };
-
         var DEBUG = false;
         document.addEventListener('DOMContentLoaded', function() {
             /* --- DOM ELEMENTS --- */
@@ -701,6 +690,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             /* --- INSTRUMENT SYSTEM --- */
             var currentInstrumentInstance = null;
 
+            // Base Factory for creating instrument objects
+            var InstrumentFactory = {
+                create: function(name) {
+                    return {
+                        name: name,
+                        type: 'Instrument',
+                        activeNodes: activeOscillators // Reference global storage
+                    };
+                }
+            };
+
             var DefaultInstrument = {
                 create: function() {
                     var inst = InstrumentFactory.create('Default');
@@ -712,6 +712,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var gainValue = 0.15;
 
                             var oscillator = audioContext.createOscillator();
@@ -810,6 +819,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var gainValue = 0.12;
 
                             var waveformSelect = document.getElementById('gameboy-wave');
@@ -975,6 +993,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var gainValue = 0.25;
 
                             var typeSelect = document.getElementById('guitar-type');
@@ -1192,6 +1219,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var gainValue = 0.15;
 
                             var instrumentSelect = document.getElementById('snes-instrument');
@@ -1470,6 +1506,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var gainValue = 0.5;
 
                             var typeSelect = document.getElementById('drums-type');
@@ -1750,6 +1795,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var decaySlider = document.getElementById('bell-decay');
                             var brightnessSlider = document.getElementById('bell-brightness');
 
@@ -1934,6 +1988,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var breathSlider = document.getElementById('flute-breath');
                             var vibratoSlider = document.getElementById('flute-vibrato');
                             
@@ -2136,6 +2199,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var attackSlider = document.getElementById('violin-attack');
                             var vibratoSlider = document.getElementById('violin-vibrato');
                             var filterSlider = document.getElementById('violin-filter');
@@ -2368,6 +2440,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.playNote = function(note, freq) {
                         try {
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
                             var decaySlider = document.getElementById('ukulele-decay');
                             var nylonSlider = document.getElementById('ukulele-nylon');
 
@@ -2546,6 +2627,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             if (!window.customSampleBuffer) return;
 
                             var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
 
                             // 1. Source
                             var source = audioContext.createBufferSource();
