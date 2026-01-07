@@ -1,5 +1,5 @@
 ---
-88baseURL: https://hyperagon.github.io/
+baseURL: https://hyperagon.github.io/
 languageCode: en-us
 title: Hyperag⬡n
 theme: PaperMod
@@ -39,3 +39,4 @@ menu:
     - name: Tags
       url: tags/
       weight: 10
+---
