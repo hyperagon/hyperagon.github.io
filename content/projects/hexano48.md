@@ -1,6 +1,6 @@
 ---
 title: 'Hexano 48 (HTML5)'
 summary: 'Music in your Pocket'
-date:  2025-12-18T09:24:13Z
+date:  2026-01-08T09:24:13Z
 layout: hexano48
 ---
