@@ -9,10 +9,12 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hexano 4.7</title>
+    <title>Hexano 4.8</title>
     <style type="text/css">
         /* --- Basic Setup & Theme --- */
         html, body {
@@ -304,9 +306,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         }
 
         .panel-buttons {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Forces 2 columns */
             gap: 10px;
         }
 
@@ -604,8 +605,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var overlayPanel = document.getElementById('overlay-panel');
             var panelCloseBtn = document.getElementById('panel-close-btn');
             var panelContent = document.getElementById('panel-content');
-            var exportButton = document.getElementById('export-button');
-            var importButton = document.getElementById('import-button');
+            var exportJSON = document.getElementById('export-json-button');
+            var exportAudio = document.getElementById('export-audio-button');
+            var importJSONButton = document.getElementById('import-json-button');
             var importAudioButton = document.getElementById('import-audio-button');
             var fileInput = document.getElementById('file-input');
             var audioFileInput = document.getElementById('audio-file-input');
@@ -670,13 +672,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         return;
                     }
                 },
-                '8bit': {
-                    name: '8-bit',
+                'Gameboy': {
+                    name: 'Gameboy',
                     playNote: function(note, freq) {
-                        return play8BitNote(note, freq);
+                        return playGameboyNote(note, freq);
                     },
                     stopNote: function(note) {
-                        return stop8BitNote(note);
+                        return stopGameboyNote(note);
                     },
                     init: function() {
                         /* Apply Game Boy theme - ONLY BACKGROUND */
@@ -716,8 +718,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         removeGuitarControls();
                     }
                 },
-                '16bit': {
-                    name: '16-bit',
+                'SNES': {
+                    name: 'SNES',
                     playNote: function(note, freq) {
                         return playSNESNote(note, freq);
                     },
@@ -864,8 +866,29 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 { key: '', note: 'A#7', freq: 3729.310, type: 'black' },
                 { key: '', note: 'B7', freq: 3951.066, type: 'white' }
             ];
-                    
-            var noteRows = [
+            
+            /* 
+               Portrait = SHORT or Landscape = WIDE mode
+               (from hexano51)
+            */
+            var SHORT = [
+                //noteLayout.slice(0, 6),    /* C1 to F1 */
+                //noteLayout.slice(6, 12),   /* F#1 to B1 */
+                //noteLayout.slice(12, 18),  /* C2 to F2 */
+                //noteLayout.slice(18, 24),  /* F#2 to B2 */
+                noteLayout.slice(24, 30),  /* C3 to F3 */
+                noteLayout.slice(30, 36),  /* F#3 to B3 */
+                noteLayout.slice(36, 42),  /* C4 to F4 */
+                noteLayout.slice(42, 48),  /* F#4 to B4 */
+                noteLayout.slice(48, 54),  /* C5 to F5 */
+                noteLayout.slice(54, 60),  /* F#5 to B5 */
+                noteLayout.slice(60, 66),  /* C6 to F6 */
+                noteLayout.slice(66, 72),  /* F#6 to B6 */
+                //noteLayout.slice(72, 78),  /* C7 to F7 */
+                //noteLayout.slice(78, 84)   /* F#7 to B7 */
+            ];
+
+            var WIDE = [
                 noteLayout.slice(0, 12),   /* C1 to B1 */
                 noteLayout.slice(12, 24),  /* C2 to B2 */
                 noteLayout.slice(24, 36),  /* C3 to B3 */
@@ -874,6 +897,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 noteLayout.slice(60, 72),  /* C6 to B6 */
                 noteLayout.slice(72, 84),  /* C7 to B7 */
             ];
+
+            // Determine default rows based on orientation initially
+            var isPortrait = window.innerHeight > window.innerWidth;
+            var noteRows = isPortrait ? SHORT : WIDE;
 
             var notesByKey = {};
             var notesByNoteName = {};
@@ -895,76 +922,98 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             /* --- HEXBOARD SCALING --- */
             function scaleHexboard() {
                 if (!hexboard || !hexboardContainer) return;
-
+                
                 var svg = hexboard.querySelector('.piano-svg');
                 if (!svg) return;
 
-                /* --- STEP 1: RESET --- */
-                /* We must clear previous overrides so the container can shrink  */
-                /* to its natural size before we measure it. */
-                hexboard.style.width = '';
-                hexboard.style.height = '';
-                hexboard.style.minWidth = '';
-                hexboard.style.minHeight = '';
-                svg.style.width = '';
-                svg.style.height = '';
-
-                /* --- STEP 2: MEASURE --- */
+                /* 1. Orientation Check */
                 var containerWidth = hexboardContainer.clientWidth;
                 var containerHeight = hexboardContainer.clientHeight;
+                
+                // Determine if we are in portrait mode
+                var isPortraitNow = window.innerHeight > window.innerWidth;
+
+                // 2. Rebuild if Layout Changed (e.g., rotated device)
+                // Note: In portrait, we use SHORT rows. In landscape, we use WIDE rows.
+                var previousRows = noteRows;
+                noteRows = isPortraitNow ? SHORT : WIDE;
+
+                // Compare array lengths/contents to detect if we need to redraw
+                // We serialize to string for a deep comparison of the structure
+                var currentRowsString = JSON.stringify(previousRows);
+                var targetRowsString = JSON.stringify(noteRows);
+
+                if (currentRowsString !== targetRowsString) {
+                    // Clear existing board
+                    while (hexboard.firstChild) {
+                        hexboard.removeChild(hexboard.firstChild);
+                    }
+                    // Reset lookups
+                    notesByKey = {};
+                    notesByNoteName = {};
+                    
+                    // Rebuild DOM
+                    createPiano();
+                    
+                    // Re-fetch svg reference as DOM has changed
+                    svg = hexboard.querySelector('.piano-svg');
+                }
+
+                /* 3. Calculate Dimensions */
+                // Get the intrinsic SVG size (from viewBox)
+                var viewBox = svg.getAttribute('viewBox').split(' ');
+                var svgWidth = parseFloat(viewBox[2]);
+                var svgHeight = parseFloat(viewBox[3]);
 
                 if (containerWidth === 0 || containerHeight === 0) return;
 
-                var viewBox = svg.getAttribute('viewBox').split(' ');
-                var originalWidth = parseFloat(viewBox[2]);
-                var originalHeight = parseFloat(viewBox[3]);
+                /* 4. Scale Calculation */
+                var scale = 1;
+                var finalWidth, finalHeight;
 
-                var isPortrait = window.innerHeight > window.innerWidth;
-
-                let scale;
-
-                if (isPortrait) {
-                /* PORTRAIT: */
-                /* 1. Fit the board's LENGTH (originalWidth) to the screen HEIGHT. */
-                /* 2. Ignore the screen width (don't shrink just because it's narrow). */
-                scale = containerHeight / originalWidth;
-
-                hexboard.style.transform = 'rotate(90deg)';
+                if (isPortraitNow) {
+                    // PORTRAIT MODE
+                    // In portrait, we effectively rotate the board 90 degrees visually.
+                    // This means the SVG's Width should fit into the Container's Height.
+                    // And the SVG's Height should fit into the Container's Width.
+                    
+                    var scaleW = containerHeight / svgWidth;
+                    var scaleH = containerWidth / svgHeight;
+                    
+                    scale = Math.min(scaleW, scaleH);
+                    
+                    // Set final dimensions such that we swap width and height to match rotation
+                    finalWidth = svgHeight * scale;
+                    finalHeight = svgWidth * scale;
+                    
+                    // Remove CSS transforms; we are handling layout via dimensions now
+                    hexboard.style.transform = 'none'; 
                 } else {
-                /* LANDSCAPE: */
-                /* Standard fit (respect both dimensions so it doesn't get cut off). */
-                scale = Math.min(containerWidth / originalWidth, containerHeight / originalHeight);
-
-                hexboard.style.transform = 'rotate(0deg)';
+                    // LANDSCAPE MODE
+                    // Standard fit: SVG Width to Container Width, SVG Height to Container Height
+                    var scaleW = containerWidth / svgWidth;
+                    var scaleH = containerHeight / svgHeight;
+                    
+                    scale = Math.min(scaleW, scaleH);
+                    
+                    finalWidth = svgWidth * scale;
+                    finalHeight = svgHeight * scale;
+                    
+                    hexboard.style.transform = 'none';
                 }
 
-                var finalWidth = originalWidth * scale;
-                var finalHeight = originalHeight * scale;
-
-                /* --- STEP 3: APPLY --- */
-
-                /* Force specific pixel sizes on the wrapper */
+                /* 5. Apply Dimensions */
+                // We set the explicit pixel size of the #hexboard div.
+                // This allows the flexbox container to center it, and ensures
+                // it exactly fits the available space (or maintains aspect ratio).
                 hexboard.style.width = finalWidth + 'px';
                 hexboard.style.height = finalHeight + 'px';
+                
+                // Ensure SVG fills the #hexboard div
+                svg.style.width = '100%';
+                svg.style.height = '100%';
 
-                /* Lock min-size to prevent Flexbox from squashing it  */
-                /* (This fixes the "width shrinks it" issue) */
-                hexboard.style.minWidth = finalWidth + 'px';
-                hexboard.style.minHeight = finalHeight + 'px';
-
-                /* Force SVG to fill that exact space */
-                svg.style.width = finalWidth + 'px';
-                svg.style.height = finalHeight + 'px';
-
-                /* Cleanup constraints */
-                hexboard.style.maxWidth = 'none';
-                hexboard.style.maxHeight = 'none';
-                svg.style.maxWidth = 'none';
-                svg.style.maxHeight = 'none';
-
-                hexboard.style.flexShrink = '0';
                 hexboard.style.transformOrigin = 'center center';
-                hexboard.style.margin = 'auto';
             }
 
             function initInstrumentSelector() {
@@ -1680,47 +1729,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function createPiano() {
-                /* Create main SVG container */
                 var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('class', 'piano-svg');
                 
-                /* Hexagon dimensions for proper tiling (pointy-top orientation) */
-                var hexRadius = 50; /* Radius from center to any vertex */
-                
-                /* For pointy-top hexagons: */
-                /* Width = 2 * radius */
-                /* Height = sqrt(3) * radius */
+                var hexRadius = 50;
                 var hexWidth = hexRadius * 2;
                 var hexHeight = Math.sqrt(3) * hexRadius;
-                
-                /* CORRECTED SPACING FOR PROPER TILING: */
-                /* Horizontal spacing between centers is 1.5 * radius */
                 var horizontalSpacing = hexRadius * 1.75;
-                /* Vertical spacing between rows is the full height */
-                var verticalSpacing = hexHeight * 0.85;
+                var verticalSpacing = hexHeight * 0.85; // This is the vertical step per row
                 
-                /* Calculate total width and height with proper spacing */
-                var maxRowLength = Math.max.apply(Math, noteRows.map(function(row) { return row.length; }));
-                
-                /* For width: (maxRowLength-1) * spacing + hexWidth + offset for odd rows */
-                /* The offset accounts for the half-spacing shift in alternating rows */
-                var totalWidth = (maxRowLength - 1) * horizontalSpacing + hexWidth + (horizontalSpacing / 2);
-                
-                /* For height: (noteRows.length-1) * spacing + hexHeight */
-                /* This properly accounts for the spacing between rows */
-                var totalHeight = (noteRows.length - 1) * verticalSpacing + (2 * hexRadius);
-                
-                /* Set SVG dimensions */
-                svg.setAttribute('width', "100%");
-                svg.setAttribute('height', "100%");
-                svg.setAttribute('viewBox', '0 0 ' + totalWidth + ' ' + totalHeight);
-                
-                /* Create hexagon points (pointy-top orientation) */
+                // Bounding box tracking
+                var minX = Infinity, maxX = -Infinity;
+                var minY = Infinity, maxY = -Infinity;
+
                 function getHexagonPoints(cx, cy, radius) {
                     var points = [];
-                    /* Start at top point and go clockwise */
                     for (var i = 0; i < 6; i++) {
-                        /* 30°, 90°, 150°, 210°, 270°, 330° for pointy-top */
                         var angle = (Math.PI / 3) * i - Math.PI / 2;
                         var x = cx + radius * Math.cos(angle);
                         var y = cy + radius * Math.sin(angle);
@@ -1729,28 +1753,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return points.join(' ');
                 }
                 
-                /* Create hexagons for each note */
+                // Generate Grid
                 for (var i = 0; i < noteRows.length; i++) {
                     var rowData = noteRows[i];
-                    
-                    /* Calculate row offset for hexagonal tiling */
                     var rowOffsetX = (i % 2 === 1) ? horizontalSpacing / 2 : 0;
-                    
                     var rowOffsetY = i * verticalSpacing;
                     
                     for (var j = 0; j < rowData.length; j++) {
                         var noteData = rowData[j];
-                        
-                        /* Calculate center position for this hexagon */
-                        /* FIX: Position the first hexagon at hexRadius, then add spacing for subsequent ones */
                         var cx = rowOffsetX + hexRadius + (j * horizontalSpacing);
                         var cy = rowOffsetY + hexRadius;
                         
-                        /* Create group for hexagon and text */
+                        // Update Bounding Box (The Center +/- Radius)
+                        if (cx - hexRadius < minX) minX = cx - hexRadius;
+                        if (cx + hexRadius > maxX) maxX = cx + hexRadius;
+                        if (cy - hexRadius < minY) minY = cy - hexRadius;
+                        if (cy + hexRadius > maxY) maxY = cy + hexRadius;
+
                         var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                         g.setAttribute('class', 'hexagon-group');
                         
-                        /* Create hexagon polygon */
                         var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                         polygon.setAttribute('class', 'hexagon');
                         polygon.setAttribute('id', noteData.note);
@@ -1760,36 +1782,38 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         polygon.setAttribute('data-freq', noteData.freq);
                         polygon.setAttribute('data-note-name', noteData.note.replace(/[0-9]/, ''));
                         
-                        /* Create note name text - positioned higher in the hexagon */
                         var noteText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         noteText.setAttribute('class', 'note-text');
                         noteText.setAttribute('x', cx);
-                        noteText.setAttribute('y', cy); /* Moved up from center */
+                        noteText.setAttribute('y', cy);
                         noteText.textContent = noteData.note;
                         
-                        /* Create key label text - positioned lower in the hexagon */
                         var keyText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         keyText.setAttribute('class', 'note-key');
                         keyText.setAttribute('x', cx);
-                        keyText.setAttribute('y', cy + 20); /* Moved further down from center */
+                        keyText.setAttribute('y', cy + 20);
                         keyText.textContent = noteData.key === 'Shift' ? '⇧' : noteData.key;
                         
-                        /* Add elements to group */
                         g.appendChild(polygon);
                         g.appendChild(noteText);
                         g.appendChild(keyText);
-                        
-                        /* Add group to SVG */
                         svg.appendChild(g);
                         
-                        /* Store references for event handling */
-                        notesByKey[noteData.key] = noteData; /* Store the exact key, not lowercase */
+                        notesByKey[noteData.key] = noteData;
                         notesByNoteName[noteData.note] = notesByNoteName[noteData.note] || [];
                         notesByNoteName[noteData.note].push(polygon);
                     }
                 }
                 
-                /* Add SVG to hexboard */
+                // Set ViewBox to exactly encompass the grid
+                var totalWidth = maxX - minX;
+                var totalHeight = maxY - minY;
+                var padding = 0; // Add some padding around edges
+                var vbWidth = totalWidth + padding;
+                var vbHeight = totalHeight + padding;
+
+                svg.setAttribute('viewBox', (minX - padding/2) + ' ' + (minY - padding/2) + ' ' + vbWidth + ' ' + vbHeight);
+                
                 hexboard.appendChild(svg);
             }
             
@@ -1889,7 +1913,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
             }
 
-            function play8BitNote(note, freq) {
+            function playGameboyNote(note, freq) {
                 try {
                     var now = audioContext.currentTime;
                     var gainValue = 0.12;
@@ -1959,10 +1983,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     };
                     
                     if(DEBUG) {
-                        console.log("8-bit Note started:", note, "Frequency:", roundedFreq);
+                        console.log("Gameboy Note started:", note, "Frequency:", roundedFreq);
                     }
                 } catch (e) {
-                    console.error("Error playing 8-bit note:", e);
+                    console.error("Error playing Gameboy note:", e);
                 }
             }
 
@@ -2511,12 +2535,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
             }
             
-            function stop8BitNote(note) {
+            function stopGameboyNote(note) {
                 var oscillatorData = activeOscillators[note];
                 
                 if (!oscillatorData) {
                     if(DEBUG) {
-                        console.log("8-bit note data missing:", note, oscillatorData);
+                        console.log("Gameboy note data missing:", note, oscillatorData);
                     }
                     delete activeOscillators[note];
                     return;
@@ -2561,10 +2585,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     delete activeOscillators[note];
                     
                     if(DEBUG) {
-                        console.log("8-bit Note stopped:", note, "Release time:", releaseTime);
+                        console.log("Gameboy Note stopped:", note, "Release time:", releaseTime);
                     }
                 } catch (e) {
-                    console.error("Error stopping 8-bit note:", e);
+                    console.error("Error stopping Gameboy note:", e);
                     /* Still remove from active oscillators even if stopping failed */
                     delete activeOscillators[note];
                 }
@@ -3047,9 +3071,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 });
                 
                 /* Import/Export button listeners  */
-                exportButton.addEventListener('click', exportMelody);
+                exportJSON.addEventListener('click', exportMelody);
+                exportAudio.addEventListener('click', generateWav);
                 
-                importButton.addEventListener('click', function() {
+                importJSONButton.addEventListener('click', function() {
                     fileInput.click();
                 });
                 
@@ -4195,9 +4220,11 @@ function findNearestNote(frequency) {
                 <!-- Notes will be displayed here -->
             </div>
             <div class="panel-buttons">
-                <button id="export-button" class="panel-button">Export JSON</button>
+                <button id="import-json-button" class="panel-button">Import JSON</button>
                 <button id="import-audio-button" class="panel-button">Import Audio</button>
-                <button id="import-button" class="panel-button">Import JSON</button>
+                <button id="export-json-button" class="panel-button">Export JSON</button>
+                <button id="export-audio-button" class="panel-button">Export Audio</button>
+                
                 <input type="file" id="file-input" accept=".json" style="display: none;">
                 <input type="file" id="audio-file-input" accept="audio/*" style="display: none;">
             </div>
