@@ -9,8 +9,6 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -562,6 +560,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
         /* Game Boy instrument specific styles - ONLY BACKGROUND */
         .gameboy-theme {
+            background-color: #9bbc0f !important;
+        }
 
         /* Guitar instrument specific styles */
         .guitar-theme {
@@ -594,15 +594,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             background-color: #DEB887 !important; /* Burlywood (Light Wood) */
         }
         
+        .tuba-theme {
+            background-color: #4E342E !important; /* Dark Brown/Brass */
+        }
+        
         .custom-theme {
             background-color: #2E8B57 !important; /* Sea Green */
         }
     }
     </style>
     <script type="text/javascript">
-        // Global storage for active nodes, accessible to all instruments
-        var activeOscillators = {};
-
+        'use strict';
         var DEBUG = false;
         document.addEventListener('DOMContentLoaded', function() {
             /* --- DOM ELEMENTS --- */
@@ -623,26 +625,41 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var panelCloseBtn = document.getElementById('panel-close-btn');
             var panelContent = document.getElementById('panel-content');
             
+            /* 
+               FIX: Renamed variables to avoid reserved words 'import' and 'export'.
+               Added 'var' declarations to prevent implicit globals.
+            */
+            var btnImportJson = document.getElementById('import-json-btn');
+            var btnImportAudio = document.getElementById('import-audio-btn');
+            var btnExportJson = document.getElementById('export-json-btn');
+            var btnExportAudio = document.getElementById('export-audio-btn');
+
+            var fileInput = document.getElementById('file-input');
+            var audioFileInput = document.getElementById('audio-file-input');
+            var progressContainer = document.getElementById('progress-container');
+            var progressFill = document.getElementById('progress-fill');
+            var progressText = document.getElementById('progress-text');
+            
             // 1. Import JSON
-            importJSONButton = document.getElementById('import-json-btn');
-            importJSONButton.addEventListener('click', function() {
+            btnImportJson = document.getElementById('import-json-btn');
+            btnImportJson.addEventListener('click', function() {
                 document.getElementById('file-input').click();
             });
 
             // 2. Import Audio
-            importAudioButton = document.getElementById('import-audio-btn');
+            btnImportAudio = document.getElementById('import-audio-btn');
             
-            importAudioButton.addEventListener('click', function() {
+            btnImportAudio.addEventListener('click', function() {
                 document.getElementById('audio-file-input').click();
             });
 
             // 3. Export JSON
-            exportJSONButton = document.getElementById('export-json-btn');
-            exportJSONButton.addEventListener('click', exportMelody);
+            btnExportJson = document.getElementById('export-json-btn');
+            btnExportJson.addEventListener('click', exportMelody);
 
             // 4. Export Audio
-            exportAudioButton = document.getElementById('export-audio-btn');
-            exportAudioButton.addEventListener('click', exportWav);
+            btnExportAudio = document.getElementById('export-audio-btn');
+            btnExportAudio.addEventListener('click', exportWav);
 
             var fileInput = document.getElementById('file-input');
             var audioFileInput = document.getElementById('audio-file-input');
@@ -776,7 +793,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         var note = noteData;
                         var oscillator = context.createOscillator();
                         var gainNode = context.createGain();
@@ -940,7 +957,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         var waveformSelect = document.getElementById('gameboy-wave');
                         var noiseSelect = document.getElementById('gameboy-noise');
                         var attackSlider = document.getElementById('gameboy-attack');
@@ -1127,6 +1144,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
                                 oscillatorData.gainNode.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
                             }
+                            
+                            // FIX: Corrected variable names from harmonicGain to harmonicGain1/2
                             if (oscillatorData.harmonicGain1) {
                                 oscillatorData.harmonicGain1.gain.cancelScheduledValues(now);
                                 oscillatorData.harmonicGain1.gain.setValueAtTime(oscillatorData.harmonicGain1.gain.value, now);
@@ -1137,6 +1156,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 oscillatorData.harmonicGain2.gain.setValueAtTime(oscillatorData.harmonicGain2.gain.value, now);
                                 oscillatorData.harmonicGain2.gain.linearRampToValueAtTime(0, now + releaseTime);
                             }
+                            
                             if (oscillatorData.pluckGain) {
                                 oscillatorData.pluckGain.gain.cancelScheduledValues(now);
                                 oscillatorData.pluckGain.gain.setValueAtTime(oscillatorData.pluckGain.gain.value, now);
@@ -1150,7 +1170,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         var typeSelect = document.getElementById('guitar-type');
                         var bodySlider = document.getElementById('guitar-body');
                         
@@ -1457,7 +1477,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             }
                             if (oscillatorData.harmonicGain1) {
                                 oscillatorData.harmonicGain1.gain.cancelScheduledValues(now);
-                                oscillatorData.harmonicGain.gain.setValueAtTime(oscillatorData.harmonicGain1.gain.value, now);
+                                oscillatorData.harmonicGain1.gain.setValueAtTime(oscillatorData.harmonicGain1.gain.value, now);
                                 oscillatorData.harmonicGain1.gain.linearRampToValueAtTime(0, now + releaseTime);
                             }
                             if (oscillatorData.harmonicGain2) {
@@ -1490,7 +1510,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         var instrumentSelect = document.getElementById('snes-instrument');
                         var attackSlider = document.getElementById('snes-attack');
                         var releaseSlider = document.getElementById('snes-release');
@@ -1782,7 +1802,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         var typeSelect = document.getElementById('drums-type');
                         var pitchSlider = document.getElementById('drums-pitch');
                         var decaySlider = document.getElementById('drums-decay');
@@ -1791,71 +1811,122 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         var pitch = pitchSlider ? parseFloat(pitchSlider.value) : 1;
                         var decayTime = decaySlider ? parseFloat(decaySlider.value) : 0.5;
 
-                        var oscillator = context.createOscillator();
-                        var oscillatorGain = context.createGain();
-                        var noiseBuffer = context.createBufferSource();
-                        var noiseGain = context.createGain();
-                        var noiseFilter = context.createBiquadFilter();
-                        
-                        // Create noise buffer
+                        // Create Noise Buffer (common for snare/hihat/cymbal)
                         var bufferSize = context.sampleRate * 2;
                         var buffer = context.createBuffer(1, bufferSize, context.sampleRate);
                         var output = buffer.getChannelData(0);
                         for (var i = 0; i < bufferSize; i++) {
                             output[i] = Math.random() * 2 - 1;
                         }
-                        noiseBuffer.buffer = buffer;
-                        noiseBuffer.loop = true;
 
                         if (drumType === 'kick') {
-                            oscillator.type = 'sine';
-                            oscillator.frequency.setValueAtTime(noteData.freq * pitch, startTime);
-                            oscillator.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                            var osc = context.createOscillator();
+                            var oscGain = context.createGain();
                             
-                            oscillatorGain.gain.setValueAtTime(0.7, startTime);
-                            oscillatorGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(noteData.freq * pitch, startTime);
+                            osc.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
                             
-                            oscillator.connect(oscillatorGain);
-                            oscillatorGain.connect(destination);
-                            oscillator.start(startTime);
-                            oscillator.stop(startTime + decayTime);
+                            oscGain.gain.setValueAtTime(0.7, startTime);
+                            oscGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                            
+                            osc.connect(oscGain);
+                            oscGain.connect(destination);
+                            osc.start(startTime);
+                            osc.stop(startTime + decayTime);
+
                         } else if (drumType === 'snare') {
-                            oscillator.type = 'triangle';
-                            oscillator.frequency.value = noteData.freq * pitch;
+                            var osc = context.createOscillator();
+                            var oscGain = context.createGain();
+                            var noiseSource = context.createBufferSource();
+                            var noiseGain = context.createGain();
+                            var noiseFilter = context.createBiquadFilter();
+
+                            noiseSource.buffer = buffer;
+                            
+                            osc.type = 'triangle';
+                            osc.frequency.value = noteData.freq * pitch;
                             
                             noiseFilter.type = 'highpass';
                             noiseFilter.frequency.value = 5000;
                             
-                            oscillatorGain.gain.setValueAtTime(0.5, startTime);
+                            oscGain.gain.setValueAtTime(0.5, startTime);
                             noiseGain.gain.setValueAtTime(0.5, startTime);
                             
-                            oscillatorGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                            oscGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
                             noiseGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
 
-                            oscillator.connect(oscillatorGain);
-                            noiseBuffer.connect(noiseFilter);
+                            osc.connect(oscGain);
+                            noiseSource.connect(noiseFilter);
                             noiseFilter.connect(noiseGain);
                             
-                            oscillatorGain.connect(destination);
+                            oscGain.connect(destination);
                             noiseGain.connect(destination);
                             
-                            oscillator.start(startTime);
-                            noiseBuffer.start(startTime);
-                            oscillator.stop(startTime + decayTime);
-                            noiseBuffer.stop(startTime + decayTime);
+                            osc.start(startTime);
+                            noiseSource.start(startTime);
+                            osc.stop(startTime + decayTime);
+                            noiseSource.stop(startTime + decayTime);
+
+                        } else if (drumType === 'hihat' || drumType === 'cymbal') {
+                            // FIX: Added specific logic for hi-hat and cymbal
+                            var osc = context.createOscillator();
+                            var noiseSource = context.createBufferSource();
+                            noiseSource.buffer = buffer;
+                            
+                            var oscFilter = context.createBiquadFilter();
+                            oscFilter.type = 'bandpass';
+                            oscFilter.frequency.value = noteData.freq * pitch;
+                            oscFilter.Q.value = 10;
+                            
+                            var noiseFilter = context.createBiquadFilter();
+                            noiseFilter.type = 'highpass';
+                            if (drumType === 'hihat') noiseFilter.frequency.value = 8000;
+                            else noiseFilter.frequency.value = 3000; // Cymbal lower
+                            
+                            var oscGain = context.createGain();
+                            var noiseGain = context.createGain();
+                            var masterDrumGain = context.createGain();
+                            
+                            oscGain.gain.value = drumType === 'hihat' ? 0.2 : 0.3;
+                            noiseGain.gain.value = drumType === 'hihat' ? 0.3 : 0.4;
+                            
+                            var envDecay = drumType === 'hihat' ? decayTime * 0.2 : decayTime * 2;
+                            
+                            masterDrumGain.gain.setValueAtTime(0.7, startTime);
+                            masterDrumGain.gain.exponentialRampToValueAtTime(0.01, startTime + envDecay);
+
+                            noiseSource.connect(noiseFilter);
+                            noiseFilter.connect(noiseGain);
+                            noiseGain.connect(masterDrumGain);
+                            
+                            osc.connect(oscFilter);
+                            oscFilter.connect(oscGain);
+                            oscGain.connect(masterDrumGain);
+                            
+                            masterDrumGain.connect(destination);
+                            
+                            osc.start(startTime);
+                            noiseSource.start(startTime);
+                            osc.stop(startTime + envDecay);
+                            noiseSource.stop(startTime + envDecay);
+
                         } else {
-                            // Default to a tom-like sound for other types in export (including hi-hat/cymbal simplified)
-                            oscillator.type = 'square';
-                            oscillator.frequency.setValueAtTime(noteData.freq * pitch, startTime);
-                            oscillator.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                            // Default to Tom
+                            var osc = context.createOscillator();
+                            var oscGain = context.createGain();
                             
-                            oscillatorGain.gain.setValueAtTime(0.7, startTime);
-                            oscillatorGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                            osc.type = 'square';
+                            osc.frequency.setValueAtTime(noteData.freq * pitch, startTime);
+                            osc.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
                             
-                            oscillator.connect(oscillatorGain);
-                            oscillatorGain.connect(destination);
-                            oscillator.start(startTime);
-                            oscillator.stop(startTime + decayTime);
+                            oscGain.gain.setValueAtTime(0.7, startTime);
+                            oscGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
+                            
+                            osc.connect(oscGain);
+                            oscGain.connect(destination);
+                            osc.start(startTime);
+                            osc.stop(startTime + decayTime);
                         }
                     };
                     
@@ -2008,7 +2079,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         var decaySlider = document.getElementById('bell-decay');
                         var brightnessSlider = document.getElementById('bell-brightness');
 
@@ -2137,7 +2208,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 noiseFilter.connect(noiseGain);
                                 noiseGain.connect(mainGainNode);
                                 noiseNode.start(now);
-                                noiseNode.stop(now + 0.5);
+                                // NOTE: We do not stop noiseNode here, we handle it in stopNote
                             }
 
                             // 4. Main Gain (Envelope)
@@ -2151,11 +2222,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             mainGain.connect(mainGainNode);
                             osc.start(now);
 
+                            // FIX: Store noiseNode so we can stop it later
                             activeOscillators[note] = {
                                 osc: osc,
                                 mainGain: mainGain,
                                 lfo: lfo,
-                                lfoGain: lfoGain
+                                lfoGain: lfoGain,
+                                noiseNode: noiseNode // Added this reference
                             };
 
                         } catch (e) {
@@ -2176,6 +2249,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 oscillatorData.lfo.stop(now + releaseTime);
                             }
 
+                            // FIX: Stop the noise node to prevent memory leak
+                            if (oscillatorData.noiseNode) {
+                                try {
+                                    oscillatorData.noiseNode.stop(now + releaseTime);
+                                } catch(e) {}
+                            }
+
                             if (oscillatorData.mainGain) {
                                 oscillatorData.mainGain.gain.cancelScheduledValues(now);
                                 oscillatorData.mainGain.gain.setValueAtTime(oscillatorData.mainGain.gain.value, now);
@@ -2192,7 +2272,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    // Keep existing export and cleanup methods...
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         var breathSlider = document.getElementById('flute-breath');
                         var vibratoSlider = document.getElementById('flute-vibrato');
                         
@@ -2433,73 +2514,83 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
-                        var breathSlider = document.getElementById('flute-breath');
-                        var vibratoSlider = document.getElementById('flute-vibrato');
-                        
-                        var breathAmount = breathSlider ? parseFloat(breathSlider.value) : 0.1;
-                        var vibratoSpeed = vibratoSlider ? parseFloat(vibratoSlider.value) : 5;
+                    inst.render = function(context, noteData, startTime, duration, destination) {
+                        var attackSlider = document.getElementById('violin-attack');
+                        var vibratoSlider = document.getElementById('violin-vibrato');
+                        var filterSlider = document.getElementById('violin-filter');
+
+                        var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.2;
+                        var vibratoRate = vibratoSlider ? parseFloat(vibratoSlider.value) : 6;
+                        var filterFreq = filterSlider ? parseFloat(filterSlider.value) : 2500;
                         var freq = noteData.freq;
 
-                        // 1. Main Osc
+                        // 1. Oscillator (Sawtooth for string buzz)
                         var osc = context.createOscillator();
-                        osc.type = 'triangle';
+                        osc.type = 'sawtooth';
                         osc.frequency.setValueAtTime(freq, startTime);
-                        
-                        // 2. Vibrato
-                        if (vibratoSpeed > 0) {
+
+                        // 2. Vibrato (LFO)
+                        if (vibratoRate > 0) {
                             var lfo = context.createOscillator();
                             lfo.type = 'sine';
-                            lfo.frequency.value = vibratoSpeed;
+                            lfo.frequency.value = vibratoRate;
                             var lfoGain = context.createGain();
-                            lfoGain.gain.value = 3;
+                            lfoGain.gain.value = 8; // Depth in Hz
                             lfo.connect(lfoGain);
                             lfoGain.connect(osc.frequency);
                             lfo.start(startTime);
                             lfo.stop(startTime + duration + 0.5);
                         }
 
-                        // 3. Breath
-                        if (breathAmount > 0) {
-                            var noiseNode = context.createBufferSource();
-                            var bufferSize = context.sampleRate * 0.5;
-                            var buffer = context.createBuffer(1, bufferSize, context.sampleRate);
-                            var data = buffer.getChannelData(0);
-                            for (var i = 0; i < bufferSize; i++) {
-                                data[i] = Math.random() * 2 - 1;
-                            }
-                            noiseNode.buffer = buffer;
-                            noiseNode.loop = true;
-                            
-                            var noiseFilter = context.createBiquadFilter();
-                            noiseFilter.type = 'highpass';
-                            noiseFilter.frequency.value = 1000;
-                            
-                            var noiseGain = context.createGain();
-                            noiseGain.gain.setValueAtTime(breathAmount, startTime);
-                            noiseGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
-                            
-                            noiseNode.connect(noiseFilter);
-                            noiseFilter.connect(noiseGain);
-                            noiseGain.connect(destination);
-                            noiseNode.start(startTime);
-                            noiseNode.stop(startTime + 0.5);
-                        }
+                        // 3. Filter (Lowpass to warm sawtooth)
+                        var filter = context.createBiquadFilter();
+                        filter.type = 'lowpass';
+                        filter.frequency.value = filterFreq;
+                        filter.Q.value = 1;
 
-                        // 4. Envelope
-                        var mainGain = context.createGain();
-                        mainGain.gain.setValueAtTime(0, startTime);
-                        mainGain.gain.linearRampToValueAtTime(0.3, startTime + 0.1);
-                        mainGain.gain.linearRampToValueAtTime(0.25, startTime + 0.2);
-                        mainGain.gain.linearRampToValueAtTime(0.3, startTime + 0.4);
+                        // 4. Reverb (Simple Convolver for room sound)
+                        var convolver = context.createConvolver();
+                        var reverbGain = context.createGain();
+                        var dryGain = context.createGain();
                         
-                        // Release
-                        var releaseTime = 0.3;
-                        mainGain.gain.setValueAtTime(0.3, startTime + duration);
-                        mainGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration + releaseTime);
+                        // Generate impulse
+                        var length = context.sampleRate * 1.5;
+                        var impulse = context.createBuffer(2, length, context.sampleRate);
+                        for (var channel = 0; channel < 2; channel++) {
+                            var channelData = impulse.getChannelData(channel);
+                            for (var i = 0; i < length; i++) {
+                                channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2);
+                            }
+                        }
+                        convolver.buffer = impulse;
+                        
+                        reverbGain.gain.value = 0.4; // Mix amount
+                        dryGain.gain.value = 0.6;
 
-                        osc.connect(mainGain);
-                        mainGain.connect(destination);
+                        osc.connect(filter);
+                        filter.connect(dryGain);
+                        filter.connect(reverbGain);
+                        
+                        dryGain.connect(destination);
+                        reverbGain.connect(convolver);
+                        convolver.connect(destination);
+
+                        // 5. Envelope
+                        var masterGain = context.createGain();
+                        masterGain.gain.setValueAtTime(0, startTime);
+                        // Slow bowing attack
+                        masterGain.gain.linearRampToValueAtTime(0.4, startTime + attackTime);
+                        
+                        var releaseTime = 0.4;
+
+                        masterGain.gain.setValueAtTime(0.4, startTime + duration);
+                        masterGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration + releaseTime);
+
+                        // Insert master gain at start of chain
+                        osc.disconnect(); 
+                        osc.connect(masterGain);
+                        masterGain.connect(filter);
+
                         osc.start(startTime);
                         osc.stop(startTime + duration + releaseTime);
                     };
@@ -2544,7 +2635,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             var osc = audioContext.createOscillator();
                             osc.type = 'sawtooth';
                             osc.frequency.setValueAtTime(freq, now);
-                            osc.start(now); // Immediate start
+                            osc.start(now); 
 
                             // 2. Harmonics (Body resonance)
                             var harmonic1 = audioContext.createOscillator();
@@ -2556,11 +2647,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             h1Gain.gain.value = 0.1;
 
                             // 3. Filter (Lowpass)
-                            // Uke is small, so lower cutoff to simulate size. "Nylon" factor adjusts this.
                             var filter = audioContext.createBiquadFilter();
                             filter.type = 'lowpass';
                             filter.frequency.value = freq * nylonFactor;
-                            filter.Q.value = 1.5; // Slight resonance
+                            filter.Q.value = 1.5;
 
                             // 4. Pluck Noise (Transient)
                             var pluckNoise = audioContext.createBufferSource();
@@ -2570,11 +2660,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 pluckData[i] = (Math.random() * 2 - 1) * 0.3;
                             }
                             pluckNoise.buffer = pluckBuffer;
+                            
                             var pluckGain = audioContext.createGain();
                             pluckNoise.connect(pluckGain);
                             pluckGain.connect(filter);
                             pluckNoise.start(now);
-                            pluckNoise.stop(now + 0.1);
+                            // pluckNoise.stop is handled in stopNote
 
                             // Pluck envelope
                             pluckGain.gain.setValueAtTime(0.2, now);
@@ -2591,13 +2682,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             filter.connect(mainGainNode);
 
                             masterGain.gain.setValueAtTime(0, now);
-                            masterGain.gain.linearRampToValueAtTime(0.4, now + 0.02); // Fast attack
+                            masterGain.gain.linearRampToValueAtTime(0.4, now + 0.02);
                             masterGain.gain.exponentialRampToValueAtTime(0.001, now + decayTime);
 
+                            // FIX: Store pluckNoise so we can stop it later
                             activeOscillators[note] = {
                                 osc: osc,
                                 harmonic1: harmonic1,
-                                masterGain: masterGain
+                                masterGain: masterGain,
+                                pluckNoise: pluckNoise // Added reference
                             };
 
                         } catch (e) {
@@ -2615,14 +2708,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
                         try {
                             var now = audioContext.currentTime;
-                            var releaseTime = 0.1; // Short release for plucked instruments
+                            var releaseTime = 0.1;
 
-                            // Defensive Stop logic to prevent "stop without start" errors
+                            // Stop Oscillators
                             try {
                                 if (oscillatorData.osc) oscillatorData.osc.stop(now + releaseTime);
                                 if (oscillatorData.harmonic1) oscillatorData.harmonic1.stop(now + releaseTime);
                             } catch (e) {
-                                // Ignore node stop errors
+                                // Ignore stop errors
+                            }
+
+                            // FIX: Stop Pluck Noise to prevent memory leak
+                            if (oscillatorData.pluckNoise) {
+                                try {
+                                    oscillatorData.pluckNoise.stop(now + releaseTime);
+                                } catch (e) {}
                             }
 
                             if (oscillatorData.masterGain) {
@@ -2631,8 +2731,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 oscillatorData.masterGain.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
                             }
 
+                            // FIX: Use equality check to prevent Race Condition.
+                            // If a new note starts, it overwrites activeOscillators[note].
+                            // We must ensure we don't delete the NEW note when the OLD note's timeout fires.
                             setTimeout(function() {
-                                if (activeOscillators[note] && activeOscillators[note].isStopping) {
+                                if (activeOscillators[note] === oscillatorData) {
                                     delete activeOscillators[note];
                                     hideKeyPress(note);
                                 }
@@ -2645,7 +2748,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         var decaySlider = document.getElementById('ukulele-decay');
                         var nylonSlider = document.getElementById('ukulele-nylon');
 
@@ -2692,6 +2795,211 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.cleanup = function() {
                         document.body.classList.remove('ukulele-theme');
                         removeUkuleleControls();
+                    };
+
+                    return inst;
+                }
+            };
+            
+            var TubaInstrument = {
+                create: function() {
+                    var inst = InstrumentFactory.create('Tuba');
+                    
+                    inst.init = function() {
+                        document.body.classList.add('tuba-theme');
+                        createTubaControls();
+                    };
+                    
+                    inst.playNote = function(note, freq) {
+                        try {
+                            var now = audioContext.currentTime;
+                                                
+                            // FIX: Ensure mainGainNode is initialized
+                            if (!mainGainNode || mainGainNode.context !== audioContext) {
+                                if (!audioContext) return; 
+                                mainGainNode = audioContext.createGain();
+                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.connect(audioContext.destination);
+                            }
+                            
+                            var attackSlider = document.getElementById('tuba-attack');
+                            var releaseSlider = document.getElementById('tuba-release');
+                            var brillSlider = document.getElementById('tuba-brilliance');
+                            var vibSlider = document.getElementById('tuba-vibrato');
+
+                            var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.2;
+                            var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.4;
+                            var brilliance = brillSlider ? parseFloat(brillSlider.value) : 2.5;
+                            var vibRate = vibSlider ? parseFloat(vibSlider.value) : 4.0;
+
+                            // 1. Oscillators (Sawtooth for Brass)
+                            // We use two slightly detuned sawtooths for thickness
+                            var osc1 = audioContext.createOscillator();
+                            osc1.type = 'sawtooth';
+                            osc1.frequency.setValueAtTime(freq, now);
+                            osc1.start(now);
+
+                            var osc2 = audioContext.createOscillator();
+                            osc2.type = 'sawtooth';
+                            osc2.frequency.setValueAtTime(freq * 1.005, now); // Slight detune
+                            osc2.start(now);
+
+                            // 2. Vibrato (LFO)
+                            var lfo = audioContext.createOscillator();
+                            lfo.type = 'sine';
+                            lfo.frequency.value = vibRate;
+                            var lfoGain = audioContext.createGain();
+                            lfoGain.gain.value = 6; // Depth in Hz
+
+                            lfo.connect(lfoGain);
+                            lfoGain.connect(osc1.frequency);
+                            lfoGain.connect(osc2.frequency);
+                            lfo.start(now);
+
+                            // 3. Filter (Lowpass is essential for Tuba sound)
+                            var filter = audioContext.createBiquadFilter();
+                            filter.type = 'lowpass';
+                            filter.frequency.value = freq * brilliance;
+                            filter.Q.value = 1.0;
+
+                            // 4. Mixers/Gains
+                            var osc1Gain = audioContext.createGain();
+                            osc1Gain.gain.value = 0.5;
+                            var osc2Gain = audioContext.createGain();
+                            osc2Gain.gain.value = 0.5;
+
+                            osc1.connect(osc1Gain);
+                            osc2.connect(osc2Gain);
+                            osc1Gain.connect(filter);
+                            osc2Gain.connect(filter);
+
+                            // 5. Main Envelope
+                            var masterGain = audioContext.createGain();
+                            
+                            filter.connect(masterGain);
+                            masterGain.connect(mainGainNode);
+
+                            masterGain.gain.setValueAtTime(0, now);
+                            // Slow, swelling attack
+                            masterGain.gain.linearRampToValueAtTime(0.5, now + attackTime);
+
+                            activeOscillators[note] = {
+                                osc1: osc1,
+                                osc2: osc2,
+                                lfo: lfo,
+                                masterGain: masterGain,
+                                releaseTime: releaseTime
+                            };
+
+                        } catch (e) {
+                            console.error("Error playing tuba note:", e);
+                        }
+                    };
+
+                    inst.stopNote = function(note) {
+                        var oscillatorData = activeOscillators[note];
+                        if (!oscillatorData) return;
+
+                        // Prevent re-entry
+                        if (oscillatorData.isStopping) return;
+                        oscillatorData.isStopping = true;
+
+                        try {
+                            var now = audioContext.currentTime;
+                            var releaseTime = oscillatorData.releaseTime || 0.4;
+
+                            try {
+                                if (oscillatorData.osc1) oscillatorData.osc1.stop(now + releaseTime);
+                                if (oscillatorData.osc2) oscillatorData.osc2.stop(now + releaseTime);
+                                if (oscillatorData.lfo) oscillatorData.lfo.stop(now + releaseTime);
+                            } catch (e) {}
+
+                            if (oscillatorData.masterGain) {
+                                oscillatorData.masterGain.gain.cancelScheduledValues(now);
+                                oscillatorData.masterGain.gain.setValueAtTime(oscillatorData.masterGain.gain.value, now);
+                                oscillatorData.masterGain.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
+                            }
+
+                            // Safe cleanup delay
+                            setTimeout(function() {
+                                if (activeOscillators[note] && activeOscillators[note].isStopping) {
+                                    delete activeOscillators[note];
+                                    hideKeyPress(note);
+                                }
+                            }, releaseTime * 1000);
+
+                        } catch (e) {
+                            console.error("Error stopping tuba note:", e);
+                            delete activeOscillators[note];
+                            hideKeyPress(note);
+                        }
+                    };
+
+                    inst.render = function(context, noteData, startTime, duration, destination) {
+                        var attackSlider = document.getElementById('tuba-attack');
+                        var releaseSlider = document.getElementById('tuba-release');
+                        var brillSlider = document.getElementById('tuba-brilliance');
+                        var vibSlider = document.getElementById('tuba-vibrato');
+
+                        var attackTime = attackSlider ? parseFloat(attackSlider.value) : 0.2;
+                        var releaseTime = releaseSlider ? parseFloat(releaseSlider.value) : 0.4;
+                        var brilliance = brillSlider ? parseFloat(brillSlider.value) : 2.5;
+                        var vibRate = vibSlider ? parseFloat(vibSlider.value) : 4.0;
+                        var freq = noteData.freq;
+
+                        var osc1 = context.createOscillator();
+                        osc1.type = 'sawtooth';
+                        osc1.frequency.setValueAtTime(freq, startTime);
+
+                        var osc2 = context.createOscillator();
+                        osc2.type = 'sawtooth';
+                        osc2.frequency.setValueAtTime(freq * 1.005, startTime);
+
+                        var lfo = context.createOscillator();
+                        lfo.type = 'sine';
+                        lfo.frequency.value = vibRate;
+                        var lfoGain = context.createGain();
+                        lfoGain.gain.value = 6;
+                        lfo.connect(lfoGain);
+                        lfoGain.connect(osc1.frequency);
+                        lfoGain.connect(osc2.frequency);
+                        lfo.start(startTime);
+                        lfo.stop(startTime + duration + releaseTime);
+
+                        var filter = context.createBiquadFilter();
+                        filter.type = 'lowpass';
+                        filter.frequency.value = freq * brilliance;
+                        filter.Q.value = 1.0;
+
+                        var osc1Gain = context.createGain();
+                        osc1Gain.gain.value = 0.5;
+                        var osc2Gain = context.createGain();
+                        osc2Gain.gain.value = 0.5;
+                        
+                        var masterGain = context.createGain();
+
+                        osc1.connect(osc1Gain);
+                        osc2.connect(osc2Gain);
+                        osc1Gain.connect(filter);
+                        osc2Gain.connect(filter);
+                        filter.connect(masterGain);
+                        masterGain.connect(destination);
+
+                        masterGain.gain.setValueAtTime(0, startTime);
+                        masterGain.gain.linearRampToValueAtTime(0.5, startTime + attackTime);
+                        
+                        masterGain.gain.setValueAtTime(0.5, startTime + duration);
+                        masterGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration + releaseTime);
+
+                        osc1.start(startTime);
+                        osc2.start(startTime);
+                        osc1.stop(startTime + duration + releaseTime);
+                        osc2.stop(startTime + duration + releaseTime);
+                    };
+                    
+                    inst.cleanup = function() {
+                        document.body.classList.remove('tuba-theme');
+                        removeTubaControls();
                     };
 
                     return inst;
@@ -2792,7 +3100,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         }
                     };
 
-                    inst.export = function(context, noteData, startTime, duration, destination) {
+                    inst.render = function(context, noteData, startTime, duration, destination) {
                         if (!window.customSampleBuffer) return;
 
                         var freq = noteData.freq;
@@ -3088,16 +3396,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             function initInstrumentSelector() {
                 /* Populate instrument dropdown */
                 var instrumentList = [
-                    { id: 'default', name: 'Default', Class: DefaultInstrument },
-                    { id: 'gameboy', name: 'Gameboy', Class: GameBoyInstrument },
-                    { id: 'guitar', name: 'Guitar', Class: GuitarInstrument },
-                    { id: 'snes', name: 'SNES', Class: SNESInstrument },
-                    { id: 'drums', name: 'Drums & Percussion', Class: DrumsInstrument },
-                    { id: 'bell', name: 'Bell', Class: BellInstrument },
-                    { id: 'flute', name: 'Flute', Class: FluteInstrument },
-                    { id: 'violin', name: 'Violin', Class: ViolinInstrument },
-                    { id: 'ukulele', name: 'Ukulele', Class: UkuleleInstrument },
-                    { id: 'custom', name: 'Custom Sample', Class: CustomSampleInstrument }
+                    { id: 'default', name: 'Default', InstClass: DefaultInstrument },
+                    { id: 'gameboy', name: 'Gameboy', InstClass: GameBoyInstrument },
+                    { id: 'guitar', name: 'Guitar', InstClass: GuitarInstrument },
+                    { id: 'snes', name: 'SNES', InstClass: SNESInstrument },
+                    { id: 'drums', name: 'Drums & Percussion', InstClass: DrumsInstrument },
+                    { id: 'bell', name: 'Bell', InstClass: BellInstrument },
+                    { id: 'flute', name: 'Flute', InstClass: FluteInstrument },
+                    { id: 'violin', name: 'Violin', InstClass: ViolinInstrument },
+                    { id: 'ukulele', name: 'Ukulele', InstClass: UkuleleInstrument },
+                    { id: 'tuba', name: 'Tuba', InstClass: TubaInstrument },
+                    { id: 'custom', name: 'Custom Sample', InstClass: CustomSampleInstrument }
                 ];
 
                 for (var i = 0; i < instrumentList.length; i++) {
@@ -3124,7 +3433,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             }
 
             function selectInstrument(instrumentId) {
-                var ClassMap = {
+                var ClassMap = { // Renamed from ClassMap to avoid collision logic if minified, though ClassMap is fine as a var
                     'default': DefaultInstrument,
                     'gameboy': GameBoyInstrument,
                     'guitar': GuitarInstrument,
@@ -3134,6 +3443,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     'flute': FluteInstrument,
                     'violin': ViolinInstrument,
                     'ukulele': UkuleleInstrument,
+                    'tuba': TubaInstrument,
                     'custom': CustomSampleInstrument
                 };
 
@@ -3143,7 +3453,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
                 
                 /* Create new instrument instance using .create() */
-                currentInstrumentInstance = ClassMap[instrumentId].create();
+                // Use .InstClass instead of .Class
+                currentInstrumentInstance = ClassMap[instrumentId].InstClass ? ClassMap[instrumentId].InstClass.create() : ClassMap[instrumentId].create();
                 currentInstrumentInstance.init();
                 
                 /* Update UI */
@@ -3980,6 +4291,135 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 document.querySelector('.wave-selector').style.display = 'inline-flex';
             }
             
+            function createTubaControls() {
+                document.querySelector('.wave-selector').style.display = 'none';
+                var controlBar = document.querySelector('.control-bar');
+                
+                var tubaControls = document.createElement('div');
+                tubaControls.id = 'tuba-controls';
+                tubaControls.style.display = 'inline-flex';
+                tubaControls.style.marginLeft = '10px';
+                
+                var attackGroup = document.createElement('div');
+                attackGroup.className = 'control-group';
+                attackGroup.style.marginRight = '10px';
+                
+                var attackLabel = document.createElement('label');
+                attackLabel.textContent = 'Attack';
+                attackLabel.id = 'tuba-attack-label';
+                attackLabel.style.marginBottom = '5px';
+                attackLabel.style.fontSize = '0.8em';
+                
+                var attackSlider = document.createElement('input');
+                attackSlider.type = 'range';
+                attackSlider.id = 'tuba-attack';
+                attackSlider.min = '0.05';
+                attackSlider.max = '0.5';
+                attackSlider.step = '0.01';
+                attackSlider.value = '0.2';
+                attackSlider.style.width = '100px';
+                
+                attackSlider.addEventListener('input', function() {
+                    document.getElementById('tuba-attack-label').textContent = 'Attack';
+                });
+
+                attackGroup.appendChild(attackLabel);
+                attackGroup.appendChild(attackSlider);
+                
+                var releaseGroup = document.createElement('div');
+                releaseGroup.className = 'control-group';
+                releaseGroup.style.marginRight = '10px';
+                
+                var releaseLabel = document.createElement('label');
+                releaseLabel.textContent = 'Release';
+                releaseLabel.id = 'tuba-release-label';
+                releaseLabel.style.marginBottom = '5px';
+                releaseLabel.style.fontSize = '0.8em';
+                
+                var releaseSlider = document.createElement('input');
+                releaseSlider.type = 'range';
+                releaseSlider.id = 'tuba-release';
+                releaseSlider.min = '0.1';
+                releaseSlider.max = '1.0';
+                releaseSlider.step = '0.05';
+                releaseSlider.value = '0.4';
+                releaseSlider.style.width = '100px';
+
+                releaseSlider.addEventListener('input', function() {
+                    document.getElementById('tuba-release-label').textContent = 'Release';
+                });
+
+                releaseGroup.appendChild(releaseLabel);
+                releaseGroup.appendChild(releaseSlider);
+                
+                var brillGroup = document.createElement('div');
+                brillGroup.className = 'control-group';
+                brillGroup.style.marginRight = '10px';
+                
+                var brillLabel = document.createElement('label');
+                brillLabel.textContent = 'Bright';
+                brillLabel.id = 'tuba-brilliance-label';
+                brillLabel.style.marginBottom = '5px';
+                brillLabel.style.fontSize = '0.8em';
+                
+                var brillSlider = document.createElement('input');
+                brillSlider.type = 'range';
+                brillSlider.id = 'tuba-brilliance';
+                brillSlider.min = '1';
+                brillSlider.max = '8';
+                brillSlider.step = '0.1';
+                brillSlider.value = '2.5';
+                brillSlider.style.width = '100px';
+
+                brillSlider.addEventListener('input', function() {
+                    document.getElementById('tuba-brilliance-label').textContent = 'Bright';
+                });
+
+                brillGroup.appendChild(brillLabel);
+                brillGroup.appendChild(brillSlider);
+
+                var vibGroup = document.createElement('div');
+                vibGroup.className = 'control-group';
+                
+                var vibLabel = document.createElement('label');
+                vibLabel.textContent = 'Vibrato';
+                vibLabel.id = 'tuba-vibrato-label';
+                vibLabel.style.marginBottom = '5px';
+                vibLabel.style.fontSize = '0.8em';
+                
+                var vibSlider = document.createElement('input');
+                vibSlider.type = 'range';
+                vibSlider.id = 'tuba-vibrato';
+                vibSlider.min = '0';
+                vibSlider.max = '10';
+                vibSlider.step = '0.5';
+                vibSlider.value = '4';
+                vibSlider.style.width = '100px';
+
+                vibSlider.addEventListener('input', function() {
+                    document.getElementById('tuba-vibrato-label').textContent = 'Vibrato';
+                });
+
+                vibGroup.appendChild(vibLabel);
+                vibGroup.appendChild(vibSlider);
+                
+                tubaControls.appendChild(attackGroup);
+                tubaControls.appendChild(releaseGroup);
+                tubaControls.appendChild(brillGroup);
+                tubaControls.appendChild(vibGroup);
+                
+                controlBar.appendChild(tubaControls);
+            }
+
+            function removeTubaControls() {
+                var tubaControls = document.getElementById('tuba-controls');
+                if (tubaControls) {
+                    tubaControls.parentNode.removeChild(tubaControls);
+                }
+                
+                document.querySelector('.wave-selector').style.display = 'inline-flex';
+            }
+            
             function createCustomControls() {
                 document.querySelector('.wave-selector').style.display = 'none';
                 var controlBar = document.querySelector('.control-bar');
@@ -4587,15 +5027,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 });
                 
                 /*
-                exportJSONButton.addEventListener('click', exportMelody);
+                 btnExportJson.addEventListener('click', exportMelody);
                 */
-                importJSONButton.addEventListener('click', function() {
+                btnImportJson.addEventListener('click', function() {
                     fileInput.click();
                 });
                 
                 fileInput.addEventListener('change', importMelody);
                 
-                importAudioButton.addEventListener('click', function() {
+                btnImportAudio.addEventListener('click', function() {
                     audioFileInput.click();
                 });
                 
@@ -4727,7 +5167,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 var dataStr = JSON.stringify(melodyData, null, 2);
                 var dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
                 
-                var exportFileDefaultName = 'melody.json';
+                var exportFileDefaultName = 'hexano.json';
                 
                 var linkElement = document.createElement('a');
                 linkElement.setAttribute('href', dataUri);
@@ -5242,7 +5682,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         if (noteDuration <= 0.01) continue;
 
                         if (currentInstrumentInstance) {
-                            currentInstrumentInstance.export(offlineContext, note, startTime, noteDuration, masterGainNode);
+                            currentInstrumentInstance.render(offlineContext, note, startTime, noteDuration, masterGainNode);
                         }
                     }
 
