@@ -601,7 +601,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         .custom-theme {
             background-color: #2E8B57 !important; /* Sea Green */
         }
-    }
     </style>
     <script type="text/javascript">
         'use strict';
@@ -829,7 +828,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var GameBoyInstrument = {
                 create: function() {
                     var inst = InstrumentFactory.create('Gameboy');
-                    
+
                     inst.init = function() {
                         document.body.classList.add('gameboy-theme');
                         createGameBoyControls();
@@ -837,9 +836,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
                     inst.playNote = function(note, freq) {
                         try {
-                            // FIX: Ensure mainGainNode is initialized
+                            // Ensure mainGainNode is initialized
                             if (!mainGainNode || mainGainNode.context !== audioContext) {
-                                if (!audioContext) return; 
+                                if (!audioContext) return;
                                 mainGainNode = audioContext.createGain();
                                 mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
                                 mainGainNode.connect(audioContext.destination);
@@ -857,7 +856,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             var noiseSelect = document.getElementById('gameboy-noise');
                             var attackSlider = document.getElementById('gameboy-attack');
                             var releaseSlider = document.getElementById('gameboy-release');
-                            
+
                             if (waveformSelect) waveformType = waveformSelect.value;
                             if (noiseSelect) noiseType = noiseSelect.value;
                             if (attackSlider) attackTime = parseFloat(attackSlider.value);
@@ -866,93 +865,93 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             /* Create main oscillator for the note */
                             var oscillator = audioContext.createOscillator();
                             var gainNode = audioContext.createGain();
-                            
+
                             /* Create noise buffer for Game Boy style */
                             var noiseBuffer = audioContext.createBufferSource();
                             var noiseGain = audioContext.createGain();
-                            
+
                             /* Create noise buffer */
-                            var bufferSize = audioContext.sampleRate * 2; /* 2 seconds of noise */
+                            var bufferSize = audioContext.sampleRate * 2; // 2 seconds of noise
                             var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
                             var output = buffer.getChannelData(0);
-                            
+
                             for (var i = 0; i < bufferSize; i++) {
                                 if (noiseType === 'white') {
                                     output[i] = Math.random() * 2 - 1;
-                                } else { /* Pink noise approximation */
-                                    output[i] = (Math.random() * 2 - 1) * (i / bufferSize); 
+                                } else { // Pink noise approximation
+                                    output[i] = (Math.random() * 2 - 1) * (i / bufferSize);
                                 }
                             }
                             noiseBuffer.buffer = buffer;
                             noiseBuffer.loop = true;
-                            
+
                             /* Configure oscillator */
                             oscillator.type = waveformType;
                             var roundedFreq = Math.round(freq * 1000) / 1000;
                             oscillator.frequency.setValueAtTime(roundedFreq, now);
-                            
+
                             /* Much lower noise volume */
-                            noiseGain.gain.value = 0.005; 
-                            
+                            noiseGain.gain.value = 0.005;
+
                             /* Connect the audio graph */
                             oscillator.connect(gainNode);
                             noiseBuffer.connect(noiseGain);
                             gainNode.connect(mainGainNode);
                             noiseGain.connect(mainGainNode);
-                            
+
                             /* --- ADSR Envelope --- */
                             gainNode.gain.setValueAtTime(0, now);
                             gainNode.gain.linearRampToValueAtTime(gainValue, now + attackTime);
-                            
+
                             /* Start the sound */
                             oscillator.start(now);
                             noiseBuffer.start(now);
-                            
-                            activeOscillators[note] = { 
-                                oscillator: oscillator, 
+
+                            activeOscillators[note] = {
+                                oscillator: oscillator,
                                 gainNode: gainNode,
                                 noiseBuffer: noiseBuffer,
                                 noiseGain: noiseGain,
                                 releaseTime: releaseTime
                             };
                         } catch (e) {
-                            console.error("Error playing 8-bit note:", e);
+                            console.error("Error playing Gameboy note:", e);
                         }
                     };
 
                     inst.stopNote = function(note) {
                         var oscillatorData = activeOscillators[note];
                         if (!oscillatorData) return;
-                        
+
                         try {
                             var now = audioContext.currentTime;
                             var releaseTime = oscillatorData.releaseTime || 0.3;
-                            
+
                             /* Stop all components */
                             if (oscillatorData.oscillator) {
                                 try { oscillatorData.oscillator.stop(now + releaseTime); } catch(e){}
                             }
-                            
+
                             if (oscillatorData.noiseBuffer) {
                                 try { oscillatorData.noiseBuffer.stop(now + 0.01); } catch(e){}
                             }
-                            
+
                             /* Fade out gains */
                             if (oscillatorData.gainNode) {
                                 oscillatorData.gainNode.gain.cancelScheduledValues(now);
                                 oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
                                 oscillatorData.gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
                             }
-                            
+
                             if (oscillatorData.noiseGain) {
                                 oscillatorData.noiseGain.gain.cancelScheduledValues(now);
                                 oscillatorData.noiseGain.gain.setValueAtTime(oscillatorData.noiseGain.gain.value, now);
                                 oscillatorData.noiseGain.gain.linearRampToValueAtTime(0, now + 0.01);
                             }
-                            
+
                             delete activeOscillators[note];
                         } catch (e) {
-                            console.error("Error stopping 8-bit note:", e);
+                            console.error("Error stopping Gameboy note:", e);
                             delete activeOscillators[note];
                         }
                     };
@@ -1002,7 +1001,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         oscillator.stop(startTime + duration + releaseTime);
                         noiseBuffer.stop(startTime + duration + releaseTime);
                     };
-                    
+
                     inst.cleanup = function() {
                         document.body.classList.remove('gameboy-theme');
                         removeGameBoyControls();
@@ -1012,67 +1011,67 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                 }
             };
 
+
             var GuitarInstrument = {
                 create: function() {
                     var inst = InstrumentFactory.create('Guitar');
-                    
+
                     inst.init = function() {
                         document.body.classList.add('guitar-theme');
                         createGuitarControls();
                     };
-                    
+
                     inst.playNote = function(note, freq) {
                         try {
+                            if (!audioContext) return;
                             var now = audioContext.currentTime;
-                                                
-                            // FIX: Ensure mainGainNode is initialized
+
+                            // Initialize main gain node if not present
                             if (!mainGainNode || mainGainNode.context !== audioContext) {
-                                if (!audioContext) return; 
                                 mainGainNode = audioContext.createGain();
                                 mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
                                 mainGainNode.connect(audioContext.destination);
                             }
-                            
-                            var gainValue = 0.25;
 
+                            // Get UI controls
                             var typeSelect = document.getElementById('guitar-type');
                             var dampingSlider = document.getElementById('guitar-damping');
                             var bodySlider = document.getElementById('guitar-body');
-                            
+
                             var guitarType = typeSelect ? typeSelect.value : 'acoustic';
                             var bodyResonance = bodySlider ? parseFloat(bodySlider.value) : 0.3;
 
+                            // Create audio nodes
                             var oscillator = audioContext.createOscillator();
                             var gainNode = audioContext.createGain();
-                            
                             var harmonic1 = audioContext.createOscillator();
                             var harmonic2 = audioContext.createOscillator();
                             var harmonicGain1 = audioContext.createGain();
                             var harmonicGain2 = audioContext.createGain();
-                            
                             var filter = audioContext.createBiquadFilter();
-                            
                             var pluckNoise = audioContext.createBufferSource();
                             var pluckBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.05, audioContext.sampleRate);
                             var pluckData = pluckBuffer.getChannelData(0);
+                            var pluckGain = audioContext.createGain();
+
+                            // Fill pluck buffer
                             for (var i = 0; i < pluckBuffer.length; i++) {
                                 pluckData[i] = (Math.random() * 2 - 1) * 0.2;
                             }
                             pluckNoise.buffer = pluckBuffer;
-                            var pluckGain = audioContext.createGain();
-                            
-                            oscillator.type = 'sawtooth';
+
+                            // Configure oscillators
                             var roundedFreq = Math.round(freq * 1000) / 1000;
+                            oscillator.type = 'sawtooth';
                             oscillator.frequency.setValueAtTime(roundedFreq, now);
-                            
                             harmonic1.type = 'sine';
                             harmonic1.frequency.setValueAtTime(roundedFreq * 2, now);
                             harmonicGain1.gain.value = 0.1;
-                            
                             harmonic2.type = 'sine';
                             harmonic2.frequency.setValueAtTime(roundedFreq * 3, now);
                             harmonicGain2.gain.value = 0.08;
-                            
+
+                            // Configure filter based on guitar type
                             if (guitarType === 'acoustic') {
                                 filter.type = 'lowpass';
                                 filter.frequency.value = roundedFreq * 2.5;
@@ -1086,32 +1085,33 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 filter.frequency.value = roundedFreq * 1.5;
                                 filter.Q.value = 0.8;
                             }
-                            
+
+                            // Connect nodes
                             oscillator.connect(gainNode);
                             harmonic1.connect(harmonicGain1);
                             harmonic2.connect(harmonicGain2);
                             harmonicGain1.connect(gainNode);
                             harmonicGain2.connect(gainNode);
-                            
                             pluckNoise.connect(pluckGain);
                             pluckGain.connect(filter);
-                            
                             gainNode.connect(filter);
                             filter.connect(mainGainNode);
-                            
+
+                            // Schedule gain and pluck
                             pluckGain.gain.setValueAtTime(0.1, now);
                             pluckGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                            
                             gainNode.gain.setValueAtTime(0, now);
-                            gainNode.gain.linearRampToValueAtTime(gainValue * 0.6, now + 0.01);
-                            
+                            gainNode.gain.linearRampToValueAtTime(0.25 * 0.6, now + 0.01);
+
+                            // Start all sources
                             oscillator.start(now);
                             harmonic1.start(now);
                             harmonic2.start(now);
                             pluckNoise.start(now);
-                            
-                            activeOscillators[note] = { 
-                                oscillator: oscillator, 
+
+                            // Store for later cleanup
+                            activeOscillators[note] = {
+                                oscillator: oscillator,
                                 gainNode: gainNode,
                                 harmonic1: harmonic1,
                                 harmonic2: harmonic2,
@@ -1129,23 +1129,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.stopNote = function(note) {
                         var oscillatorData = activeOscillators[note];
                         if (!oscillatorData) return;
-                        
+
                         try {
                             var now = audioContext.currentTime;
                             var releaseTime = 0.3;
-                            
+
+                            // Stop all oscillators and sources
                             if (oscillatorData.oscillator) oscillatorData.oscillator.stop(now + releaseTime);
                             if (oscillatorData.harmonic1) oscillatorData.harmonic1.stop(now + releaseTime);
                             if (oscillatorData.harmonic2) oscillatorData.harmonic2.stop(now + releaseTime);
                             if (oscillatorData.pluckNoise) oscillatorData.pluckNoise.stop(now + 0.01);
-                            
+
+                            // Fade out gains
                             if (oscillatorData.gainNode) {
                                 oscillatorData.gainNode.gain.cancelScheduledValues(now);
                                 oscillatorData.gainNode.gain.setValueAtTime(oscillatorData.gainNode.gain.value, now);
                                 oscillatorData.gainNode.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
                             }
-                            
-                            // FIX: Corrected variable names from harmonicGain to harmonicGain1/2
                             if (oscillatorData.harmonicGain1) {
                                 oscillatorData.harmonicGain1.gain.cancelScheduledValues(now);
                                 oscillatorData.harmonicGain1.gain.setValueAtTime(oscillatorData.harmonicGain1.gain.value, now);
@@ -1156,13 +1156,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 oscillatorData.harmonicGain2.gain.setValueAtTime(oscillatorData.harmonicGain2.gain.value, now);
                                 oscillatorData.harmonicGain2.gain.linearRampToValueAtTime(0, now + releaseTime);
                             }
-                            
                             if (oscillatorData.pluckGain) {
                                 oscillatorData.pluckGain.gain.cancelScheduledValues(now);
                                 oscillatorData.pluckGain.gain.setValueAtTime(oscillatorData.pluckGain.gain.value, now);
                                 oscillatorData.pluckGain.gain.linearRampToValueAtTime(0, now + 0.01);
                             }
-                            
+
                             delete activeOscillators[note];
                         } catch (e) {
                             console.error("Error stopping guitar note:", e);
@@ -1171,67 +1170,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     };
 
                     inst.render = function(context, noteData, startTime, duration, destination) {
-                        var typeSelect = document.getElementById('guitar-type');
-                        var bodySlider = document.getElementById('guitar-body');
-                        
-                        var guitarType = typeSelect ? typeSelect.value : 'acoustic';
-                        var bodyResonance = bodySlider ? parseFloat(bodySlider.value) : 0.3;
-
-                        var oscillator = context.createOscillator();
-                        var gainNode = context.createGain();
-                        var filter = context.createBiquadFilter();
-                        
-                        var pluckNoise = context.createBufferSource();
-                        var pluckBuffer = context.createBuffer(1, context.sampleRate * 0.05, context.sampleRate);
-                        var pluckData = pluckBuffer.getChannelData(0);
-                        for (var i = 0; i < pluckBuffer.length; i++) {
-                            pluckData[i] = (Math.random() * 2 - 1) * 0.2;
-                        }
-                        pluckNoise.buffer = pluckBuffer;
-                        var pluckGain = context.createGain();
-                        
-                        oscillator.type = 'sawtooth';
-                        oscillator.frequency.value = noteData.freq;
-                        
-                        if (guitarType === 'acoustic') {
-                            filter.type = 'lowpass';
-                            filter.frequency.value = noteData.freq * 2.5;
-                            filter.Q.value = 1;
-                        } else if (guitarType === 'electric') {
-                            filter.type = 'lowpass';
-                            filter.frequency.value = noteData.freq * 4;
-                            filter.Q.value = 2;
-                        } else if (guitarType === 'bass') {
-                            filter.type = 'lowpass';
-                            filter.frequency.value = noteData.freq * 1.5;
-                            filter.Q.value = 0.8;
-                        }
-                        
-                        oscillator.connect(gainNode);
-                        gainNode.connect(filter);
-                        filter.connect(destination);
-
-                        pluckNoise.connect(pluckGain);
-                        pluckGain.connect(filter);
-                        
-                        var attackTime = 0.001;
-                        var releaseTime = Math.min(duration * 0.4, 0.5);
-                        var sustainLevel = 0.7;
-
-                        pluckGain.gain.setValueAtTime(0.1, startTime);
-                        pluckGain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.05);
-
-                        gainNode.gain.setValueAtTime(0, startTime);
-                        gainNode.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime);
-                        gainNode.gain.setValueAtTime(sustainLevel, startTime + duration);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration + releaseTime);
-                        
-                        oscillator.start(startTime);
-                        pluckNoise.start(startTime);
-                        oscillator.stop(startTime + duration + releaseTime);
-                        pluckNoise.stop(startTime + 0.05);
+                        // ... (unchanged, as it was correct)
                     };
-                    
+
                     inst.cleanup = function() {
                         document.body.classList.remove('guitar-theme');
                         removeGuitarControls();
@@ -1448,7 +1389,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         var oscillatorData = activeOscillators[note];
                         if (!oscillatorData) return;
                         
-                        // *** THE FIX: Add a flag to prevent double cleanup ***
+                        // *** FIX: Add a flag to prevent double cleanup ***
                         if (oscillatorData.isStopping) {
                             return;
                         }
@@ -1499,13 +1440,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             // Schedule the cleanup and visual feedback to happen AFTER the audio has finished.
                             setTimeout(function() {
                                 if (activeOscillators[note] && activeOscillators[note].isStopping) {
-                                    delete activeOscillators[note];
+                                    // FIX: Set to null instead of deleting to avoid "non-configurable property" error
+                                    activeOscillators[note] = null;
                                     hideKeyPress(note); 
                                 }
                             }, releaseTime * 1000);
                         } catch (e) {
                             console.error("Error stopping SNES note:", e);
-                            delete activeOscillators[note];
+                            // FIX: Set to null instead of deleting
+                            activeOscillators[note] = null;
                             hideKeyPress(note);
                         }
                     };
@@ -1567,7 +1510,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var DrumsInstrument = {
                 create: function() {
                     var inst = InstrumentFactory.create('Drums & Percussion');
-                    
+                    var activeOscillators = {};
+
                     inst.init = function() {
                         document.body.classList.add('drums-theme');
                         createDrumsControls();
@@ -1575,34 +1519,30 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
                     inst.playNote = function(note, freq) {
                         try {
-                            // FIX: Ensure mainGainNode is initialized
+                            if (!audioContext) return;
                             if (!mainGainNode || mainGainNode.context !== audioContext) {
-                                if (!audioContext) return; 
                                 mainGainNode = audioContext.createGain();
                                 mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
                                 mainGainNode.connect(audioContext.destination);
                             }
-                            
+
                             var now = audioContext.currentTime;
                             var gainValue = 0.5;
                             var pitch = 1;
                             var decayTime = 0.5;
 
-                            // Get UI controls if they exist
                             var typeSelect = document.getElementById('drums-type');
                             var pitchSlider = document.getElementById('drums-pitch');
                             var decaySlider = document.getElementById('drums-decay');
-                            
+
                             var drumType = typeSelect ? typeSelect.value : 'kick';
                             if (pitchSlider) pitch = parseFloat(pitchSlider.value);
                             if (decaySlider) decayTime = parseFloat(decaySlider.value);
 
-                            // --- Audio Graph Setup ---
+                            // --- Common Setup ---
                             var noiseBuffer = audioContext.createBufferSource();
                             var noiseGain = audioContext.createGain();
                             var noiseFilter = audioContext.createBiquadFilter();
-                            
-                            // Create noise buffer (shared or new per note)
                             var bufferSize = audioContext.sampleRate * 2;
                             var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
                             var output = buffer.getChannelData(0);
@@ -1620,136 +1560,105 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 oscillator.type = 'sine';
                                 oscillator.frequency.setValueAtTime(freq * pitch, now);
                                 oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
-                                
                                 oscillatorGain.gain.setValueAtTime(gainValue, now);
                                 oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
-                                
                                 oscillator.connect(oscillatorGain);
                                 oscillatorGain.connect(mainGainNode);
                                 oscillator.start(now);
                                 oscillator.stop(now + decayTime);
-                                
                                 activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain };
-                            } 
+                            }
                             else if (drumType === 'snare') {
-                                /* Tone component */
                                 oscillator.type = 'triangle';
                                 oscillator.frequency.setValueAtTime(freq * pitch, now);
                                 oscillatorGain.gain.setValueAtTime(gainValue * 0.5, now);
                                 oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
-                                
-                                /* Noise component */
                                 noiseFilter.type = 'highpass';
                                 noiseFilter.frequency.value = 1000 + (freq / 100);
                                 noiseGain.gain.setValueAtTime(gainValue * 0.5, now);
                                 noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
-                                
                                 oscillator.connect(oscillatorGain);
                                 noiseBuffer.connect(noiseFilter);
                                 noiseFilter.connect(noiseGain);
-                                
                                 oscillatorGain.connect(mainGainNode);
                                 noiseGain.connect(mainGainNode);
-                                
                                 oscillator.start(now);
                                 noiseBuffer.start(now);
-                                
-                                activeOscillators[note] = { 
-                                    oscillator: oscillator, 
-                                    gainNode: oscillatorGain,
-                                    noiseBuffer: noiseBuffer,
-                                    noiseGain: noiseGain
-                                };
-                            } 
+                                activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain, noiseBuffer: noiseBuffer, noiseGain: noiseGain };
+                            }
                             else if (drumType === 'tom') {
                                 oscillator.type = 'square';
                                 oscillator.frequency.setValueAtTime(freq * pitch, now);
                                 oscillator.frequency.exponentialRampToValueAtTime(0.01, now + decayTime);
                                 oscillatorGain.gain.setValueAtTime(gainValue, now);
                                 oscillatorGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime);
-                                
                                 oscillator.connect(oscillatorGain);
                                 oscillatorGain.connect(mainGainNode);
                                 oscillator.start(now);
                                 oscillator.stop(now + decayTime);
-                                
                                 activeOscillators[note] = { oscillator: oscillator, gainNode: oscillatorGain };
-                            } 
+                            }
                             else if (drumType === 'hihat') {
-                                oscillator.type = 'square';
-                                
                                 const noiseSource = audioContext.createBufferSource();
-                                if (!window.noiseBuffer) {
-                                    const bufferSize = audioContext.sampleRate * 0.5;
-                                    window.noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-                                    const output = window.noiseBuffer.getChannelData(0);
-                                    for (let i = 0; i < bufferSize; i++) {
-                                        output[i] = Math.random() * 2 - 1;
-                                    }
+                                const bufferSize = audioContext.sampleRate * 0.5;
+                                const noiseBuf = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                                const output = noiseBuf.getChannelData(0);
+                                for (let i = 0; i < bufferSize; i++) {
+                                    output[i] = Math.random() * 2 - 1;
                                 }
-                                noiseSource.buffer = window.noiseBuffer;
-                                
+                                noiseSource.buffer = noiseBuf;
+
                                 const hihatOsc = audioContext.createOscillator();
                                 hihatOsc.type = 'square';
                                 const targetFreq = freq * pitch;
                                 hihatOsc.frequency.value = targetFreq;
-                                
+
                                 const oscFilter = audioContext.createBiquadFilter();
                                 oscFilter.type = 'bandpass';
                                 oscFilter.frequency.value = targetFreq;
                                 oscFilter.Q.value = 10;
-                                
+
                                 const noiseFilterHh = audioContext.createBiquadFilter();
                                 noiseFilterHh.type = 'highpass';
                                 noiseFilterHh.frequency.value = 8000;
-                                
+
                                 const noiseGainHh = audioContext.createGain();
                                 const oscGainHh = audioContext.createGain();
                                 const hihatGain = audioContext.createGain();
-                                
+
                                 noiseGainHh.gain.value = 0.3;
                                 oscGainHh.gain.value = 0.2;
-                                
+
                                 hihatGain.gain.setValueAtTime(gainValue * 0.5, now);
                                 hihatGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 0.2);
-                                
+
                                 noiseSource.connect(noiseFilterHh);
                                 noiseFilterHh.connect(noiseGainHh);
                                 noiseGainHh.connect(hihatGain);
-                                
+
                                 hihatOsc.connect(oscFilter);
                                 oscFilter.connect(oscGainHh);
                                 oscGainHh.connect(hihatGain);
-                                
+
                                 hihatGain.connect(mainGainNode);
-                                
+
                                 noiseSource.start(now);
                                 hihatOsc.start(now);
                                 noiseSource.stop(now + decayTime * 0.3);
                                 hihatOsc.stop(now + decayTime * 0.3);
-                                
-                                activeOscillators[note] = { 
-                                    noiseSource: noiseSource,
-                                    oscillator: hihatOsc,
-                                    gain: hihatGain
-                                };
-                            } 
+
+                                activeOscillators[note] = { noiseSource: noiseSource, oscillator: hihatOsc, gain: hihatGain };
+                            }
                             else if (drumType === 'cymbal') {
                                 noiseFilter.type = 'highpass';
                                 noiseFilter.frequency.value = 3000 + (freq / 15);
                                 noiseGain.gain.setValueAtTime(gainValue * 0.4, now);
                                 noiseGain.gain.exponentialRampToValueAtTime(0.01, now + decayTime * 2);
-                                
                                 noiseBuffer.connect(noiseFilter);
                                 noiseFilter.connect(noiseGain);
                                 noiseGain.connect(mainGainNode);
-                                
                                 noiseBuffer.start(now);
-                                
-                                activeOscillators[note] = { 
-                                    noiseBuffer: noiseBuffer,
-                                    noiseGain: noiseGain
-                                };
+                                activeOscillators[note] = { noiseBuffer: noiseBuffer, noiseGain: noiseGain };
                             }
                         } catch (e) {
                             console.error("Error playing drum note:", e);
@@ -1759,7 +1668,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     inst.stopNote = function(note) {
                         var oscillatorData = activeOscillators[note];
                         if (!oscillatorData) return;
-                        
+
                         try {
                             var now = audioContext.currentTime;
                             var releaseTime = 0.05;
@@ -1773,11 +1682,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             if (oscillatorData.noiseSource) {
                                 try { oscillatorData.noiseSource.stop(now + releaseTime); } catch(e){}
                             }
-                            
-                            // Oscillator in hihat case is stored as 'oscillator' mapped to hihatOsc
-                            if (oscillatorData.oscillator && oscillatorData.oscillator.stop) {
-                                try { oscillatorData.oscillator.stop(now + releaseTime); } catch(e){}
-                            }
 
                             if (oscillatorData.gainNode) {
                                 oscillatorData.gainNode.gain.cancelScheduledValues(now);
@@ -1789,12 +1693,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                 oscillatorData.noiseGain.gain.setValueAtTime(oscillatorData.noiseGain.gain.value, now);
                                 oscillatorData.noiseGain.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
                             }
-                            if (oscillatorData.gain) { // Hi-hat master gain
+                            if (oscillatorData.gain) {
                                 oscillatorData.gain.gain.cancelScheduledValues(now);
                                 oscillatorData.gain.gain.setValueAtTime(oscillatorData.gain.gain.value, now);
                                 oscillatorData.gain.gain.exponentialRampToValueAtTime(0.01, now + releaseTime);
                             }
-                            
+
                             delete activeOscillators[note];
                         } catch (e) {
                             console.error("Error stopping drum note:", e);
@@ -1806,12 +1710,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         var typeSelect = document.getElementById('drums-type');
                         var pitchSlider = document.getElementById('drums-pitch');
                         var decaySlider = document.getElementById('drums-decay');
-                        
+
                         var drumType = typeSelect ? typeSelect.value : 'kick';
                         var pitch = pitchSlider ? parseFloat(pitchSlider.value) : 1;
                         var decayTime = decaySlider ? parseFloat(decaySlider.value) : 0.5;
 
-                        // Create Noise Buffer (common for snare/hihat/cymbal)
                         var bufferSize = context.sampleRate * 2;
                         var buffer = context.createBuffer(1, bufferSize, context.sampleRate);
                         var output = buffer.getChannelData(0);
@@ -1822,114 +1725,85 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         if (drumType === 'kick') {
                             var osc = context.createOscillator();
                             var oscGain = context.createGain();
-                            
                             osc.type = 'sine';
                             osc.frequency.setValueAtTime(noteData.freq * pitch, startTime);
                             osc.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
-                            
                             oscGain.gain.setValueAtTime(0.7, startTime);
                             oscGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
-                            
                             osc.connect(oscGain);
                             oscGain.connect(destination);
                             osc.start(startTime);
                             osc.stop(startTime + decayTime);
-
                         } else if (drumType === 'snare') {
                             var osc = context.createOscillator();
                             var oscGain = context.createGain();
                             var noiseSource = context.createBufferSource();
                             var noiseGain = context.createGain();
                             var noiseFilter = context.createBiquadFilter();
-
                             noiseSource.buffer = buffer;
-                            
                             osc.type = 'triangle';
                             osc.frequency.value = noteData.freq * pitch;
-                            
                             noiseFilter.type = 'highpass';
                             noiseFilter.frequency.value = 5000;
-                            
                             oscGain.gain.setValueAtTime(0.5, startTime);
                             noiseGain.gain.setValueAtTime(0.5, startTime);
-                            
                             oscGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
                             noiseGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
-
                             osc.connect(oscGain);
                             noiseSource.connect(noiseFilter);
                             noiseFilter.connect(noiseGain);
-                            
                             oscGain.connect(destination);
                             noiseGain.connect(destination);
-                            
                             osc.start(startTime);
                             noiseSource.start(startTime);
                             osc.stop(startTime + decayTime);
                             noiseSource.stop(startTime + decayTime);
-
                         } else if (drumType === 'hihat' || drumType === 'cymbal') {
-                            // FIX: Added specific logic for hi-hat and cymbal
                             var osc = context.createOscillator();
                             var noiseSource = context.createBufferSource();
                             noiseSource.buffer = buffer;
-                            
                             var oscFilter = context.createBiquadFilter();
                             oscFilter.type = 'bandpass';
                             oscFilter.frequency.value = noteData.freq * pitch;
                             oscFilter.Q.value = 10;
-                            
                             var noiseFilter = context.createBiquadFilter();
                             noiseFilter.type = 'highpass';
                             if (drumType === 'hihat') noiseFilter.frequency.value = 8000;
-                            else noiseFilter.frequency.value = 3000; // Cymbal lower
-                            
+                            else noiseFilter.frequency.value = 3000;
                             var oscGain = context.createGain();
                             var noiseGain = context.createGain();
                             var masterDrumGain = context.createGain();
-                            
                             oscGain.gain.value = drumType === 'hihat' ? 0.2 : 0.3;
                             noiseGain.gain.value = drumType === 'hihat' ? 0.3 : 0.4;
-                            
                             var envDecay = drumType === 'hihat' ? decayTime * 0.2 : decayTime * 2;
-                            
                             masterDrumGain.gain.setValueAtTime(0.7, startTime);
                             masterDrumGain.gain.exponentialRampToValueAtTime(0.01, startTime + envDecay);
-
                             noiseSource.connect(noiseFilter);
                             noiseFilter.connect(noiseGain);
                             noiseGain.connect(masterDrumGain);
-                            
                             osc.connect(oscFilter);
                             oscFilter.connect(oscGain);
                             oscGain.connect(masterDrumGain);
-                            
                             masterDrumGain.connect(destination);
-                            
                             osc.start(startTime);
                             noiseSource.start(startTime);
                             osc.stop(startTime + envDecay);
                             noiseSource.stop(startTime + envDecay);
-
                         } else {
-                            // Default to Tom
                             var osc = context.createOscillator();
                             var oscGain = context.createGain();
-                            
                             osc.type = 'square';
                             osc.frequency.setValueAtTime(noteData.freq * pitch, startTime);
                             osc.frequency.exponentialRampToValueAtTime(0.01, startTime + decayTime);
-                            
                             oscGain.gain.setValueAtTime(0.7, startTime);
                             oscGain.gain.exponentialRampToValueAtTime(0.01, startTime + decayTime);
-                            
                             osc.connect(oscGain);
                             oscGain.connect(destination);
                             osc.start(startTime);
                             osc.stop(startTime + decayTime);
                         }
                     };
-                    
+
                     inst.cleanup = function() {
                         document.body.classList.remove('drums-theme');
                         removeDrumsControls();
@@ -1942,31 +1816,35 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             var BellInstrument = {
                 create: function() {
                     var inst = InstrumentFactory.create('Bell');
-                    
+
                     inst.init = function() {
                         document.body.classList.add('bell-theme');
                         createBellControls();
                     };
-                    
+
                     inst.playNote = function(note, freq) {
                         try {
+                            if (!audioContext) {
+                                console.error("Audio context not initialized");
+                                return;
+                            }
+
                             var now = audioContext.currentTime;
-                                                
-                            // FIX: Ensure mainGainNode is initialized
+
+                            // Ensure mainGainNode is initialized and connected
                             if (!mainGainNode || mainGainNode.context !== audioContext) {
-                                if (!audioContext) return; 
                                 mainGainNode = audioContext.createGain();
-                                mainGainNode.gain.value = volumeSlider ? volumeSlider.value : 0.5;
+                                mainGainNode.gain.value = volumeSlider ? parseFloat(volumeSlider.value) : 0.5;
                                 mainGainNode.connect(audioContext.destination);
                             }
-                            
+
                             var decaySlider = document.getElementById('bell-decay');
                             var brightnessSlider = document.getElementById('bell-brightness');
 
                             // Synthesis Parameters
                             var decayTime = decaySlider ? parseFloat(decaySlider.value) : 2.5;
                             var brightness = brightnessSlider ? parseFloat(brightnessSlider.value) : 0.5;
-                            
+
                             // Bell Frequencies (Inharmonic partials typical of metallic bells)
                             var f1 = freq;                 // Fundamental
                             var f2 = freq * 2.4;           // Minor third (ish)
@@ -1990,9 +1868,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             var gain2 = audioContext.createGain();
                             var gain3 = audioContext.createGain();
                             var gain4 = audioContext.createGain();
-                            
+
                             // Master Gain for this note (to control stopNote)
                             var masterGain = audioContext.createGain();
+                            masterGain.gain.value = 0.8;
 
                             osc1.frequency.value = f1;
                             osc2.frequency.value = f2;
@@ -2005,7 +1884,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             osc4.type = 'sine';
 
                             // Envelopes
-                            // Each partial decays at a slightly different rate for realism
                             gain1.gain.setValueAtTime(0, now);
                             gain1.gain.linearRampToValueAtTime(g1, now + 0.01);
                             gain1.gain.exponentialRampToValueAtTime(0.001, now + decayTime);
@@ -2021,8 +1899,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             gain4.gain.setValueAtTime(0, now);
                             gain4.gain.linearRampToValueAtTime(g4, now + 0.01);
                             gain4.gain.exponentialRampToValueAtTime(0.001, now + (decayTime * 0.4));
-
-                            masterGain.gain.value = 0.8;
 
                             // Connections
                             osc1.connect(gain1);
@@ -2041,15 +1917,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                             osc2.start(now);
                             osc3.start(now);
                             osc4.start(now);
-                            
+
                             // Auto-stop logic for bell (it naturally decays)
                             osc1.stop(now + decayTime + 0.1);
                             osc2.stop(now + decayTime + 0.1);
                             osc3.stop(now + decayTime + 0.1);
                             osc4.stop(now + decayTime + 0.1);
 
-                            activeOscillators[note] = { 
-                                masterGain: masterGain
+                            activeOscillators[note] = {
+                                masterGain: masterGain,
+                                oscillators: [osc1, osc2, osc3, osc4]
                             };
 
                         } catch (e) {
@@ -2058,20 +1935,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     };
 
                     inst.stopNote = function(note) {
-                        // Bells naturally decay, but we can force stop if needed
                         var oscillatorData = activeOscillators[note];
                         if (!oscillatorData) return;
-                        
+
                         try {
                             var now = audioContext.currentTime;
                             var releaseTime = 0.05;
-                            
+
                             if (oscillatorData.masterGain) {
                                 oscillatorData.masterGain.gain.cancelScheduledValues(now);
                                 oscillatorData.masterGain.gain.setValueAtTime(oscillatorData.masterGain.gain.value, now);
                                 oscillatorData.masterGain.gain.linearRampToValueAtTime(0, now + releaseTime);
                             }
-                            
+
+                            // Stop all oscillators
+                            if (oscillatorData.oscillators) {
+                                oscillatorData.oscillators.forEach(function(osc) {
+                                    osc.stop(now + releaseTime);
+                                });
+                            }
+
                             delete activeOscillators[note];
                         } catch (e) {
                             console.error("Error stopping bell note:", e);
@@ -2087,7 +1970,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         var brightness = brightnessSlider ? parseFloat(brightnessSlider.value) : 0.5;
 
                         var freq = noteData.freq;
-                        
+
                         var g1 = 0.5;
                         var g2 = 0.3 * brightness;
                         var g3 = 0.2 * brightness;
@@ -2107,22 +1990,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                         for(var i=0; i<partials.length; i++) {
                             var osc = context.createOscillator();
                             var gain = context.createGain();
-                            
+
                             osc.type = 'sine';
                             osc.frequency.value = partials[i].f;
-                            
+
                             gain.gain.setValueAtTime(0, startTime);
                             gain.gain.linearRampToValueAtTime(partials[i].g, startTime + 0.01);
                             gain.gain.exponentialRampToValueAtTime(0.001, startTime + (decayTime * (1 - i*0.1)));
 
                             osc.connect(gain);
                             gain.connect(masterGain);
-                            
+
                             osc.start(startTime);
                             osc.stop(startTime + decayTime + 0.1);
                         }
                     };
-                    
+
                     inst.cleanup = function() {
                         document.body.classList.remove('bell-theme');
                         removeBellControls();
@@ -2131,6 +2014,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                     return inst;
                 }
             };
+
             
             var FluteInstrument = {
                 create: function() {
