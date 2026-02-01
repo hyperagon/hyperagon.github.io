@@ -1,9 +1,9 @@
 +++
 title = 'Learning AI (Library)'
 summary = 'A big list of learning resources.'
-date = 2026-01-22T11:30:03+01:01
+date = 2025-01-22T11:30:03+01:01
 draft = false
-weight = 1 # Pin it
+weight = 0 # Pin it
 tags = ['machine learning', 'library', 'learn']
 showtoc = true
 +++
