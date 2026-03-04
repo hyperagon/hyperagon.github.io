@@ -1,5 +1,5 @@
 ---
-title: 'Hexano 7.1 (HTML5)'
+title: 'Hexano 7.2 (HTML5)'
 summary: 'Music in your Pocket'
 date:  2026-02-28T09:24:13Z
 layout: hexano72.min
