@@ -9,3 +9,5 @@ I've been talking to an **LLM** to improve Rollidy yet it forgets what we went t
 The question is, is this good for us? Getting annoyed at a machine for forgeting?
 
 ![Mean](mean.png)
+
+The prompt needs to explicitly state that it can't just grow the canvas, assuming it doean«t ignore that like it did when told not to touch anything else.
