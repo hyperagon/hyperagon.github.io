@@ -10,4 +10,4 @@ The question is, is this good for us, getting annoyed at a machine for forgeting
 
 ![Mean](mean.png)
 
-The prompt needs to explicitly state that it can't just grow the canvas, assuming it doean't ignore that like it did when told not to touch anything else.
+The prompt needs to explicitly state that it can't just grow the canvas, assuming it doesn't ignore that like it did when told not to touch anything else.
