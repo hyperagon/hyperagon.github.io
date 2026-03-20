@@ -6,7 +6,7 @@ draft = false
 tags = ['ai', 'llm']
 +++
 I've been talking to an **LLM** to improve Rollidy yet it forgets what we went through to make it Virtual and why we did it (to support long melodies).
-The question is, is this good for us? Getting annoyed at a machine for forgeting?
+The question is, is this good for us, getting annoyed at a machine for forgeting?
 
 ![Mean](mean.png)
 
