@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>There She Is!!</title>
+    <style>
+        select {
+            width:100%;
+        }
+        
+        div * {
+            width: 800px;
+            height:600px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <select id="file">
+       <option value="swf/example.swf">Ruffle Example</option>
+       <option value="swf/There She Is!! step1.swf">There She Is!!</option>
+       <option value="swf/There She Is!! step2.swf">There She Is!! step2</option>
+       <option value="swf/There She Is!! step3.swf">There She Is!! step3</option>
+       <option value="swf/There She Is!! step4.swf">There She Is!! step4</option>
+       <option value="swf/There She Is!! step5.swf">There She Is!! step5</option>
+    </select>
+    
+    <div id = 'container'>
+    </div>
+
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
+        let ruffle;
+        let player;
+        
+        let select = document.getElementById("file");
+        select.addEventListener("change", () => {
+            player.ruffle().load(select.value);
+        });
+
+        window.addEventListener("DOMContentLoaded", () => {
+            ruffle = window.RufflePlayer.newest();
+            player = ruffle.createPlayer();
+            let container = document.getElementById("container");
+            container.appendChild(player);
+        });
+    </script>
+    <script src="ruffle.js"></script>
+</body>
