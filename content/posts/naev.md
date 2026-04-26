@@ -98,7 +98,7 @@ Or learn [Lua](https://www.lua.org/) and hard-code it...
 
 `player.pilot():target():kill()`
 
-Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=wDgQdr8ZkTw), kill everything.
+Or if you're a [megalomqaniac](https://www.youtube.com/watch?v=nR31ymMSUA0&t=20s), kill everything.
 
 `for _,Enemy in pairs(player.pilot():getEnemies()) do Enemy:kill() end`
 `for _,Ally in pairs(player.pilot():getAllies()) do Ally:kill() end`
