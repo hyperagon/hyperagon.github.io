@@ -214,7 +214,7 @@ Or if you're a [megalomaniac](https://www.youtube.com/watch?v=nR31ymMSUA0&t=20s)
 `faction.modPlayerRaw("Dreamer Clan", 100)`
 `faction.modPlayerRaw("Black Lotus", 100)`
 
-## [Add Intrinaic Outfit](https://naev.org/api/modules/pilot.html#outfitAddIntrinsic) (see these in "Toggle Display")
+## [Add Intrinsic Outfit](https://naev.org/api/modules/pilot.html#outfitAddIntrinsic) (see these in "Toggle Display")
 
 `player.pilot():outfitAddIntrinsic("Port & Polish")`
 
