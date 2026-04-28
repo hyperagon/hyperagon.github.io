@@ -230,7 +230,7 @@ Or if you're a [megalomaniac](https://www.youtube.com/watch?v=nR31ymMSUA0&t=20s)
 `system.get("Pas"):setKnown(true, true)`
 `system.get("Effetey"):setKnown(true, true)`
 
-## [Change chapter](https://naev.org/api/modules/player.html#chapterSet) (Desn't actually change things)
+## [Change chapter](https://naev.org/api/modules/player.html#chapterSet)
 
 `player.chapterSet(2)`
 
