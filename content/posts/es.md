@@ -1,7 +1,7 @@
 +++
 title = "Endless Sky Cheats"
 summary = "Getting to the fun faster."
-date = 2024-11-19T08:10:34+01:00
+date = 2026-04-20T08:10:34+01:00
 postdate = 2024-08-14T08:10:34+01:00
 draft = false
 tags = ['games']
@@ -71,7 +71,7 @@ Either add `cloak 0.04` to your ship's attributes or a `Cloking Device` to its o
 
 Press **C** to cloak, note that you can't fire weapons or hail planets while cloaked.
 
-## Add Outifts (they all take mass but outfits space will go negative and still work)
+## Add Outfits (they all take mass but outfits space will go negative and still work)
 
 ```
 	outfits
