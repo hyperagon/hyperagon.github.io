@@ -71,7 +71,7 @@ Either add `cloak 0.04` to your ship's attributes or a `Cloking Device` to its o
 
 Press **C** to cloak, note that you can't fire weapons or hail planets while cloaked.
 
-## Add Outfits (they all take mass but outfits space will go negative and still work)
+## Add Outfits (they all take mass but outfit space will go negative and still work)
 
 ```
 	outfits
