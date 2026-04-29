@@ -6,7 +6,7 @@ postdate = 2024-08-14T08:10:34+01:00
 draft = false
 tags = ['games']
 +++
-[Endless Sky]((https://endless-sky.github.io/)) is another [open-source](https://github.com/endless-sky/endless-sky) game, made with [C++](https://en.wikipedia.org/wiki/C++).
+[Endless Sky]((https://endless-sky.github.io/)) is another [open-source](https://github.com/endless-sky/endless-sky) game, made with [C++](https://en.wikipedia.org/wiki/C++) (it uses the [SDL](https://www.libsdl.org/) library).
 
 Similar to [NAEV](https://naev.org/) it was inspired by the **Escape Velocity** gane.
 I looked to [cheat and found a discussion,](https://steamcommunity.com/app/404410/discussions/0/154645427521143152/) then I digged around and made my own list to avoid needing [plugins](https://endless-sky.github.io/plugins.html) / [Cheat Engine](https://www.cheatengine.org/).
