@@ -1016,5 +1016,5 @@ visited Zosma
 visited "Zuba Zub"
 visited Zubenelgenubi
 visited Zubeneschamali
-harvedted
+harvested
 ```
