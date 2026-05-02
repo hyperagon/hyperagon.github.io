@@ -1,6 +1,6 @@
 Hello, I am **Hyperag⬡n** and here are some facts about me:
 
-- I am interested in [*Multi Player*](https://en.wikipedia.org/wiki/Multiplayer_video_game), [*Machine Learning*](https://en.wikipedia.org/wiki/Machine_learning) and [*Video Games*](https://en.wikipedia.org/wiki/Video_games).
+- I am interested in [*Video Games*](https://en.wikipedia.org/wiki/Video_games), [*Multi Player*](https://en.wikipedia.org/wiki/Multiplayer_video_game) and [*Machine Learning*](https://en.wikipedia.org/wiki/Machine_learning).
 - I occasionally sketch on my smartphone.
 - I love and prefer to use open source ([Linux](https://www.linux.org/)).
 - I speak English rather well but it is [very American, not Bri-ish](https://www.speakmoreclearly.com/english-pronunciation-tips/the-difference-between-a-british-and-american-accent/).
