@@ -3,7 +3,7 @@ title = "Confidently Wrong"
 summary = "The fatigue is palpable."
 date = 2026-05-26T08:10:34+01:00
 draft = false
-tags = ['ai', 'llm', 'openmw']
+tags = ['ai', 'llm', 'modding'. 'openmw']
 +++
 I've been talking to **LLMs** and getting some rather funny replies.
 In fact, some decide that they have to *emphasize* how right they got it. (PS: they didn't)
