@@ -16,6 +16,6 @@ Of course this confidence is misplaced but it gets worse when you see the lie in
 
 Yeah you can play a game in a completely different game, it didn't even check if I was talking about the same. Got to save those tokens right?
 
-Anyway I made a video that will come out in the future. Modding re3ally is the ultimate form of cheating.
+Anyway I made a video that will come out in the future. Modding really is the ultimate form of cheating.
 
 ![Modding](modding.png)
