@@ -10,7 +10,7 @@ tags = ['modding', 'openmw']
 For starters let's do an Elixir that recovers everything.
 ![Elixir](1.png)
 
-Let's put it indide the left-most vase after going down from the Silt Strider on Balmora.
+Let's put it inside the left-most vase after going down from the Silt Strider on Balmora.
 ![Find the Object](2.png)
 
 Then edit that record to have that new item.
@@ -26,3 +26,4 @@ Then edit his/her dialog.
 ![Edit Dialog](6.png)
 
 In the scripts you can use things like `player->addItem "p_elixir" 1` to gert that item and `"Fam"->resurrect()` to make the NPC immortal.
+![Commands](7.png)
