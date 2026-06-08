@@ -1,6 +1,6 @@
 +++
 title = "OpenMW Modding"
-summary = "Modding is the ultimate form of Cheating"
+summary = "Modding is the ultimate form of Cheating."
 date = 2026-06-08T08:10:34+01:00
 draft = false
 tags = ['modding', 'openmw']
