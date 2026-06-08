@@ -27,3 +27,5 @@ Then edit his/her dialog.
 
 In the scripts you can use console commands: `player->addItem "p_elixir" 1` to get the item and `"Fam"->resurrect()` to make the NPC immortal.
 ![Commands](7.png)
+
+If you're wondering what commands are available check [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies) to get you started.
