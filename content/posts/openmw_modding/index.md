@@ -25,5 +25,5 @@ Now we need to clone Fargoth or any other NPC.
 Then edit his/her dialog.
 ![Edit Dialog](6.png)
 
-In the scripts you can use things like `player->addItem "p_elixir" 1` to gert that item and `"Fam"->resurrect()` to make the NPC immortal.
+In the scripts you can use things like `player->addItem "p_elixir" 1` to get that item and `"Fam"->resurrect()` to make the NPC immortal.
 ![Commands](7.png)
