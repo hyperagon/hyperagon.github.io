@@ -7,7 +7,7 @@ tags = ['modding', 'openmw']
 +++
 "*Modding is the ultimate form of Cheating*" and I made a video that will come out after I'm done completing [OpenMW](https://openmw.org/). Parts of this overlaps with what was done in [this guide](https://openmw.readthedocs.io/en/stable/manuals/openmw-cs/tour.html).
 
-For starters let's do an Elixir that recovers everything.
+For starters let's make an Elixir that recovers everything.
 ![Elixir](1.png)
 
 Now locate the left-most vase after going down from the Silt Strider in Balmora.
