@@ -10,7 +10,7 @@ tags = ['modding', 'openmw']
 For starters let's do an Elixir that recovers everything.
 ![Elixir](1.png)
 
-Let's put it inside the left-most vase after going down from the Silt Strider on Balmora.
+Now locate the left-most vase after going down from the Silt Strider in Balmora.
 ![Find the Object](2.png)
 
 Then edit that record to have that new item.
@@ -25,7 +25,7 @@ Now we need to clone Fargoth or any other NPC.
 Then edit his/her dialog.
 ![Edit Dialog](6.png)
 
-In the scripts you can use console commands: `player->addItem "p_elixir" 1` to get the item and `"Fam"->resurrect()` to make the NPC immortal.
+In the scripts you can use console commands.
 ![Commands](7.png)
 
-If you're wondering what commands are available check [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies) to get you started.
+If you're wondering what commands are available you can see [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and learn more from [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies).
