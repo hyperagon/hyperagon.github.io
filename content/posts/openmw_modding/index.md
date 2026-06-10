@@ -29,3 +29,5 @@ In the scripts you can use console commands.
 ![Commands](7.png)
 
 If you're wondering what commands are available you can see [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and learn more from [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies).
+
+Try it out by putting [the file](Fam.omwaddon) in `~/.var/app/org.openmw.OpenMW/data/openmw/data/`
