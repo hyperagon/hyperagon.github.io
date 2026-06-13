@@ -5,7 +5,7 @@ date = 2026-06-08T08:10:34+01:00
 draft = false
 tags = ['modding', 'openmw']
 +++
-"*Modding is the ultimate form of Cheating*" and I made a video that will come out after I'm done completing [OpenMW](https://openmw.org/). Parts of this overlaps with what was done in [this guide](https://openmw.readthedocs.io/en/stable/manuals/openmw-cs/tour.html).
+"*Modding is the ultimate form of Cheating*" and I made a video that will come out after Fam is done completing [OpenMW](https://openmw.org/). Parts of this overlaps with what was done in [this guide](https://openmw.readthedocs.io/en/stable/manuals/openmw-cs/tour.html).
 
 For starters let's make an *Elixir* that recovers everything.
 ![Elixir](1.png)
