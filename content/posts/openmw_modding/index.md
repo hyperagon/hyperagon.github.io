@@ -33,4 +33,5 @@ See which commands are available in [this list](https://wiki.openmw.org/index.ph
 Try it out by putting [this file](Fam.omwaddon) in `~/.var/app/org.openmw.OpenMW/data/openmw/data/`
 ![Fam Ingame](8.png)
 
-You can find **Fam** on the roof of the house next to *Caius Cossades* house.
+Load the Addon and you'll find **Fam** on the roof of the house next to *Caius Cossades* house.
+![Load the Addon](9.png)
