@@ -33,5 +33,5 @@ See which commands are available in [this list](https://wiki.openmw.org/index.ph
 Try it out by putting [this file](Fam.omwaddon) in `~/.var/app/org.openmw.OpenMW/data/openmw/data/`
 ![Fam Ingame](8.png)
 
-Add metadata amd the addon before playing.
+Add metadata and the addon before playing.
 ![Load the Addon](9.png)
