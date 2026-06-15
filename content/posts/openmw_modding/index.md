@@ -28,7 +28,7 @@ Then edit his/her dialog. (Topics and Topic Infos)
 In the scripts you can use console commands. See which are available in [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and learn more from [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies).
 ![Commands](7.png)
 
-Now drag-and-drop the NPC on the Cell.
+Now *View* the Cell and drag-and-drop the NPC on it.
 ![Fam Ingame](8.png)
 
 Add metadata and the addon before playing.
