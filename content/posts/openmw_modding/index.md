@@ -29,9 +29,9 @@ In the scripts you can use console commands.
 ![Commands](7.png)
 
 See which commands are available in [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and learn more from [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies).
-
-Try it out by putting [this file](Fam.omwaddon) in `~/.var/app/org.openmw.OpenMW/data/openmw/data/`
 ![Fam Ingame](8.png)
 
 Add metadata and the addon before playing.
 ![Load the Addon](9.png)
+
+Try it out by putting [this file](Fam.omwaddon) in `~/.var/app/org.openmw.OpenMW/data/openmw/data/`
