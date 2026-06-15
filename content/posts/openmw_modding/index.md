@@ -25,10 +25,10 @@ Now we need to clone Fargoth or any other NPC.
 Then edit his/her dialog. (Topics and Topic Infos)
 ![Edit Dialog](6.png)
 
-In the scripts you can use console commands.
+In the scripts you can use console commands. See which commands are available in [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and learn more from [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies).
 ![Commands](7.png)
 
-See which commands are available in [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and learn more from [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies). Now drag-and-drop the NPC on the Cell.
+Now drag-and-drop the NPC on the Cell.
 ![Fam Ingame](8.png)
 
 Add metadata and the addon before playing.
