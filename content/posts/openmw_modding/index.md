@@ -22,7 +22,7 @@ And let's also make a *Cheater's Amulet* with the same effect but constant (ever
 Now we need to clone Fargoth or any other NPC.
 ![Make an NPC](5.png)
 
-Then edit his/her dialog. (Topics and Topic Infos)
+Then edit his/her dialog. (Topic and Topic Info)
 ![Edit Dialog](6.png)
 
 In the scripts you can use console commands. See which are available in [this list](https://wiki.openmw.org/index.php?title=Scripting_%28status%29) and learn more from [this tutorial](https://en.uesp.net/wiki/Morrowind_Mod:Scripting_for_Dummies).
