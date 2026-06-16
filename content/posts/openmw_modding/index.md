@@ -10,7 +10,7 @@ tags = ['modding', 'openmw']
 For starters let's make an *Elixir* that recovers everything.
 ![Elixir](1.png)
 
-Now locate the left-most vase after going down from the Silt Strider in Balmora.
+Now locate the left-most urn after going down from the Silt Strider in Balmora.
 ![Find the Object](2.png)
 
 Then edit that record to have that new item.
