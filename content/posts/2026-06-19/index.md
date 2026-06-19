@@ -13,4 +13,4 @@ But alas some things do not seem complete, just look at what I found in the Alph
 
 ![AlphaDemo](AlphaDemo.png)
 
-I can't wait to show how to run this, it's so easy. Granted, I already had most of the requirements since I needed them to compile [DevilutionX](https://devilutionx.com/).
+I can't wait to show how to run this, it's so easy. I already had most of the requirements since I needed them to compile [DevilutionX](https://devilutionx.com/).
