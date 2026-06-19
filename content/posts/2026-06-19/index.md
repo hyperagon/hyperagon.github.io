@@ -9,7 +9,7 @@ Been looking into some games to play next and found [Flare Engine](https://githu
 
 Funny that I actually found it when looking for projects similar to [DevilutionX](https://devilutionx.com/).
 
-But alas some do not seem complete (on the Alpha Demo).
+But alas some things do not seem complete (on the Alpha Demo).
 
 ![AlphaDemo](AlphaDemo.png)
 
