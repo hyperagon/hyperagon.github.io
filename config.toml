@@ -26,25 +26,9 @@ Wizard by Night"""
     name = "itchio"
     url = "https://hyperagon.itch.io/"
 
-#    [[params.socialIcons]]
-#    name = "LinkedIn"
-#    url = "https://www.linkedin.com/in/vím"
-
     [[params.socialIcons]]
     name = "youtube"
     url = "https://www.youtube.com/@hyperag-on"
-
-#    [[params.socialIcons]]
-#    name = "X"
-#    url = "https://x.com/alphachill8"
-
-#    [[params.socialIcons]]
-#    name = "email"
-#    url = "mailto:hyperagon@outlook.com"
-
-#    [[params.socialIcons]]
-#    name = "bluesky"
-#    url = "https://bsky.app/profile/hyperagon.bsky.social"
 
     [[menu.main]]
     name = "Projects"
@@ -55,8 +39,3 @@ Wizard by Night"""
     name = "Tags"
     url = "tags/"
     weight = 10
-
-#    [[menu.main]]
-#    name = "Search"
-#    url = "search/"
-#    weight = 15
