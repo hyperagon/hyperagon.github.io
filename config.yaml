@@ -1,6 +1,7 @@
 ---
+# python -m http.server
 baseURL: https://hyperagon.github.io/
-languageCode: en-us
+locale: en-us
 title: Hyperag⬡n
 theme: PaperMod
 paginate: 3
@@ -27,10 +28,8 @@ params:
       url: https://github.com/hyperagon
     - name: itchio
       url: https://hyperagon.itch.io/
-    - name: LinkedIn
-      url: https://www.linkedin.com/in/hyperagon
-    - name: Twitter
-      url: https://twitter.com/hyperagon
+    - name: "youtube"
+      url: "https://www.youtube.com/@hyperag-on"
 menu:
   main:
     - name: Projects

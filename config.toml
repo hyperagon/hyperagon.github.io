@@ -1,0 +1,46 @@
+baseURL = 'https://hyperagon.github.io/'
+locale = 'en-us'
+title = 'Hyperag⬡n'
+theme = 'PaperMod'
+paginate = 3
+
+[params]
+env = "production"
+keywords = [ "Blog", "Portfolio" ]
+author = "Hyperag⬡n"
+images = ["static/favicon-16x16.png", "static/favicon-32x32.png", "static/favicon.png"]
+comments = true
+ShowCodeCopyButtons = true
+
+  [params.homeInfoParams]
+  Title = "Hyperag⬡n"
+  Content = """Programmer by Day
+
+Wizard by Night"""
+
+    [[params.socialIcons]]
+    name = "Github"
+    url = "https://github.com/hyperagon"
+
+    [[params.socialIcons]]
+    name = "itchio"
+    url = "https://hyperagon.itch.io/"
+
+    [[params.socialIcons]]
+    name = "youtube"
+    url = "https://www.youtube.com/@hyperag-on"
+
+    [[menu.main]]
+    name = "Projects"
+    url = "projects/"
+    weight = 5
+
+    [[menu.main]]
+    name = "Tags"
+    url = "tags/"
+    weight = 10
+
+#    [[menu.main]]
+#    name = "Search"
+#    url = "search/"
+#    weight = 15
