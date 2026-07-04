@@ -1,6 +1,6 @@
 +++
 title = "Small LLMs"
-summary = "Maybe one day?"
+summary = "At least it's coherent?"
 date = 2026-07-04T08:10:34+01:00
 draft = false
 tags = ['llm', 'ai']
