@@ -9,4 +9,4 @@ Hello, I am **Hyperag⬡n** and here are some facts about me:
 
 View my website at [hyperagon.github.io](https://hyperagon.github.io/).
 
-Clone this by following [this guide](https://www.youtube.com/watch?v=4yDSoKmNK54).
+Clone this by following [this video](https://www.youtube.com/watch?v=4yDSoKmNK54).
