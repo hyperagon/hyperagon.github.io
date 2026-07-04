@@ -5,7 +5,7 @@ date = 2026-07-04T08:10:34+01:00
 draft = false
 tags = ['llm', 'ai']
 +++
-I have tested [a small model](https://huggingface.co/mradermacher/FastThink-0.5B-Tiny-abliterated-GGUF) (under 1 GB) but my results are with small models was always bad, here's replies to a "Hi" prompt:
+I have tested [a small model](https://huggingface.co/mradermacher/FastThink-0.5B-Tiny-abliterated-GGUF) (under 1 GB) but my results with small models was always bad, here's replies to a "Hi" prompt:
 
 ![Crazy Locqal 1](crazy_local2.png)
 
