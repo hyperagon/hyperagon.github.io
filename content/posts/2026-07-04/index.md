@@ -7,6 +7,10 @@ tags = ['llm', 'ai']
 +++
 I have tested small models (under 1 GB) but my results are always bad, they can't even reply "Hi"....
 
-![AlphaDemo](AlphaDemo.png)
+![Crazy Locqal 1](crazy_local1.png)
 
-Seing this kind of stuff might make you worry but it's got several issue.
+Seing this kind of stuff might make you worry but let's try again...
+
+![Crazy Locqal 2](crazy_local2.png)
+
+Yeah, getting "Hello fellow humsn" vibes here, plus she's drating menu under 7 years so that would mean she dates 11 year-olds...
