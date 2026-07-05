@@ -9,7 +9,7 @@ I have tested [a small model](https://huggingface.co/mradermacher/FastThink-0.5B
 
 ![Crazy Locqal 1](crazy_local2.png)
 
-Seing this kind of stuff might make you worry but let's try again...
+Seing this kind of stuff might make you worry. Let's try again...
 
 ![Crazy Locqal 2](crazy_local1.png)
 
