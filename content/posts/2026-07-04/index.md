@@ -14,3 +14,5 @@ Seing this kind of stuff might make you worry. Let's try again...
 ![Crazy Locqal 2](crazy_local1.png)
 
 Yeah, getting "hello fellow human" (pretending to be human) vibes here, plus dating people 7 years younger would mean that she dates 11 year-olds... Don't fall for these absurd lies.
+
+The model has since stopped, very curious indeed.
