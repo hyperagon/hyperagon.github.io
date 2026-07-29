@@ -16,3 +16,5 @@ Seing this kind of stuff might make you worry. Let's try again...
 Yeah, getting "hello fellow human" (pretending to be human) vibes here, plus dating people 7 years younger would mean that she dates 11 year-olds... Don't fall for these absurd lies.
 
 The model has since stopped, very curious indeed.
+
+I found an interesting [generated audio sample](https://cdn.scenema.ai/public/content/scenema-audio-demo/british-tirade-chained.mp3) on the subject for this [voice generator](https://scenema.ai/audio).
