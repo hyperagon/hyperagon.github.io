@@ -17,4 +17,4 @@ Yeah, getting "hello fellow human" (pretending to be human) vibes here, plus dat
 
 The model has since stopped, very curious indeed.
 
-I found an interesting [generated audio sample](https://cdn.scenema.ai/public/content/scenema-audio-demo/british-tirade-chained.mp3) on the subject for this [voice generator](https://scenema.ai/audio).
+I found an angry [generated audio sample](https://cdn.scenema.ai/public/content/scenema-audio-demo/british-tirade-chained.mp3) about this subject, in this [voice generator exanples](https://scenema.ai/audio).
