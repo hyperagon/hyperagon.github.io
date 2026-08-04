@@ -12,4 +12,4 @@ it was just a matter of convincing it that it had tools... What is it with these
 
 It was unable to get the date right since it was in a different language but that was easily fixed by instruxting it to use `date --iso-8601` to get a *YYYY-MM-DD* format, no need to translate numbers.
 
-By the way you can use `./bin/llama-cli -m MODEL.gguf --tools exec_shell_command` or if that's not enough `./bin/llama-cli -m MODEL.gguf --tools all`. 
+By the way you can use `./bin/llama-server -m MODEL.gguf --tools exec_shell_command` or if that's not enough `./bin/llama-server -m MODEL.gguf --tools all`. If you prefer to keep it in the Terminal just replace `llama-server` with `llama-cli`.
