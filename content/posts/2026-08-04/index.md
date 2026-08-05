@@ -20,4 +20,4 @@ It insists that it can't use `python` despite being able to run shell commands..
 
 That's better, note that only the month was wrong, these pictures were taken in the 3rd and 4th day perspectively.
 
-If you pr4frre, use the tool to get the date without needing shell commands: `get_datetime`.
+If you prefere, use the tool that only gets the date/time: `get_datetime`.
