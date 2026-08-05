@@ -17,3 +17,7 @@ By the way you can use `./bin/llama-server -m MODEL.gguf --tools exec_shell_comm
 It insists that it can't use `python` despite being able to run shell commands...
 
 ![Correct Local Tools](2026-08-04.png)
+
+That's better, note that only the month was wrong, these pictures were taken in the 3rd and 4th day perspectively.
+
+There's also a command to get the date without needing shell commands, that's a different tool: `get_datetime`.
