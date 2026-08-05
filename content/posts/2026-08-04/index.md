@@ -1,7 +1,7 @@
 +++
 title = "Tools on Llama.cpp"
 summary = "Good grief"
-date = 2026-07-04T08:10:34+01:00
+date = 2026-08-04T08:10:34+01:00
 draft = false
 tags = ['llm', 'ai']
 +++
@@ -15,3 +15,5 @@ It was unable to get the date right since it was in a different language but tha
 By the way you can use `./bin/llama-server -m MODEL.gguf --tools exec_shell_command` or if that's not enough `./bin/llama-server -m MODEL.gguf --tools all`. If you prefer to keep it in the Terminal just replace `llama-server` with `llama-cli`.
 
 It insists that it can't use `python` despite being able to run shell commands...
+
+![Correct Local Tools](2026-08-04.png)
