@@ -8,7 +8,7 @@ tags = ['llm', 'ai']
 I finally had [Llama.cpp](https://github.com/ggml-org/llama.cpp) serve an *LLM* with **tools** enabled,
 it was just a matter of convincing it that it had tools... What is it with these models not trusting the user?
 
-![Local Tools](2026-08-03.png)
+![Local Tools](2026-08-02.png)
 
 It was unable to get the date right since it was in a different language but that was easily fixed by instructing it to use `date --iso-8601` to get a *YYYY-MM-DD* format, no need to translate.
 
@@ -18,6 +18,6 @@ It insists that it can't use `python` despite being able to run shell commands..
 
 ![Correct Local Tools](2026-08-04.png)
 
-That's better, note that only the month was wrong, these pictures were taken in the 3rd and 4th day perspectively.
+That's better, note that only the month was wrong, these pictures were taken in the 2nd and 4th day perspectively.
 
 If you prefer, use the tool that only gets the date/time: `get_datetime`.
