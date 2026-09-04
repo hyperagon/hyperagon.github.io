@@ -20,5 +20,7 @@ What happens is that the animation does not play (stuck at `Cache: 0%`) yet I ca
 this happened after exporting to a video file (*.MKV* and *.MP4*) the animation is irrelevant.
 The files produced look fine so it's a reminder to save **BEFORE** you render/export.
 
+Just [try it](follow_path.friction).
+
 I also suspect that the *WebVG* icons are actually [Lucide Icons](https://lucide.dev/icons/), they look similar.
 With an [ISC License](https://en.wikipedia.org/wiki/ISC_license) it's fair I suppose.
