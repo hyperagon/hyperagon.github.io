@@ -30,6 +30,9 @@ Wizard by Night"""
     name = "youtube"
     url = "https://www.youtube.com/@hyperag-on"
 
+    [[params.socialIcons]]
+    name = "dailymotion"
+    url = "https://www.dailymotion.com/user/hyperagon"
     [[menu.main]]
     name = "Projects"
     url = "projects/"
