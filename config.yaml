@@ -30,6 +30,8 @@ params:
       url: https://hyperagon.itch.io/
     - name: "youtube"
       url: "https://www.youtube.com/@hyperag-on"
+    - name: "dailymotion"
+      url: "https://www.dailymotion.com/user/hyperagon"
 menu:
   main:
     - name: Projects
